@@ -72,6 +72,9 @@
 #include "nrfx_twi.h"
 #include "nrfx_twim.h"
 #include "oled.h"
+#include "app_button.h"
+#include "nrf_gpio.h"
+#include "button.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -86,7 +89,7 @@
 
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
-#define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "FlashBlaster v0"                               /**< Name of device. Will be included in the advertising data. */
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
 
 #define APP_BLE_OBSERVER_PRIO           3                                           /**< Application's BLE observer priority. You shouldn't need to modify this value. */
@@ -699,13 +702,13 @@ static void advertising_start(void)
 int main(void)
 {
     bool erase_bonds;
-    
+
     // Initialize.
     uart_init();
     twi_init();
     log_init();
     timers_init();
-    buttons_leds_init(&erase_bonds);
+//    buttons_leds_init(&erase_bonds);
     power_management_init();
     ble_stack_init();
     gap_params_init();
@@ -717,16 +720,15 @@ int main(void)
     // Start execution.
     //printf("\r\nUART started.\r\n");
     //NRF_LOG_INFO("Debug logging for UART over RTT started.");
-    //advertising_start();
+    advertising_start();
 
     oled_init(); 
-
     clear_display(0); // fill black
-	
     draw_text_box(0,"this is a test"); // draw box around selection text
     draw_box(21);
     draw_box(42);
 
+    button_init();
 
 
     // Enter main loop.

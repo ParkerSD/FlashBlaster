@@ -1,18 +1,15 @@
 
-
-
-
-
-#ifndef OLED_H_
-#define OLED_H_
-
-
 // OLED96
 // Library for accessing the 0.96" SSD1306 128x64 OLED display
 // Written by Larry Bank (bitbank@pobox.com)
 // Copyright (c) 2017 BitBank Software, Inc.
 // Project started 1/15/2017
 //
+
+#ifndef OLED_H_
+#define OLED_H_
+
+
 // OLED type for init function
 enum {
 	OLED_128x32 = 1,
