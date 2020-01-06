@@ -49,6 +49,8 @@
  */
 
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -708,7 +710,7 @@ int main(void)
     twi_init();
     log_init();
     timers_init();
-//    buttons_leds_init(&erase_bonds);
+    //buttons_leds_init(&erase_bonds);
     power_management_init();
     ble_stack_init();
     gap_params_init();
@@ -720,15 +722,14 @@ int main(void)
     // Start execution.
     //printf("\r\nUART started.\r\n");
     //NRF_LOG_INFO("Debug logging for UART over RTT started.");
-    advertising_start();
+
+    //advertising_start();
 
     oled_init(); 
-    clear_display(0); // fill black
-    draw_text_box(0,"this is a test"); // draw box around selection text
-    draw_box(21);
-    draw_box(42);
-
     button_init();
+    
+    draw_screen();
+
 
 
     // Enter main loop.

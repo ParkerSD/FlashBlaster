@@ -25,6 +25,17 @@ typedef enum
 	FONT_SMALL		// 6x8
 } FONTSIZE;
 
+
+typedef struct _list  // for test 
+{
+    char* item0;
+    char* item1;
+    char* item2;
+    bool listFull;
+} list;
+
+
+
 // Initialize the OLED96 library for a specific I2C address
 // Optionally enable inverted or flipped mode
 // returns 0 for success, 1 for failure
@@ -59,7 +70,15 @@ int oledSetContrast(unsigned char ucContrast);
 
 void draw_box(int y);
 
-void draw_text_box(int y, char* text);
+void draw_text(int y, char* text); //0 < y < 7 
+
+list* list_new(void);
+
+void draw_list(void);
+
+void draw_screen(void);
+
+void rerender_screen(int8_t);
 
 
 #endif /* OLED96_H_ */

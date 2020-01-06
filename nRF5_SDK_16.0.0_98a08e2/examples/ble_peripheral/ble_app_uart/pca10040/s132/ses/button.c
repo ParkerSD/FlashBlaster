@@ -1,4 +1,6 @@
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -27,16 +29,33 @@
 #include "button.h" 
 
 
-void button_up_callback(uint8_t pin_no, uint8_t button_action)
+volatile int8_t itemHighlighted = 0; 
+
+
+void button_up_callback(uint8_t pin_no, uint8_t button_action) // TODO: minimize work button interrupts do 
 {
-    if (button_action == APP_BUTTON_PUSH)
+    if (button_action == APP_BUTTON_PUSH) //or use APP_BUTTON_RELEASE
     {
-        clear_display(0);
+        itemHighlighted--; // no wrap around 
+        if(itemHighlighted < 0)
+        {
+            itemHighlighted = 0;
+        }
+        rerender_screen(itemHighlighted);
     }
 }
+
 void button_down_callback(uint8_t pin_no, uint8_t button_action)
 {
-    draw_text_box(0,"this is a test");
+    if(button_action == APP_BUTTON_PUSH)
+    {
+        itemHighlighted++;
+        if(itemHighlighted > 2)
+        {
+            itemHighlighted = 2;
+        }
+        rerender_screen(itemHighlighted);
+    }
 }
 
 

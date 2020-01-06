@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -35,7 +37,7 @@ static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 
 static void oledWriteCommand(unsigned char);
 
-
+list* globallist; 
 
 void twi_init(void)
 {
@@ -61,7 +63,9 @@ void oled_init(void)
 
     uint32_t ret;
     ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, oled64_initbuf, sizeof(oled64_initbuf), false);
-    // TODO: handle error
+    APP_ERROR_CHECK(ret);
+
+    clear_display(0); // fill black
 }
 
 void oled_test(void)
@@ -87,14 +91,14 @@ int oledInit(int iChannel, int iAddr, int iType, int bFlip, int bInvert)
 	
         uint32_t ret;
         ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, oled64_initbuf, sizeof(oled64_initbuf), false);
-        // TODO: handle error
+        APP_ERROR_CHECK(ret);
 
 	if (bInvert)
 	{
 		uc[0] = 0; // command
 		uc[1] = 0xa7; // invert command
                 ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, uc, 2, false);
-                // TODO: handle error
+                APP_ERROR_CHECK(ret);
 	}
 	if (bFlip) // rotate display 180
 	{
@@ -125,7 +129,7 @@ static void oledWriteCommand(unsigned char c)
 	buf[1] = c;
         uint32_t ret;
         ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, buf, 2, false);
-        // TODO: handle error
+        APP_ERROR_CHECK(ret);
 
 } /* oledWriteCommand() */
 
@@ -139,7 +143,7 @@ static void oledWriteCommand2(unsigned char c, unsigned char d)
 	buf[2] = d;
         uint32_t ret; 
         ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, buf, 3, false);
-        // TODO: handle error
+        APP_ERROR_CHECK(ret);
 
 } /* oledWriteCommand2() */
 
@@ -171,7 +175,7 @@ static void oledWriteDataBlock(unsigned char *ucBuf, int iLen)
 	memcpy(&ucTemp[1], ucBuf, iLen);
         uint32_t ret; 
         ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, ucTemp, iLen+1, false);
-        // TODO: handle error
+        APP_ERROR_CHECK(ret);
 					
 	// Keep a copy in local buffer
 	memcpy(&ucScreen[iScreenOffset], ucBuf, iLen);
@@ -298,24 +302,84 @@ void draw_box(int y) // top left corner of full width box = point (0, y)
 	}
 }
 
-void draw_text_box(int y, char* text)
+void draw_text(int y, char* text) // 0 < y < 8
 {   
-	
-	oledWriteString(1,y+1,text,FONT_SMALL);
-	
-	for(int f=0; f<128; f++)
-	{
-		oledSetPixel(f, y, 1); //draw x lines
-		oledSetPixel(f, y+20, 1); 
-	}
-	
-	for(int g=0; g<20; g++)
-	{
-		oledSetPixel(0, y+g, 1); //draw y lines
-		oledSetPixel(127, y+g, 1); 
-	}
+    oledWriteString(1, y, text, FONT_SMALL);
+}
 
-	
+list* list_new(void)
+{
+
+    list* x = malloc(sizeof(list)); 
+
+    //x->item0 = flash_fetch(item0); //need to create entire list struct here from file system
+    //x->item1 = flash_fetch(item1);
+    
+}
+
+void draw_list(void) // was - draw_list(list* itemlist)
+{
+    oledWriteString(1, 3, "this is string one", FONT_SMALL);
+    oledWriteString(1, 5, "this is string two", FONT_SMALL);
+    oledWriteString(1, 7, "this is string three", FONT_SMALL);
+}
+
+list* draw_initial_screen(void)
+{   
+    draw_box(17);
+    list* itemlist = list_new();
+    //draw_list(itemlist);
+
+    return itemlist; 
+}
+
+void draw_screen(void) // wrapper for draw_initial_screen
+{
+    //globallist = draw_initial_screen(); //TODO: globallist defined at top, producing garbage data
+    draw_box(17);
+    draw_list();
+
+}
+
+
+void rerender_screen(int8_t itemHighlighted)
+{
+    list* itemlist = list_new();
+
+    char item0[] = {"this is string one"}; // TODO: these names should come from file system in flash 
+    char item1[] = {"this is string two"};
+    char item2[] = {"this is string three"};
+ 
+    itemlist->item0 = item0; // based on button presses the order will change and items will be rerendered
+    itemlist->item1 = item1;
+    itemlist->item2 = item2; // NULL for no render
+
+    if(itemHighlighted == 0)
+    {
+        clear_display(0);
+        draw_box(17); //TODO: draw box only once for speed
+        oledWriteString(1, 3, itemlist->item0, FONT_SMALL);
+        oledWriteString(1, 5, itemlist->item1, FONT_SMALL);
+        oledWriteString(1, 7, itemlist->item2, FONT_SMALL);
+    }
+    else if(itemHighlighted == 1)
+    {   
+        clear_display(0);
+        draw_box(17);
+        //oledWriteString(1, 3, itemlist->item0, FONT_SMALL);
+        oledWriteString(1, 3, itemlist->item1, FONT_SMALL);
+        oledWriteString(1, 5, itemlist->item2, FONT_SMALL);
+    }
+    else if(itemHighlighted == 2)
+    {
+        clear_display(0);
+        draw_box(17);
+        //oledWriteString(1, 3, itemlist->item0, FONT_SMALL);
+        //oledWriteString(1, 5, itemlist->item1, FONT_SMALL);
+        oledWriteString(1, 3, itemlist->item2, FONT_SMALL);
+    }
+
+    free(itemlist);
 }
 
 

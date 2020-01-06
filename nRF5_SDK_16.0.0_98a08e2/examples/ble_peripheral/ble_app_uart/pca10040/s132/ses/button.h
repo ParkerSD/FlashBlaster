@@ -12,9 +12,11 @@
 #define BTN_UP 5  
 #define BTN_DOWN 7 
 #define BUTTON_COUNT 2
-#define BUTTON_DEBOUNCE_DELAY 25
+#define BUTTON_DEBOUNCE_DELAY 10
 
 void button_init(void);
+
+
 
 
 #endif /* BUTTON_H_ */ 
