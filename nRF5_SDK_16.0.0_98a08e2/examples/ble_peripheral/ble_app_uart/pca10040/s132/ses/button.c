@@ -28,15 +28,101 @@
 #include "nrf_gpio.h"
 #include "button.h" 
 
+#define OFF 1
+#define ON 0 
 
 volatile int8_t itemHighlighted = 0; 
 
+//volatile uint8_t buttonUp;
 
-void button_up_callback(uint8_t pin_no, uint8_t button_action) // TODO: minimize work button interrupts do 
+//volatile uint8_t buttonDown; 
+
+//volatile uint8_t state; 
+
+/*
+void get_button_state(void)
 {
-    if (button_action == APP_BUTTON_PUSH) //or use APP_BUTTON_RELEASE
+    if(nrf_gpio_pin_read(BTN_UP)) // high level is logic false
     {
-        itemHighlighted--; // no wrap around 
+        buttonUp = 0; // ON
+    }
+    else 
+    {
+        buttonUp = 1; //OFF
+    }
+    if(nrf_gpio_pin_read(BTN_DOWN))
+    {
+        buttonDown = 0; 
+    }
+    else 
+    {
+        buttonDown = 1; 
+    }
+
+    state = (buttonUp << 1) | buttonDown; 
+}
+*/
+
+/*        // too slow 
+void encoder_callback(uint8_t pin_no, uint8_t button_action) // TODO: minimize work button interrupts do
+{
+    get_button_state();
+
+    if (pin_no == BTN_UP && button_action == APP_BUTTON_PUSH) // low level 
+    {
+        buttonUp = OFF; // 1 = off, 0 = on 
+        if(buttonDown == ON) //&& state == 3)
+        {
+            itemHighlighted--;
+        }
+    }
+
+    else if (pin_no == BTN_UP && button_action == APP_BUTTON_RELEASE) // high level
+    {
+        buttonUp = ON;
+        if(buttonDown == OFF) //&& state == 0)
+        {
+            itemHighlighted--;
+        }
+    }
+
+    else if (pin_no == BTN_DOWN && button_action == APP_BUTTON_PUSH) 
+    {
+        buttonDown == OFF;
+        if(buttonUp == ON) //&& state == 3)
+        {
+            itemHighlighted++;
+        }
+    }
+    
+    else if (pin_no == BTN_DOWN && button_action == APP_BUTTON_RELEASE) 
+    {
+        buttonDown == ON;
+        if(buttonUp == OFF) //&& state == 0)
+        {
+            itemHighlighted++;
+        }
+    }
+    
+    if(itemHighlighted < 0)
+    {
+        itemHighlighted = 0;
+    }
+
+    else if(itemHighlighted > 2)
+    {
+        itemHighlighted = 2;
+    }
+
+    rerender_screen(itemHighlighted);
+}
+*/
+
+void button_up_callback(uint8_t pin_no, uint8_t button_action)
+{
+    if(button_action == APP_BUTTON_PUSH)
+    {
+        itemHighlighted--;
         if(itemHighlighted < 0)
         {
             itemHighlighted = 0;
@@ -58,11 +144,17 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action)
     }
 }
 
+void enter_callback(uint8_t pin_no, uint8_t button_action)
+{
+    clear_display(0); // placeholder function
+}
+
 
 static app_button_cfg_t btn_config[] =
 {
     {BTN_UP, APP_BUTTON_ACTIVE_LOW, NRF_GPIO_PIN_PULLUP, button_up_callback}, // up
-    {BTN_DOWN, APP_BUTTON_ACTIVE_LOW, NRF_GPIO_PIN_PULLUP, button_down_callback} // down
+    {BTN_DOWN, APP_BUTTON_ACTIVE_LOW, NRF_GPIO_PIN_PULLUP, button_down_callback}, // down
+    {BTN_ENTER, APP_BUTTON_ACTIVE_LOW, NRF_GPIO_PIN_PULLUP, enter_callback}
 };
 
 
@@ -70,6 +162,7 @@ void button_init(void)
 {
     nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);
+    nrf_gpio_cfg_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP);
 
     uint32_t err_code; 
     err_code = app_button_init(btn_config, BUTTON_COUNT, BUTTON_DEBOUNCE_DELAY);

@@ -35,9 +35,14 @@ static int oled_type, oled_flip;
 static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 
 
-static void oledWriteCommand(unsigned char);
+static list_t* singleton;
 
-list* globallist; 
+char item0[] = {"this is string one"}; // TODO: these names should come from file system in flash 
+char item1[] = {"this is string two"};
+char item2[] = {"this is string three"};
+
+
+static void oledWriteCommand(unsigned char);
 
 void twi_init(void)
 {
@@ -307,82 +312,105 @@ void draw_text(int y, char* text) // 0 < y < 8
     oledWriteString(1, y, text, FONT_SMALL);
 }
 
-list* list_new(void)
+static list_t* new_list(void)
 {
+    list_t* list = malloc(sizeof(list)); 
 
-    list* x = malloc(sizeof(list)); 
+    list->item0 = item0; // based on button presses the order will change and items will be rerendered
+    list->item1 = item1;
+    list->item2 = item2; // NULL for no render
+    list->boxPresent = true; 
+
+    return list;
 
     //x->item0 = flash_fetch(item0); //need to create entire list struct here from file system
     //x->item1 = flash_fetch(item1);
-    
 }
 
-void draw_list(void) // was - draw_list(list* itemlist)
+void init_list(void)
 {
-    oledWriteString(1, 3, "this is string one", FONT_SMALL);
-    oledWriteString(1, 5, "this is string two", FONT_SMALL);
-    oledWriteString(1, 7, "this is string three", FONT_SMALL);
+    singleton = new_list();
 }
 
-list* draw_initial_screen(void)
+
+void draw_initial_screen(void)
 {   
     draw_box(17);
-    list* itemlist = list_new();
-    //draw_list(itemlist);
 
-    return itemlist; 
+    oledWriteString(1, 3, singleton->item0, FONT_SMALL);
+    oledWriteString(1, 5, singleton->item1, FONT_SMALL);
+    oledWriteString(1, 7, singleton->item2, FONT_SMALL);
 }
+
 
 void draw_screen(void) // wrapper for draw_initial_screen
 {
-    //globallist = draw_initial_screen(); //TODO: globallist defined at top, producing garbage data
-    draw_box(17);
-    draw_list();
-
+    init_list();
+    draw_initial_screen();
 }
 
+void clear_list(void)
+{
+    for(int f=2; f<126; f++)
+    {
+        //clear string one
+        oledSetPixel(f, 24, 0);  
+        oledSetPixel(f, 25, 0); 
+        oledSetPixel(f, 26, 0); 
+        oledSetPixel(f, 27, 0); 
+        oledSetPixel(f, 28, 0); 
+        oledSetPixel(f, 29, 0); 
+        oledSetPixel(f, 30, 0); 
+        oledSetPixel(f, 31, 0);
+
+        //clear string two
+        oledSetPixel(f, 40, 0);
+        oledSetPixel(f, 41, 0); 
+        oledSetPixel(f, 42, 0);
+        oledSetPixel(f, 43, 0); 
+        oledSetPixel(f, 44, 0); 
+        oledSetPixel(f, 45, 0); 
+        oledSetPixel(f, 46, 0); 
+        oledSetPixel(f, 47, 0); 
+
+        //clear string three
+        oledSetPixel(f, 56, 0); 
+        oledSetPixel(f, 57, 0); 
+        oledSetPixel(f, 58, 0); 
+        oledSetPixel(f, 59, 0); 
+        oledSetPixel(f, 60, 0); 
+        oledSetPixel(f, 61, 0); 
+        oledSetPixel(f, 62, 0);
+        oledSetPixel(f, 63, 0); 
+    }
+    
+}
 
 void rerender_screen(int8_t itemHighlighted)
 {
-    list* itemlist = list_new();
-
-    char item0[] = {"this is string one"}; // TODO: these names should come from file system in flash 
-    char item1[] = {"this is string two"};
-    char item2[] = {"this is string three"};
- 
-    itemlist->item0 = item0; // based on button presses the order will change and items will be rerendered
-    itemlist->item1 = item1;
-    itemlist->item2 = item2; // NULL for no render
 
     if(itemHighlighted == 0)
     {
-        clear_display(0);
-        draw_box(17); //TODO: draw box only once for speed
-        oledWriteString(1, 3, itemlist->item0, FONT_SMALL);
-        oledWriteString(1, 5, itemlist->item1, FONT_SMALL);
-        oledWriteString(1, 7, itemlist->item2, FONT_SMALL);
+        clear_list();
+        oledWriteString(1, 3, singleton->item0, FONT_SMALL);
+        oledWriteString(1, 5, singleton->item1, FONT_SMALL);
+        oledWriteString(1, 7, singleton->item2, FONT_SMALL);
     }
     else if(itemHighlighted == 1)
     {   
-        clear_display(0);
-        draw_box(17);
-        //oledWriteString(1, 3, itemlist->item0, FONT_SMALL);
-        oledWriteString(1, 3, itemlist->item1, FONT_SMALL);
-        oledWriteString(1, 5, itemlist->item2, FONT_SMALL);
+        clear_list();
+        //oledWriteString(1, 3, singleton->item0, FONT_SMALL);
+        oledWriteString(1, 3, singleton->item1, FONT_SMALL);
+        oledWriteString(1, 5, singleton->item2, FONT_SMALL);
     }
     else if(itemHighlighted == 2)
     {
-        clear_display(0);
-        draw_box(17);
-        //oledWriteString(1, 3, itemlist->item0, FONT_SMALL);
-        //oledWriteString(1, 5, itemlist->item1, FONT_SMALL);
-        oledWriteString(1, 3, itemlist->item2, FONT_SMALL);
+        clear_list();
+        //oledWriteString(1, 3, singleton->item0, FONT_SMALL);
+        //oledWriteString(1, 5, singleton->item1, FONT_SMALL);
+        oledWriteString(1, 3, singleton->item2, FONT_SMALL);
     }
-
-    free(itemlist);
 }
-
-
 
 
 unsigned char ucSmallFont[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3e,0x45,0x51,0x45,0x3e,0x00,0x3e,0x6b,0x6f,

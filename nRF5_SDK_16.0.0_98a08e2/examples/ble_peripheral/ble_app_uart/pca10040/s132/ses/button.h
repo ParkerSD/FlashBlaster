@@ -11,10 +11,13 @@
 
 #define BTN_UP 5  
 #define BTN_DOWN 7 
-#define BUTTON_COUNT 2
+#define BTN_ENTER 11 
+#define BUTTON_COUNT 3
 #define BUTTON_DEBOUNCE_DELAY 10
 
 void button_init(void);
+
+void get_button_state(void);
 
 
 

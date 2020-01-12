@@ -26,13 +26,16 @@ typedef enum
 } FONTSIZE;
 
 
-typedef struct _list  // for test 
+typedef struct list list_t; 
+typedef struct list 
 {
     char* item0;
     char* item1;
     char* item2;
-    bool listFull;
-} list;
+    bool boxPresent;
+} list_t;
+
+
 
 
 
@@ -72,11 +75,15 @@ void draw_box(int y);
 
 void draw_text(int y, char* text); //0 < y < 7 
 
-list* list_new(void);
+static list_t* new_list(void);
 
-void draw_list(void);
+void init_list(void);
+
+void clear_list(void);
 
 void draw_screen(void);
+
+void draw_initial_screen(void);
 
 void rerender_screen(int8_t);
 

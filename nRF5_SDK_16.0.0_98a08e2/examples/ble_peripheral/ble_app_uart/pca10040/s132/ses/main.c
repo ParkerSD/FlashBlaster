@@ -725,11 +725,22 @@ int main(void)
 
     //advertising_start();
 
+    //TODO: 
+    // implement file system for .bin/.hex storage and retrival in external flash 
+    // change oled interface from I2C to SPI for speed 
+    // layout hardware 
+    // reimplement encoder navigation with hardware intrrupts instead of app_button.c functions 
+    // SWD bitbang protocol ref: black magic probe github 
+    // flesh out menu interface with project->chip->file selection, create new objects 
+    // BT5 file transfer from phone app, firmware updates
+    // barrel jack charger plus lipo
+    // mobile ide/debugger? 
+
+
     oled_init(); 
     button_init();
     
     draw_screen();
-
 
 
     // Enter main loop.
