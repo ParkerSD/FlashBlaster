@@ -37,9 +37,20 @@ static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 
 static list_t* singleton;
 
-char item0[] = {"this is string one"}; // TODO: these names should come from file system in flash 
-char item1[] = {"this is string two"};
-char item2[] = {"this is string three"};
+char header0[] = {"Select Project:"}; 
+char screen0item0[] = {"Quake"}; // TODO: these names should come from file system in flash 
+char screen0item1[] = {"Jeep"};
+char screen0item2[] = {"Nikola"};
+
+char header1[] = {"Select Chip:"}; // or Project Name
+char screen1item0[] = {"Atmel"}; // TODO: these names should come from file system in flash 
+char screen1item1[] = {"Nordic"};
+char screen1item2[] = {"STM"};
+
+char header2[] = {"Select File:"}; // or Chip Name
+char screen2item0[] = {"pickthis.bin"}; // TODO: these names should come from file system in flash 
+char screen2item1[] = {"promotion.bin"};
+char screen2item2[] = {"Bug.bin"};
 
 
 static void oledWriteCommand(unsigned char);
@@ -85,6 +96,7 @@ void oled_test(void)
 		}
 	}
 }
+
 int oledInit(int iChannel, int iAddr, int iType, int bFlip, int bInvert)
 {
 	uint8_t oled64_initbuf[]={0x00,0xae,0xa8,0x3f,0xd3,0x00,0x40,0xa1,0xc8,0xda,0x12,0x81,0xff,0xa4,0xa6,0xd5,0x80,0x8d,0x14,0xaf,0x20,0x02};
@@ -282,29 +294,34 @@ int clear_display(unsigned char ucData)
 	iLines = 8; // iLines = (oled_type == OLED_128x32 || oled_type == OLED_64x32) ? 4:8;
 	iCols = 8; // iCols = (oled_type == OLED_64x32) ? 4:8;
 
-    memset(temp, ucData, 128);
+        memset(temp, ucData, 128);
 	for (y=0; y<iLines; y++)
 	{
 		oledSetPosition(0,y); // set to (0,Y)
 		oledWriteDataBlock(temp, iCols*16);
 	} // for y
 	
+        singleton->boxPresent = false;
+        singleton->headerPresent = false;
+
 	return 0;
 } /* clear_display() */
 
 void draw_box(int y) // top left corner of full width box = point (0, y) 
 {
-	for(int f=0; f<128; f++)
-	{
-		oledSetPixel(f, y, 1); //draw x lines
-		oledSetPixel(f, y+20, 1); 
-	}
+    for(int f=0; f<128; f++)
+    {
+	oledSetPixel(f, y, 1); //draw x lines
+	oledSetPixel(f, y+20, 1); 
+    }
 	
-	for(int g=0; g<20; g++)
-	{
-		oledSetPixel(0, y+g, 1); //draw y lines
-		oledSetPixel(127, y+g, 1); 
-	}
+    for(int g=0; g<20; g++)
+    {
+	oledSetPixel(0, y+g, 1); //draw y lines
+	oledSetPixel(127, y+g, 1); 
+    }
+        
+    singleton->boxPresent = true; 
 }
 
 void draw_text(int y, char* text) // 0 < y < 8
@@ -312,14 +329,22 @@ void draw_text(int y, char* text) // 0 < y < 8
     oledWriteString(1, y, text, FONT_SMALL);
 }
 
+void draw_header(void)
+{
+    draw_text(1, singleton->header);
+    singleton->headerPresent = true;
+}
+
 static list_t* new_list(void)
 {
     list_t* list = malloc(sizeof(list)); 
-
-    list->item0 = item0; // based on button presses the order will change and items will be rerendered
-    list->item1 = item1;
-    list->item2 = item2; // NULL for no render
-    list->boxPresent = true; 
+    
+    list->header = header0;
+    list->item0 = screen0item0; // based on button presses the order will change and items will be rerendered
+    list->item1 = screen0item1;
+    list->item2 = screen0item2; // NULL for no render
+    list->boxPresent = false; 
+    list->headerPresent = false; 
 
     return list;
 
@@ -336,6 +361,7 @@ void init_list(void)
 void draw_initial_screen(void)
 {   
     draw_box(17);
+    draw_header();
 
     oledWriteString(1, 3, singleton->item0, FONT_SMALL);
     oledWriteString(1, 5, singleton->item1, FONT_SMALL);
@@ -386,9 +412,8 @@ void clear_list(void)
     
 }
 
-void rerender_screen(int8_t itemHighlighted)
+void rerender_list(int8_t itemHighlighted)
 {
-
     if(itemHighlighted == 0)
     {
         clear_list();
@@ -399,16 +424,58 @@ void rerender_screen(int8_t itemHighlighted)
     else if(itemHighlighted == 1)
     {   
         clear_list();
-        //oledWriteString(1, 3, singleton->item0, FONT_SMALL);
         oledWriteString(1, 3, singleton->item1, FONT_SMALL);
         oledWriteString(1, 5, singleton->item2, FONT_SMALL);
     }
     else if(itemHighlighted == 2)
     {
         clear_list();
-        //oledWriteString(1, 3, singleton->item0, FONT_SMALL);
-        //oledWriteString(1, 5, singleton->item1, FONT_SMALL);
         oledWriteString(1, 3, singleton->item2, FONT_SMALL);
+    }
+}
+
+
+
+void rerender_screen(int8_t itemHighlighted, uint8_t screenStack)
+{   
+
+    switch(screenStack)
+    {
+        case 0: 
+            singleton->header = header0; 
+            singleton->item0 = screen0item0;
+            singleton->item1 = screen0item1;
+            singleton->item2 = screen0item2;
+            break;
+
+        case 1: 
+            singleton->header = header1; 
+            singleton->item0 = screen1item0;
+            singleton->item1 = screen1item1;
+            singleton->item2 = screen1item2;
+            break;
+
+        case 2: 
+            singleton->header = header2; 
+            singleton->item0 = screen2item0;
+            singleton->item1 = screen2item1;
+            singleton->item2 = screen2item2;
+            break; 
+
+        default:
+            break; 
+    }
+
+    rerender_list(itemHighlighted);
+
+    if(singleton->boxPresent == false)
+    {
+        draw_box(17);
+    }
+
+    if(singleton->headerPresent == false)
+    {
+        draw_header();
     }
 }
 

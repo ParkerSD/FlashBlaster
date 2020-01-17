@@ -29,10 +29,12 @@ typedef enum
 typedef struct list list_t; 
 typedef struct list 
 {
+    char* header;
     char* item0;
     char* item1;
     char* item2;
     bool boxPresent;
+    bool headerPresent;
 } list_t;
 
 
@@ -85,7 +87,9 @@ void draw_screen(void);
 
 void draw_initial_screen(void);
 
-void rerender_screen(int8_t);
+void rerender_screen(int8_t, uint8_t);
+
+void rerender_list(int8_t);
 
 
 #endif /* OLED96_H_ */

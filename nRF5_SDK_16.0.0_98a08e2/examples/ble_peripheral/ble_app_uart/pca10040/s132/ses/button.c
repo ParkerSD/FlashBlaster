@@ -32,6 +32,7 @@
 #define ON 0 
 
 volatile int8_t itemHighlighted = 0; 
+volatile uint8_t screenStack = 0; 
 
 //volatile uint8_t buttonUp;
 
@@ -127,7 +128,7 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         {
             itemHighlighted = 0;
         }
-        rerender_screen(itemHighlighted);
+        rerender_screen(itemHighlighted, screenStack);
     }
 }
 
@@ -140,13 +141,26 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action)
         {
             itemHighlighted = 2;
         }
-        rerender_screen(itemHighlighted);
+        rerender_screen(itemHighlighted, screenStack);
     }
 }
 
 void enter_callback(uint8_t pin_no, uint8_t button_action)
 {
-    clear_display(0); // placeholder function
+    if(button_action == APP_BUTTON_PUSH)
+    {
+        screenStack++;
+        itemHighlighted = 0;
+
+        if(screenStack > 2)
+        {   
+          //execute SWD programming on itemSelected
+          screenStack = 0; //reset to home screen?
+        }
+
+        clear_display(0);
+        rerender_screen(itemHighlighted, screenStack);
+     }
 }
 
 
