@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_sortlist.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\sortlist\nrf_sortlist.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\sortlist\nrf_sortlist.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
@@ -30,7 +30,7 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_sortlist.o: \
  ../../../../../../components/softdevice/s132/headers/nrf_svc.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\sortlist\nrf_sortlist.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\sortlist\nrf_sortlist.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/log/nrf_log.h \
  ../../../../../../components/libraries/experimental_section_vars/nrf_section.h \

@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_ble_qwr.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\ble\nrf_ble_qwr\nrf_ble_qwr.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\ble\nrf_ble_qwr\nrf_ble_qwr.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
@@ -31,7 +31,7 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_ble_qwr.o: \
  ../../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdlib.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\ble\nrf_ble_qwr\nrf_ble_qwr.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\ble\nrf_ble_qwr\nrf_ble_qwr.h \
  ../../../../../../components/libraries/util/nordic_common.h \
  ../../../../../../components/softdevice/s132/headers/ble.h \
  ../../../../../../components/softdevice/s132/headers/nrf_svc.h \

@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrfx_twi.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\nrfx_twi.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\nrfx_twi.c \
  ../../../../../../modules/nrfx/nrfx.h \
  ../../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../../modules/nrfx/drivers/nrfx_common.h \
@@ -55,7 +55,7 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/nrfx_twi.o: \
  ../../../../../../modules/nrfx/drivers/include/nrfx_twi_twim.h \
  ../../../../../../modules/nrfx/hal/nrf_twi.h \
  ../../../../../../modules/nrfx/hal/nrf_gpio.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\prs/nrfx_prs.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\prs/nrfx_prs.h \
  ../../../../../../integration/nrfx/nrfx_log.h \
  ../../../../../../components/libraries/log/nrf_log.h \
  ../../../../../../components/libraries/util/sdk_common.h \

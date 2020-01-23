@@ -732,22 +732,43 @@ int main(void)
     // layout hardware 
     // reimplement encoder navigation with hardware intrrupts instead of app_button.c functions 
     // SWD bitbang protocol ref: black magic probe github 
-    // flesh out menu interface with project->chip->file selection, create new objects 
     // config menu (App Side?) for entering project/chip/file tree, and ability to upload new files
 
-        // Select Project  /  Project Name  / Chip Name
-        // -> Project 1    /  -> Chip 1     / -> File1.bin
-        // -> Project 2    /  -> Chip 2     / -> File2.bin 
+    // flesh out NESTED menu interface with project->chip->file selection, create new objects 
+               
+         // Projects:      //  Chips:                   //  Files: 
 
+         // -> Project1    //  -> Chip1_Project1        // -> File1_Chip1_Project1.bin
+                                                        // -> File2_Chip1_Project1.bin
+                                                        // -> File3_Chip1_Project1.bin
+
+                           //  -> Chip2_Project1        // -> File1_Chip2_Project1.bin
+                                                        // -> File2_Chip2.Project1.bin
+                                                        // -> File3_Chip2_Project1.bin
+
+         // -> Project1    //  -> Chip1_Project2        // -> File1_Chip1_Project2.bin
+                                                        // -> File2_Chip1_Project2.bin
+                                                        // -> File3_Chip1_Project2.bin
+
+                           //  -> Chip2_Project2        // -> File1_Chip2_Project2.bin
+                                                        // -> File2_Chip2.Project2.bin
+                                                        // -> File3_Chip2_Project2.bin
+        
     // BT5 file transfer from phone app, firmware updates
-    // barrel jack charger plus lipo
+    // barrel jack charger plus lipo, battery IC
     // mobile ide/debugger? 
 
 
     oled_init(); 
     button_init();
     
-    draw_screen();
+    system_init();
+    list_init();
+
+   
+    draw_initial_screen();
+
+    //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
 
 
     // Enter main loop.

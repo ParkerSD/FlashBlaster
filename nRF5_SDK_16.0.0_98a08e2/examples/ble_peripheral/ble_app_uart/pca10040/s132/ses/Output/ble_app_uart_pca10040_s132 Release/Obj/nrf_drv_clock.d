@@ -1,7 +1,7 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_drv_clock.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.c \
  ../../../../../../components/libraries/util/nordic_common.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.h \
  ../../../../../../modules/nrfx/drivers/include/nrfx_clock.h \
  ../../../../../../modules/nrfx/nrfx.h \
  ../../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \

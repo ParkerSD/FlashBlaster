@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrfx_atomic.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic.c \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic.h \
  ../../../../../../modules/nrfx/nrfx.h \
  ../../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../../modules/nrfx/drivers/nrfx_common.h \
@@ -52,4 +52,4 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/nrfx_atomic.o: \
  ../../../../../../components/libraries/util/sdk_resources.h \
  ../../../../../../components/softdevice/s132/headers/nrf_sd_def.h \
  ../../../../../../modules/nrfx/drivers/nrfx_errors.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic_internal.h
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic_internal.h

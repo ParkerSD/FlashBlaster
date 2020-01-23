@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_atflags.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\atomic_flags\nrf_atflags.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\atomic_flags\nrf_atflags.c \
  ../../../../../../modules/nrfx/mdk/nrf.h \
  ../../../../../../modules/nrfx/mdk/nrf52.h \
  ../../../../../../components/toolchain/cmsis/include/core_cm4.h \
@@ -31,4 +31,4 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_atflags.o: \
  ../../../../../../components/softdevice/s132/headers/nrf_svc.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\atomic_flags\nrf_atflags.h
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\atomic_flags\nrf_atflags.h

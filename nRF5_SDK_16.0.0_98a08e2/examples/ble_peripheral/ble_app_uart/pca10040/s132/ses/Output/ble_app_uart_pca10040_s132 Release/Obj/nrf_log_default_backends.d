@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_log_default_backends.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\log\src\nrf_log_default_backends.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\log\src\nrf_log_default_backends.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
@@ -52,7 +52,7 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_log_default_backends.o: \
  ../../../../../../components/libraries/log/nrf_log_instance.h \
  ../../../../../../components/libraries/experimental_section_vars/nrf_section.h \
  ../../../../../../components/libraries/util/nordic_common.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\log\src\nrf_log_internal.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\log\src\nrf_log_internal.h \
  ../../../../../../components/libraries/log/nrf_log_types.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/log/nrf_log_backend_rtt.h

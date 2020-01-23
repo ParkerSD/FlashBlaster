@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/bsp.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\bsp\bsp.c \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\bsp\bsp.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bsp\bsp.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bsp\bsp.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
  ../../../../../../components/boards/boards.h \
@@ -57,7 +57,7 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/bsp.o: \
  ../../../../../../components/boards/pca10040.h \
  ../../../../../../components/libraries/button/app_button.h \
  ../../../../../../components/libraries/util/app_error.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\bsp\bsp_config.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bsp\bsp_config.h \
  ../../../../../../components/libraries/timer/app_timer.h \
  ../../../../../../components/libraries/log/nrf_log_instance.h \
  ../../../../../../components/libraries/experimental_section_vars/nrf_section.h \

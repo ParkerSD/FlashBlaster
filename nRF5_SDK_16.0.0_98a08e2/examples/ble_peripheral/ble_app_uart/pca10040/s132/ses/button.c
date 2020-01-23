@@ -129,6 +129,7 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
             itemHighlighted = 0;
         }
         rerender_screen(itemHighlighted, screenStack);
+        //rerender_list(itemHighlighted);
     }
 }
 
@@ -137,11 +138,12 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action)
     if(button_action == APP_BUTTON_PUSH)
     {
         itemHighlighted++;
-        if(itemHighlighted > 2)
+        if(itemHighlighted > 9)
         {
-            itemHighlighted = 2;
+            itemHighlighted = 9;
         }
         rerender_screen(itemHighlighted, screenStack);
+        //rerender_list(itemHighlighted);
     }
 }
 
@@ -159,7 +161,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
         }
 
         clear_display(0);
-        rerender_screen(itemHighlighted, screenStack);
+      rerender_screen(itemHighlighted, screenStack);
      }
 }
 

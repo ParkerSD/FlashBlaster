@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_strerror.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\strerror\nrf_strerror.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\strerror\nrf_strerror.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
@@ -30,5 +30,5 @@ Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_strerror.o: \
  ../../../../../../components/softdevice/s132/headers/nrf_svc.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\components\libraries\strerror\nrf_strerror.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\strerror\nrf_strerror.h \
  ../../../../../../components/libraries/util/sdk_errors.h

@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ Release/Obj/nrf_drv_twi.o: \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_twi.c \
- C:\Users\davispa\Desktop\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_twi.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_twi.c \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_twi.h \
  ../../../../../../modules/nrfx/nrfx.h \
  ../../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../../modules/nrfx/drivers/nrfx_common.h \

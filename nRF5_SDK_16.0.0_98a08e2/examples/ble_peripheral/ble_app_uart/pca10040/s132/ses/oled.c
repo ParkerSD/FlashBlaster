@@ -35,22 +35,28 @@ static int oled_type, oled_flip;
 static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 
 
-static list_t* singleton;
+list_struct* list_singleton;
 
-char header0[] = {"Select Project:"}; 
-char screen0item0[] = {"Quake"}; // TODO: these names should come from file system in flash 
-char screen0item1[] = {"Jeep"};
-char screen0item2[] = {"Nikola"};
+system_struct* system_singleton; //TODO init global system stuct based on file system
 
-char header1[] = {"Select Chip:"}; // or Project Name
-char screen1item0[] = {"Atmel"}; // TODO: these names should come from file system in flash 
-char screen1item1[] = {"Nordic"};
-char screen1item2[] = {"STM"};
 
-char header2[] = {"Select File:"}; // or Chip Name
-char screen2item0[] = {"pickthis.bin"}; // TODO: these names should come from file system in flash 
-char screen2item1[] = {"promotion.bin"};
-char screen2item2[] = {"Bug.bin"};
+
+
+volatile uint8_t projectIterator = 0; 
+volatile uint8_t chipIterator = 0; 
+volatile uint8_t fileIterator = 0; 
+
+// Hardcoded Values
+char systemFirmware[] = {"FlashBlaster V0"}; 
+
+char projectHeader[] = {"Select Project:"}; 
+char* projectNames[10] = {"Quake", "Jeep", "Nikola", "Tesla", "SpaceX", "Rockford Internal", "Subaru", "Nissan", "Ducati", "Toyota"}; // TODO: chop and hardcode as appropriate structs 
+
+char chipHeader[] = {"Select Chip:"}; // or Project Name
+char* chipNames[10] = {"Atmel", "Nordic", "STM32", "Cirrus Logic", "NXP", "Renesas", "Pic32", "AVR", "Silicon Labs", "Qualcomm"}; // 
+
+char fileHeader[] = {"Select File:"}; // or Chip Name
+char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "that.bin", "banshee.bin", "pastry.elf", "killme.hex", "reget.bin", "mistakes.hex"}; 
 
 
 static void oledWriteCommand(unsigned char);
@@ -301,8 +307,8 @@ int clear_display(unsigned char ucData)
 		oledWriteDataBlock(temp, iCols*16);
 	} // for y
 	
-        singleton->boxPresent = false;
-        singleton->headerPresent = false;
+        list_singleton->boxPresent = false;
+        list_singleton->headerPresent = false;
 
 	return 0;
 } /* clear_display() */
@@ -321,7 +327,7 @@ void draw_box(int y) // top left corner of full width box = point (0, y)
 	oledSetPixel(127, y+g, 1); 
     }
         
-    singleton->boxPresent = true; 
+    list_singleton->boxPresent = true; 
 }
 
 void draw_text(int y, char* text) // 0 < y < 8
@@ -331,49 +337,208 @@ void draw_text(int y, char* text) // 0 < y < 8
 
 void draw_header(void)
 {
-    draw_text(1, singleton->header);
-    singleton->headerPresent = true;
+    draw_text(1, list_singleton->header);
+    list_singleton->headerPresent = true;
 }
 
-static list_t* new_list(void)
+list_struct* list_new(void)
 {
-    list_t* list = malloc(sizeof(list)); 
+    list_struct* listx = malloc(sizeof(listx)); 
     
-    list->header = header0;
-    list->item0 = screen0item0; // based on button presses the order will change and items will be rerendered
-    list->item1 = screen0item1;
-    list->item2 = screen0item2; // NULL for no render
-    list->boxPresent = false; 
-    list->headerPresent = false; 
+    listx->currentList = NULL;
+    listx->header = NULL;
+    listx->item0 = NULL; // based on button presses the order will change and items will be rerendered
+    listx->item1 = NULL; 
+    listx->item2 = NULL; 
+    listx->item3 = NULL; 
+    listx->item4 = NULL; 
 
-    return list;
+    listx->boxPresent = false; 
+    listx->headerPresent = false; 
+
+    return listx;
 
     //x->item0 = flash_fetch(item0); //need to create entire list struct here from file system
     //x->item1 = flash_fetch(item1);
 }
 
-void init_list(void)
+void list_init(void)
 {
-    singleton = new_list();
+    list_singleton = list_new();
+}
+
+system_struct* system_new(void) //TODO file system, shoulf be constructed in Flash, only NAMES fetched from flash here for later display (CURRENTLY INITING WHOLE FILESSYTEM IN RAM)
+{                                                            
+    system_struct* systemx = malloc(sizeof(systemx)); 
+    
+    systemx->systemName = firmware_version_fetch(); 
+
+    if (projectNames[0] != NULL) // replace with Flash value fetch function to determine presence
+    {
+        systemx->project1 = project_new();
+    }
+    else
+    {
+        systemx->project1 = NULL;
+    }
+
+        systemx->project2 = project_new();
+
+        systemx->project3 = project_new();
+
+        systemx->project4 = project_new();
+
+        systemx->project5 = project_new();
+
+
+    return systemx;
+
+}
+
+void system_init(void)
+{
+    system_singleton = system_new();  // formerly global
+}
+
+char* firmware_version_fetch(void)
+{
+    //fetch FW version from flash 
+
+    return systemFirmware;
+}
+
+char* project_name_fetch(void)
+{
+    //fetch project name from flash 
+
+    return projectNames[projectIterator];
+
+}
+
+char* chip_name_fetch(void)
+{
+    //fetch chip name from flash 
+
+    return chipNames[chipIterator];
+
+}
+
+char* file_name_fetch(void)
+{
+    //fetch file name from flash 
+
+    return fileNames[fileIterator];
+
 }
 
 
-void draw_initial_screen(void)
+
+file_struct* file_new(void)
+{
+    file_struct* filex = malloc(sizeof(filex)); 
+
+    filex->fileName = file_name_fetch(); 
+    filex->filePtr = NULL;
+
+    fileIterator++; 
+    return filex;
+}
+
+
+
+chip_struct* chip_new(void) //TODO: render only existing files 
+{
+    chip_struct* chipx = malloc(sizeof(chipx));
+
+    chipx->chipName = chip_name_fetch(); 
+
+    if (fileNames[0] != NULL) // replace with Flash value fetch function to determine presence
+    {
+        chipx->file1 = file_new();
+    }
+    else
+    {
+        chipx->file1 = NULL;
+    }
+
+    if (fileNames[1] != NULL)
+    {
+        chipx->file2 = file_new();
+    }
+    else
+    {
+        chipx->file2 = NULL;
+    }
+
+//        chipx->file3 = file_new();
+
+//        chipx->file4 = file_new();
+
+//        chipx->file5 = file_new();
+
+    
+    chipIterator++;
+    return chipx;
+}
+
+
+
+project_struct* project_new(void) //TODO: render only existing chips
+{
+    project_struct* projectx = malloc(sizeof(projectx));
+
+    projectx->projectName = project_name_fetch();
+
+    if (chipNames[0] != NULL) // replace with Flash value fetch function to determine presence
+    {
+        projectx->chip1 = chip_new();
+    }
+    else
+    {
+        projectx->chip1 = NULL;
+    }
+
+    if (chipNames[1] != NULL)
+    {
+        projectx->chip2 = chip_new();
+    }
+    else
+    {
+        projectx->chip2 = NULL;
+    }
+
+//        projectx->chip3 = chip_new();
+
+//        projectx->chip4 = chip_new();
+
+//        projectx->chip5 = chip_new();
+
+
+    
+    projectIterator++;
+    return projectx; 
+}
+
+
+
+void draw_initial_screen(void) //TODO Problem is here, with passing pointer within struct to pointer within another stuct, not related to global 
 {   
+    list_singleton->currentList = project;
+    list_singleton->header = system_singleton->systemName; 
+    list_singleton->item0 = system_singleton->project1->projectName; 
+    list_singleton->item1 = system_singleton->project2->projectName;
+    list_singleton->item2 = system_singleton->project3->projectName;
+    list_singleton->item3 = system_singleton->project4->projectName;
+    list_singleton->item4 = system_singleton->project5->projectName;
+
     draw_box(17);
     draw_header();
-
-    oledWriteString(1, 3, singleton->item0, FONT_SMALL);
-    oledWriteString(1, 5, singleton->item1, FONT_SMALL);
-    oledWriteString(1, 7, singleton->item2, FONT_SMALL);
+    oledWriteString(1, 3, list_singleton->item0, FONT_SMALL);
+    oledWriteString(1, 5, list_singleton->item1, FONT_SMALL);
+    oledWriteString(1, 7, list_singleton->item2, FONT_SMALL);
 }
 
 
-void draw_screen(void) // wrapper for draw_initial_screen
-{
-    init_list();
-    draw_initial_screen();
-}
 
 void clear_list(void)
 {
@@ -409,57 +574,82 @@ void clear_list(void)
         oledSetPixel(f, 62, 0);
         oledSetPixel(f, 63, 0); 
     }
-    
 }
 
-void rerender_list(int8_t itemHighlighted)
+
+
+void rerender_list(int8_t itemHighlighted) // TODO: limit render to amount of existing items
 {
+    
     if(itemHighlighted == 0)
     {
         clear_list();
-        oledWriteString(1, 3, singleton->item0, FONT_SMALL);
-        oledWriteString(1, 5, singleton->item1, FONT_SMALL);
-        oledWriteString(1, 7, singleton->item2, FONT_SMALL);
+        oledWriteString(1, 3, list_singleton->item0, FONT_SMALL);
+        oledWriteString(1, 5, list_singleton->item1, FONT_SMALL);
+        oledWriteString(1, 7, list_singleton->item2, FONT_SMALL);
     }
     else if(itemHighlighted == 1)
     {   
         clear_list();
-        oledWriteString(1, 3, singleton->item1, FONT_SMALL);
-        oledWriteString(1, 5, singleton->item2, FONT_SMALL);
+        oledWriteString(1, 3, list_singleton->item1, FONT_SMALL);
+        oledWriteString(1, 5, list_singleton->item2, FONT_SMALL);
+        oledWriteString(1, 7, list_singleton->item3, FONT_SMALL);
     }
     else if(itemHighlighted == 2)
     {
         clear_list();
-        oledWriteString(1, 3, singleton->item2, FONT_SMALL);
+        oledWriteString(1, 3, list_singleton->item2, FONT_SMALL);
+        oledWriteString(1, 5, list_singleton->item3, FONT_SMALL);
+        oledWriteString(1, 7, list_singleton->item4, FONT_SMALL);
+    }
+    else if(itemHighlighted == 3)
+    {
+        clear_list();
+        oledWriteString(1, 3, list_singleton->item3, FONT_SMALL);
+        oledWriteString(1, 5, list_singleton->item4, FONT_SMALL);
+    }
+    else if(itemHighlighted == 4)
+    {
+        clear_list();
+        oledWriteString(1, 3, list_singleton->item4, FONT_SMALL);
     }
 }
 
 
 
-void rerender_screen(int8_t itemHighlighted, uint8_t screenStack)
+void rerender_screen(int8_t itemHighlighted, uint8_t screenStack) 
 {   
 
     switch(screenStack)
     {
         case 0: 
-            singleton->header = header0; 
-            singleton->item0 = screen0item0;
-            singleton->item1 = screen0item1;
-            singleton->item2 = screen0item2;
+            list_singleton->currentList = project;
+            list_singleton->header = systemFirmware;//system_singleton->systemName; //set initial values for display 
+            list_singleton->item0 = projectNames[0];//system_singleton->project1->projectName;
+            list_singleton->item1 = projectNames[1];//system_singleton->project2->projectName;
+            list_singleton->item2 = projectNames[2];//system_singleton->project3->projectName;
+            list_singleton->item3 = projectNames[3];//system_singleton->project4->projectName;
+            list_singleton->item4 = projectNames[4];//system_singleton->project5->projectName;
             break;
 
         case 1: 
-            singleton->header = header1; 
-            singleton->item0 = screen1item0;
-            singleton->item1 = screen1item1;
-            singleton->item2 = screen1item2;
+            list_singleton->currentList = chip;
+            list_singleton->header = chipHeader; 
+            list_singleton->item0 = chipNames[0];
+            list_singleton->item1 = chipNames[1];
+            list_singleton->item2 = chipNames[2];
+            list_singleton->item3 = chipNames[3];
+            list_singleton->item4 = chipNames[4];
             break;
 
         case 2: 
-            singleton->header = header2; 
-            singleton->item0 = screen2item0;
-            singleton->item1 = screen2item1;
-            singleton->item2 = screen2item2;
+            list_singleton->currentList = file;
+            list_singleton->header = fileHeader; 
+            list_singleton->item0 = fileNames[0];
+            list_singleton->item1 = fileNames[1];
+            list_singleton->item2 = fileNames[2];
+            list_singleton->item3 = fileNames[3];
+            list_singleton->item4 = fileNames[4];// was system_singleton->project1->chip1->file5->fileName;
             break; 
 
         default:
@@ -468,16 +658,17 @@ void rerender_screen(int8_t itemHighlighted, uint8_t screenStack)
 
     rerender_list(itemHighlighted);
 
-    if(singleton->boxPresent == false)
+    if(list_singleton->boxPresent == false)
     {
         draw_box(17);
     }
 
-    if(singleton->headerPresent == false)
+    if(list_singleton->headerPresent == false)
     {
         draw_header();
     }
 }
+
 
 
 unsigned char ucSmallFont[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3e,0x45,0x51,0x45,0x3e,0x00,0x3e,0x6b,0x6f,

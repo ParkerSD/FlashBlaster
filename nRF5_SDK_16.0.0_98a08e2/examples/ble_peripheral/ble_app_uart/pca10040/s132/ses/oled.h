@@ -11,7 +11,8 @@
 
 
 // OLED type for init function
-enum {
+enum 
+{
 	OLED_128x32 = 1,
 	OLED_128x64,
 	OLED_132x64,
@@ -25,20 +26,70 @@ typedef enum
 	FONT_SMALL		// 6x8
 } FONTSIZE;
 
-
-typedef struct list list_t; 
-typedef struct list 
+typedef enum
 {
+    project = 0,
+    chip,
+    file
+} list_type;
+
+typedef struct list list_struct;    //data that is actually displayed on oled, MAX 10 items, increase in future
+typedef struct list 
+{   
+    list_type currentList; 
     char* header;
     char* item0;
     char* item1;
     char* item2;
+    char* item3;
+    char* item4;
     bool boxPresent;
     bool headerPresent;
-} list_t;
+} list_struct;
 
+typedef struct file file_struct;
+typedef struct file 
+{
+    char* fileName; 
+    uint8_t* filePtr; // pointer to file 
 
+}file_struct; 
 
+typedef struct chip chip_struct;
+typedef struct chip 
+{   
+    char* chipName; 
+    file_struct* file1; // pointer to file 
+    file_struct* file2;
+    file_struct* file3;
+    file_struct* file4;
+    file_struct* file5;
+
+}chip_struct; 
+
+typedef struct project project_struct;
+typedef struct project
+{
+    char* projectName; 
+    chip_struct* chip1;
+    chip_struct* chip2;
+    chip_struct* chip3;
+    chip_struct* chip4;
+    chip_struct* chip5;
+     
+}project_struct;
+
+typedef struct system system_struct;
+typedef struct system
+{
+    char* systemName; 
+    project_struct* project1;
+    project_struct* project2;
+    project_struct* project3;
+    project_struct* project4;
+    project_struct* project5;
+
+}system_struct; 
 
 
 // Initialize the OLED96 library for a specific I2C address
@@ -77,19 +128,30 @@ void draw_box(int y);
 
 void draw_text(int y, char* text); //0 < y < 7 
 
-static list_t* new_list(void);
+list_struct* list_new(void);
 
-void init_list(void);
+void list_init(void);
 
 void clear_list(void);
-
-void draw_screen(void);
 
 void draw_initial_screen(void);
 
 void rerender_screen(int8_t, uint8_t);
 
 void rerender_list(int8_t);
+
+system_struct* system_new(void);
+
+void system_init(void);
+
+char* firmware_version_fetch(void);
+char* project_name_fetch(void);
+char* chip_name_fetch(void);
+char* file_name_fetch(void);
+
+file_struct* file_new(void);
+chip_struct* chip_new(void);
+project_struct* project_new(void);
 
 
 #endif /* OLED96_H_ */
