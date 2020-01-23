@@ -727,7 +727,7 @@ int main(void)
 
 
     //TODO: 
-    // implement file system for .bin/.hex storage and retrival in external flash 
+    // implement file system for .bin/.hex storage and retrival in internal flash, then external flash once prototype complete
     // change oled interface from I2C to SPI for speed 
     // layout hardware 
     // reimplement encoder navigation with hardware intrrupts instead of app_button.c functions 
@@ -755,7 +755,7 @@ int main(void)
                                                         // -> File3_Chip2_Project2.bin
         
     // BT5 file transfer from phone app, firmware updates
-    // barrel jack charger plus lipo, battery IC
+    // barrel jack/micro usb/usb-C charger plus lipo, battery IC
     // mobile ide/debugger? 
 
 
@@ -765,11 +765,12 @@ int main(void)
     system_init();
     list_init();
 
-   
     draw_initial_screen();
 
     //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
 
+    // only store one file hierarchy in RAM, render and pop fucntions, set_current_project(), set_current_chip() , set_current_file()
+    // file directory section in flash which is read at boot and can keep tracka of all current projects and their dependencies
 
     // Enter main loop.
     for (;;)

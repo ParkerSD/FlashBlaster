@@ -31,8 +31,9 @@
 #define OFF 1
 #define ON 0 
 
-volatile int8_t itemHighlighted = 0; 
-volatile uint8_t screenStack = 0; 
+ int8_t itemHighlighted = 0; 
+ int8_t selectedItem = 0; 
+ uint8_t screenStack = 0; 
 
 //volatile uint8_t buttonUp;
 
@@ -128,8 +129,7 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         {
             itemHighlighted = 0;
         }
-        rerender_screen(itemHighlighted, screenStack);
-        //rerender_list(itemHighlighted);
+        rerender_list(itemHighlighted);
     }
 }
 
@@ -138,12 +138,11 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action)
     if(button_action == APP_BUTTON_PUSH)
     {
         itemHighlighted++;
-        if(itemHighlighted > 9)
+        if(itemHighlighted > 5)
         {
-            itemHighlighted = 9;
+            itemHighlighted = 5;
         }
-        rerender_screen(itemHighlighted, screenStack);
-        //rerender_list(itemHighlighted);
+        rerender_list(itemHighlighted);
     }
 }
 
@@ -152,6 +151,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
     if(button_action == APP_BUTTON_PUSH)
     {
         screenStack++;
+        selectedItem = itemHighlighted; 
         itemHighlighted = 0;
 
         if(screenStack > 2)
@@ -161,7 +161,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
         }
 
         clear_display(0);
-      rerender_screen(itemHighlighted, screenStack);
+      rerender_screen(itemHighlighted, selectedItem, screenStack);
      }
 }
 

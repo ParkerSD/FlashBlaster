@@ -61,9 +61,6 @@ typedef struct chip
     char* chipName; 
     file_struct* file1; // pointer to file 
     file_struct* file2;
-    file_struct* file3;
-    file_struct* file4;
-    file_struct* file5;
 
 }chip_struct; 
 
@@ -73,9 +70,6 @@ typedef struct project
     char* projectName; 
     chip_struct* chip1;
     chip_struct* chip2;
-    chip_struct* chip3;
-    chip_struct* chip4;
-    chip_struct* chip5;
      
 }project_struct;
 
@@ -136,7 +130,7 @@ void clear_list(void);
 
 void draw_initial_screen(void);
 
-void rerender_screen(int8_t, uint8_t);
+void rerender_screen(int8_t, int8_t , uint8_t);
 
 void rerender_list(int8_t);
 
