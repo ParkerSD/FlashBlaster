@@ -71,7 +71,7 @@
 #include "nrf_drv_twi.h"
 #include "nrfx_twi.h"
 #include "nrfx_twim.h"
-#include "oled.h"
+#include "nrf_drv_spi.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -120,6 +120,50 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 {
     {BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}
 };
+
+
+
+#define SPI_INSTANCE  0 /**< SPI instance index. */
+static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE); 
+static volatile bool spi_xfer_done;  /**< Flag used to indicate that SPI instance completed the transfer. */
+
+#define TEST_STRING "Nordic"
+static uint8_t       m_tx_buf[] = TEST_STRING;           /**< TX buffer. */
+static uint8_t       m_rx_buf[sizeof(TEST_STRING) + 1];    /**< RX buffer. */
+static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. */
+
+/**
+ * @brief SPI user event handler.
+ * @param event
+ */
+void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
+                       void *                    p_context)
+{
+    spi_xfer_done = true;
+
+    if (m_rx_buf[0] != 0)
+    {
+    }
+}
+
+void spi_init(void)
+{
+    nrf_drv_spi_config_t spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
+    spi_config.ss_pin   = SPI_SS_PIN;
+    spi_config.miso_pin = SPI_MISO_PIN;
+    spi_config.mosi_pin = SPI_MOSI_PIN;
+    spi_config.sck_pin  = SPI_SCK_PIN;
+    APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, spi_event_handler, NULL));
+}
+
+void spi_transfer(void)
+{
+    // Reset rx buffer and transfer done flag
+    memset(m_rx_buf, 0, m_length);
+    spi_xfer_done = false;
+
+    APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_length, m_rx_buf, m_length));
+}
 
 
 /**@brief Function for assert macro callback.
@@ -687,31 +731,7 @@ static void idle_state_handle(void)
 }
 
 
-/**@brief Function for starting advertising.
- */
-static void advertising_start(void)
-{
-    uint32_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
-    APP_ERROR_CHECK(err_code);
-}
 
-void twi_init(void)
-{
-    ret_code_t err_code;
-
-    const nrf_drv_twi_config_t twi_config = {
-       .scl                = ARDUINO_SCL_PIN,
-       .sda                = ARDUINO_SDA_PIN,
-       .frequency          = NRF_DRV_TWI_FREQ_100K,
-       .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
-       .clear_bus_init     = false
-    };
-
-    err_code = nrf_drv_twi_init(&m_twi, &twi_config, NULL, NULL);
-    APP_ERROR_CHECK(err_code);
-
-    nrf_drv_twi_enable(&m_twi);
-}
 
 
 int main(void)
@@ -723,7 +743,7 @@ int main(void)
 
     // Initialize.
     uart_init();
-    twi_init();
+    spi_init();
     log_init();
     timers_init();
     buttons_leds_init(&erase_bonds);
@@ -735,14 +755,7 @@ int main(void)
     advertising_init();
     conn_params_init();
 
-    // Start execution.
-    //printf("\r\nUART started.\r\n");
-    //NRF_LOG_INFO("Debug logging for UART over RTT started.");
     //advertising_start();
-
-    oled_init(); 
-
-    oled_test();
 
 
 
