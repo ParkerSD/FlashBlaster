@@ -113,10 +113,9 @@ void spi_rx(void)
     APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, NULL, NULL, m_rx_buf, m_length));
 }
 
-/*______________________________________________ */ 
+/*____________________ SPI END_____________________ */ 
 
 
-static void oledWriteCommand(unsigned char);
 
 void twi_init(void)
 {
@@ -135,6 +134,10 @@ void twi_init(void)
 
     nrf_drv_twi_enable(&m_twi);
 }
+
+
+
+static void oledWriteCommand(unsigned char);
 
 void oled_init(void)
 {

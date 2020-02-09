@@ -1,0 +1,16 @@
+Removed Pin From Net: NetName=VDD Pin=C2-1
+Removed Pin From Net: NetName=GND Pin=GND-1
+Removed Pin From Net: NetName=VDD Pin=TP1-1
+Removed Pin From Net: NetName=VDD Pin=VDD-1
+Added Component: Designator=*(PCB MOUNT MICRO USB)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1040-70888"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "MICRO USB"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=*-5
+Added Pin To Net: NetName=Net*_1 Pin=*-1
+Added Pin To Net: NetName=Net*_1 Pin=C2-1
+Added Pin To Net: NetName=Net*_1 Pin=TP1-1
+Added Net: Name=Net*_1
+Added Member To Class: ClassName=Main_Schematic Member=Component * CONN RCPT MICRO USB AB R/A SMD
+Added Room: Name=Main_Schematic

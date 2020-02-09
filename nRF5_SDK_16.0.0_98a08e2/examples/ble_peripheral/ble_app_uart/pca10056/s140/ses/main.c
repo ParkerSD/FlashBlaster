@@ -731,31 +731,11 @@ int main(void)
     // reimplement encoder navigation with hardware intrrupts instead of app_button.c functions 
     // SWD bitbang protocol ref: black magic probe github 
     // config menu (App Side?) for entering project/chip/file tree, and ability to upload new files
-
-    // flesh out NESTED menu interface with project->chip->file selection, create new objects 
-               
-         // Projects:      //  Chips:                   //  Files: 
-
-         // -> Project1    //  -> Chip1_Project1        // -> File1_Chip1_Project1.bin
-                                                        // -> File2_Chip1_Project1.bin
-                                                        // -> File3_Chip1_Project1.bin
-
-                           //  -> Chip2_Project1        // -> File1_Chip2_Project1.bin
-                                                        // -> File2_Chip2.Project1.bin
-                                                        // -> File3_Chip2_Project1.bin
-
-         // -> Project1    //  -> Chip1_Project2        // -> File1_Chip1_Project2.bin
-                                                        // -> File2_Chip1_Project2.bin
-                                                        // -> File3_Chip1_Project2.bin
-
-                           //  -> Chip2_Project2        // -> File1_Chip2_Project2.bin
-                                                        // -> File2_Chip2.Project2.bin
-                                                        // -> File3_Chip2_Project2.bin
-        
     // BT5 file transfer from phone app, firmware updates
     // barrel jack/micro usb/usb-C charger plus lipo, battery IC
     // mobile ide/debugger? 
-
+    
+    //notes: do as much debugging as can be done from a mobile device that the program was not developped on 
 
     oled_init(); //TODO: replace SPI screen writes with SPI 
     button_init();

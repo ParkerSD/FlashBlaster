@@ -1,0 +1,4 @@
+Added Pin To Net: NetName=VDD Pin=*-1
+Added Pin To Net: NetName=VDD Pin=C2-1
+Added Pin To Net: NetName=VDD Pin=TP1-1
+Added Room: Name=Main_Schematic

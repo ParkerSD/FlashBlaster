@@ -1,0 +1,6 @@
+Change Component Designator: OldDesignator=GND NewDesignator=MH1
+Change Component Designator: OldDesignator=VDD NewDesignator=MH2
+Added Pin To Net: NetName=GND Pin=C4-1
+Added Pin To Net: NetName=GND Pin=J1-5
+Added Pin To Net: NetName=GND Pin=J1-5
+Added Room: Name=Main_Schematic

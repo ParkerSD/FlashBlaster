@@ -1,0 +1,134 @@
+Added Component: Designator=C1(0402 Capacitor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1425-70000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "10%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "100nF"; VariantName = "[No Variations]"
+Added Component: Designator=C2(0805 Capacitor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1425-59504"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "10%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "4.7uF"; VariantName = "[No Variations]"
+Added Component: Designator=C3(0402 Capacitor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1425-72016"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "5%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "1000pF"; VariantName = "[No Variations]"
+Added Component: Designator=C4(0402 Capacitor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1425-70000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "10%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "100nF"; VariantName = "[No Variations]"
+Added Component: Designator=CFilt1(0603 Capacitor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Capacitance"; Value = "1uF"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Case Code (Imperial)"; Value = "0603"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Case Code (Metric)"; Value = "1608"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Thickness"; Value = "0.87mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "10%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "1uF"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage Rating"; Value = "25V"; VariantName = "[No Variations]"
+Added Component: Designator=CFilt2(0603 Capacitor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Capacitance"; Value = "1uF"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Case Code (Imperial)"; Value = "0603"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Case Code (Metric)"; Value = "1608"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Thickness"; Value = "0.87mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "10%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "1uF"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage Rating"; Value = "25V"; VariantName = "[No Variations]"
+Added Component: Designator=J1(TC2030-IDC 6PIN PLUG OF NAILS)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1565-74346"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "TC2030-IDC-FP"; VariantName = "[No Variations]"
+Added Component: Designator=LED1(3X1MM RT ANGLE RGB LED SMD)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1440-57764"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=MH1(HOLE_MTG_4.5mm_6.5mm_RND)
+Add component. Clean all parameters for all variants
+Added Component: Designator=MH2(HOLE_MTG_4.5mm_6.5mm_RND)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R1(0402 Resistor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1450-70332"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "1%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "787"; VariantName = "[No Variations]"
+Added Component: Designator=R2(0402 Resistor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1450-70331"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "1%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "330"; VariantName = "[No Variations]"
+Added Component: Designator=R3(0402 Resistor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1450-70330"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "1%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "432"; VariantName = "[No Variations]"
+Added Component: Designator=R4(0402 Resistor, IPC High)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1450-70338"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance"; Value = "1%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "4.75K"; VariantName = "[No Variations]"
+Added Component: Designator=TP1(TEST POINT~RND~1.0mm)
+Add component. Clean all parameters for all variants
+Added Component: Designator=U1(SON65P200X80_HS-7N)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Rockford Part Number"; Value = "1580-74165"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "NCP718AMT330TBG"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=+3.3V Pin=CFilt1-2
+Added Pin To Net: NetName=+3.3V Pin=J1-1
+Added Pin To Net: NetName=+3.3V Pin=J1-1
+Added Pin To Net: NetName=+3.3V Pin=LED1-2
+Added Pin To Net: NetName=+3.3V Pin=R4-2
+Added Pin To Net: NetName=+3.3V Pin=U1-1
+Added Net: Name=+3.3V
+Added Pin To Net: NetName=DGND Pin=C4-1
+Added Pin To Net: NetName=DGND Pin=J1-5
+Added Pin To Net: NetName=DGND Pin=J1-5
+Added Net: Name=DGND
+Added Pin To Net: NetName=GND Pin=C1-2
+Added Pin To Net: NetName=GND Pin=C2-2
+Added Pin To Net: NetName=GND Pin=C3-2
+Added Pin To Net: NetName=GND Pin=CFilt1-1
+Added Pin To Net: NetName=GND Pin=CFilt2-1
+Added Pin To Net: NetName=GND Pin=MH1-1
+Added Pin To Net: NetName=GND Pin=U1-3
+Added Pin To Net: NetName=GND Pin=U1-7
+Added Net: Name=GND
+Added Pin To Net: NetName=LED_BLU Pin=R2-1
+Added Net: Name=LED_BLU
+Added Pin To Net: NetName=LED_RED Pin=R3-1
+Added Net: Name=LED_RED
+Added Pin To Net: NetName=MCU_-RESET Pin=C4-2
+Added Pin To Net: NetName=MCU_-RESET Pin=J1-3
+Added Pin To Net: NetName=MCU_-RESET Pin=J1-3
+Added Pin To Net: NetName=MCU_-RESET Pin=R4-1
+Added Net: Name=MCU_-RESET
+Added Pin To Net: NetName=MCU_SWCLK Pin=J1-4
+Added Pin To Net: NetName=MCU_SWCLK Pin=J1-4
+Added Net: Name=MCU_SWCLK
+Added Pin To Net: NetName=NetLED1_1 Pin=LED1-1
+Added Pin To Net: NetName=NetLED1_1 Pin=R3-2
+Added Net: Name=NetLED1_1
+Added Pin To Net: NetName=NetLED1_3 Pin=LED1-3
+Added Pin To Net: NetName=NetLED1_3 Pin=R1-2
+Added Net: Name=NetLED1_3
+Added Pin To Net: NetName=NetLED1_4 Pin=LED1-4
+Added Pin To Net: NetName=NetLED1_4 Pin=R2-2
+Added Net: Name=NetLED1_4
+Added Pin To Net: NetName=SWDIO_LED_GRN Pin=J1-2
+Added Pin To Net: NetName=SWDIO_LED_GRN Pin=J1-2
+Added Pin To Net: NetName=SWDIO_LED_GRN Pin=R1-1
+Added Net: Name=SWDIO_LED_GRN
+Added Pin To Net: NetName=VDD Pin=C1-1
+Added Pin To Net: NetName=VDD Pin=C2-1
+Added Pin To Net: NetName=VDD Pin=C3-1
+Added Pin To Net: NetName=VDD Pin=CFilt2-2
+Added Pin To Net: NetName=VDD Pin=MH2-1
+Added Pin To Net: NetName=VDD Pin=TP1-1
+Added Pin To Net: NetName=VDD Pin=U1-4
+Added Pin To Net: NetName=VDD Pin=U1-6
+Added Net: Name=VDD
+Added Class: Name=Main_Schematic
+Added Room: Name=Main_Schematic
