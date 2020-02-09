@@ -41,6 +41,7 @@
 #ifndef NRF_DRV_TWI_H__
 #define NRF_DRV_TWI_H__
 
+
 #include <nrfx.h>
 #ifdef TWIM_PRESENT
     #include <nrfx_twim.h>

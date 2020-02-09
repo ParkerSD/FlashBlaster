@@ -72,6 +72,10 @@
 #include "nrfx_twi.h"
 #include "nrfx_twim.h"
 #include "nrf_drv_spi.h"
+#include "oled.h"
+#include "app_button.h"
+#include "nrf_gpio.h"
+#include "button.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -738,15 +742,13 @@ int main(void)
 {
     bool erase_bonds;
 
-    //uint8_t SSD1306Addr = 0b0111100; 
-    
-
     // Initialize.
     uart_init();
+    twi_init();
     spi_init();
     log_init();
     timers_init();
-    buttons_leds_init(&erase_bonds);
+    //buttons_leds_init(&erase_bonds);
     power_management_init();
     ble_stack_init();
     gap_params_init();
@@ -755,9 +757,58 @@ int main(void)
     advertising_init();
     conn_params_init();
 
+    // Start execution.
+    //printf("\r\nUART started.\r\n");
+    //NRF_LOG_INFO("Debug logging for UART over RTT started.");
+
     //advertising_start();
 
 
+    //TODO: 
+    // implement file system for .bin/.hex storage and retrival in internal flash, then external flash once prototype complete
+    // change oled interface from I2C to SPI for speed 
+    // layout hardware 
+    // reimplement encoder navigation with hardware intrrupts instead of app_button.c functions 
+    // SWD bitbang protocol ref: black magic probe github 
+    // config menu (App Side?) for entering project/chip/file tree, and ability to upload new files
+
+    // flesh out NESTED menu interface with project->chip->file selection, create new objects 
+               
+         // Projects:      //  Chips:                   //  Files: 
+
+         // -> Project1    //  -> Chip1_Project1        // -> File1_Chip1_Project1.bin
+                                                        // -> File2_Chip1_Project1.bin
+                                                        // -> File3_Chip1_Project1.bin
+
+                           //  -> Chip2_Project1        // -> File1_Chip2_Project1.bin
+                                                        // -> File2_Chip2.Project1.bin
+                                                        // -> File3_Chip2_Project1.bin
+
+         // -> Project1    //  -> Chip1_Project2        // -> File1_Chip1_Project2.bin
+                                                        // -> File2_Chip1_Project2.bin
+                                                        // -> File3_Chip1_Project2.bin
+
+                           //  -> Chip2_Project2        // -> File1_Chip2_Project2.bin
+                                                        // -> File2_Chip2.Project2.bin
+                                                        // -> File3_Chip2_Project2.bin
+        
+    // BT5 file transfer from phone app, firmware updates
+    // barrel jack/micro usb/usb-C charger plus lipo, battery IC
+    // mobile ide/debugger? 
+
+
+    oled_init(); 
+    button_init();
+    
+    system_init();
+    list_init();
+
+    draw_initial_screen();
+
+    //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
+
+    // only store one file hierarchy in RAM, render and pop fucntions, set_current_project(), set_current_chip() , set_current_file()
+    // file directory section in flash which is read at boot and can keep tracka of all current projects and their dependencies
 
     // Enter main loop.
     for (;;)

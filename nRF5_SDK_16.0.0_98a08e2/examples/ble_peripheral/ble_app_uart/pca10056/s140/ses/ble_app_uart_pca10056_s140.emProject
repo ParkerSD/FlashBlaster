@@ -91,14 +91,21 @@
       <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_spi.h" />
       <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_spi.c" />
       <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_spim.c" />
+      <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_twi.c" />
+      <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_twim.c" />
+      <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_twi.c" />
     </folder>
     <folder Name="Board Support">
       <file file_name="../../../../../../components/libraries/bsp/bsp.c" />
       <file file_name="../../../../../../components/libraries/bsp/bsp_btn_ble.c" />
     </folder>
     <folder Name="Application">
-      <file file_name="../../../main.c" />
-      <file file_name="../config/sdk_config.h" />
+      <file file_name="main.c" />
+      <file file_name="sdk_config.h" />
+      <file file_name="button.c" />
+      <file file_name="button.h" />
+      <file file_name="oled.c" />
+      <file file_name="oled.h" />
     </folder>
     <folder Name="nRF_Segger_RTT">
       <file file_name="../../../../../../external/segger_rtt/SEGGER_RTT.c" />
