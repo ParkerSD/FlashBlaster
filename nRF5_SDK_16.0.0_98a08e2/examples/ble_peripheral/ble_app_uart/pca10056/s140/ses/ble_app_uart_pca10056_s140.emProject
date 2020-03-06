@@ -69,6 +69,19 @@
       <file file_name="../../../../../../components/libraries/sortlist/nrf_sortlist.c" />
       <file file_name="../../../../../../components/libraries/strerror/nrf_strerror.c" />
       <file file_name="../../../../../../components/libraries/uart/retarget.c" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd.c" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_class_base.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_core.c" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_core.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_descriptor.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_langid.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_request.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_serial_num.c" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_serial_num.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_string_desc.c" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_string_desc.h" />
+      <file file_name="../../../../../../components/libraries/usbd/app_usbd_types.h" />
     </folder>
     <folder Name="None">
       <file file_name="../../../../../../modules/nrfx/mdk/ses_startup_nrf52840.s" />
@@ -106,6 +119,10 @@
       <file file_name="button.h" />
       <file file_name="oled.c" />
       <file file_name="oled.h" />
+      <file file_name="ssd1351.c" />
+      <file file_name="ssd1351.h" />
+      <file file_name="fonts.c" />
+      <file file_name="fonts.h" />
     </folder>
     <folder Name="nRF_Segger_RTT">
       <file file_name="../../../../../../external/segger_rtt/SEGGER_RTT.c" />

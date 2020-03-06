@@ -9,9 +9,9 @@
 #include "nrf_gpio.h"
 
 
-#define BTN_UP 5  
-#define BTN_DOWN 7 
-#define BTN_ENTER 11 
+#define BTN_UP 8  
+#define BTN_DOWN 35 // P1.03
+#define BTN_ENTER 5
 #define BUTTON_COUNT 3
 #define BUTTON_DEBOUNCE_DELAY 10
 

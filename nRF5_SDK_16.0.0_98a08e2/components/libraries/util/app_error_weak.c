@@ -48,6 +48,10 @@
 #include "nrf_sdm.h"
 #endif
 
+
+#define DEBUG // I defined this here
+
+
 /*lint -save -e14 */
 /**
  * Function is implemented as weak so that it can be overwritten by custom application error handler

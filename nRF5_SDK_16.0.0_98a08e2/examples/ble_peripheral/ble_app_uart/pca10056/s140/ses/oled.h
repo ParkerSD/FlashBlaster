@@ -9,6 +9,10 @@
 #ifndef OLED_H_
 #define OLED_H_
 
+//#define CS_PIN 38 //P1.06
+#define RST_PIN 36 //P1.04
+#define DC_PIN 37 //P1.05
+#define FET_PIN 33 //P1.05
 
 // OLED type for init function
 enum 
@@ -91,10 +95,9 @@ typedef struct system
 // returns 0 for success, 1 for failure
 //
 
+void gpio_init(void);
+
 void twi_init(void);
-void spi_init(void);
-void spi_tx(void);
-void spi_rx(void);
 
 void oled_init(void); 
 

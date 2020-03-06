@@ -24,19 +24,16 @@
 #include "nrfx_twim.h"
 #include "nrf_drv_spi.h"
 #include "oled.h"
+#include "ssd1351.h" 
 
 #define SSD1306Addr 0b0111100
 
 #define TWI_INSTANCE_ID 1 
-#define SPI_INSTANCE  0 /**< SPI instance index. */
-
+static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 extern unsigned char ucFont[], ucSmallFont[];
 static int iScreenOffset; // current write offset of screen data
 static unsigned char ucScreen[1024]; // local copy of the image buffer
 static int oled_type, oled_flip;
-static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
-static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE); 
-
 
 list_struct* list_singleton;
 
@@ -63,58 +60,16 @@ char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "
 
 
 
-/*_________________ SPI START________________ */ 
 
-static volatile bool spi_xfer_done;  /**< Flag used to indicate that SPI instance completed the transfer. */
-
-#define TEST_STRING "Nordic"
-static uint8_t       m_tx_buf[] = TEST_STRING;           /**< TX buffer. */
-static uint8_t       m_rx_buf[sizeof(TEST_STRING) + 1];    /**< RX buffer. */
-static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. */
-
-
-void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
-                       void *                    p_context)
+void gpio_init(void) // init gpio for oled drivers 
 {
-    spi_xfer_done = true;
 
-    if (m_rx_buf[0] != 0)
-    {
-    }
+    //nrf_gpio_cfg_output(CS_PIN); //now defined as SS_PIN in SPIO Init
+    nrf_gpio_cfg_output(RST_PIN); 
+    nrf_gpio_cfg_output(DC_PIN); 
+    nrf_gpio_cfg_output(FET_PIN); 
+
 }
-
-void spi_init(void)
-{
-    nrf_drv_spi_config_t spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
-    spi_config.ss_pin   = SPI_SS_PIN;
-    spi_config.miso_pin = SPI_MISO_PIN;
-    spi_config.mosi_pin = SPI_MOSI_PIN;
-    spi_config.sck_pin  = SPI_SCK_PIN;
-    APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, spi_event_handler, NULL));
-}
-
-//rudimentary tx / rx fucntions, using global buffers and lengths
-
-void spi_tx(void)
-{
-    // Reset rx buffer and transfer done flag
-    memset(m_rx_buf, 0, m_length);
-    spi_xfer_done = false;
-
-    APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_length, NULL, NULL));
-}
-
-void spi_rx(void)
-{
-    // Reset rx buffer and transfer done flag
-    memset(m_rx_buf, 0, m_length);
-    spi_xfer_done = false;
-
-    APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, NULL, NULL, m_rx_buf, m_length));
-}
-
-/*____________________ SPI END_____________________ */ 
-
 
 
 void twi_init(void)
@@ -141,13 +96,12 @@ static void oledWriteCommand(unsigned char);
 
 void oled_init(void)
 {
-    uint8_t oled64_initbuf[]={0x00,0xae,0xa8,0x3f,0xd3,0x00,0x40,0xa1,0xc8,0xda,0x12,0x81,0xff,0xa4,0xa6,0xd5,0x80,0x8d,0x14,0xaf,0x20,0x02};
+    nrf_gpio_pin_set(FET_PIN); 
+    nrf_delay_ms(10); 
 
-    uint32_t ret;
-    ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, oled64_initbuf, sizeof(oled64_initbuf), false);
-    APP_ERROR_CHECK(ret);
-
-    clear_display(0); // fill black
+    SSD1351_init();
+  
+    //clear_display(0); // REPLACE WITH SSD1351 function
 }
 
 void oled_test(void)
@@ -173,23 +127,27 @@ int oledInit(int iChannel, int iAddr, int iType, int bFlip, int bInvert)
 	oled_flip = bFlip;
 	
         uint32_t ret;
-        ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, oled64_initbuf, sizeof(oled64_initbuf), false);
-        APP_ERROR_CHECK(ret);
+        spi_tx (oled64_initbuf, sizeof(oled64_initbuf));
+        //ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, oled64_initbuf, sizeof(oled64_initbuf), false);
+        //APP_ERROR_CHECK(ret);
 
 	if (bInvert)
 	{
 		uc[0] = 0; // command
 		uc[1] = 0xa7; // invert command
-                ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, uc, 2, false);
-                APP_ERROR_CHECK(ret);
+                spi_tx (uc, 2);
+                //ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, uc, 2, false);
+                //APP_ERROR_CHECK(ret);
 	}
 	if (bFlip) // rotate display 180
 	{
 		uc[0] = 0; // command
 		uc[1] = 0xa0;
-		ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, uc, 2, false);
+                spi_tx (uc, 2);
+		//ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, uc, 2, false);
 		uc[1] = 0xc0;
-		ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, uc, 2, false);
+                spi_tx (uc, 2);
+		//ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, uc, 2, false);
 	}
 	return 0;
 } /* oledInit() */
@@ -210,9 +168,10 @@ static void oledWriteCommand(unsigned char c)
 
 	buf[0] = 0x00; // command introducer
 	buf[1] = c;
-        uint32_t ret;
-        ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, buf, 2, false);
-        APP_ERROR_CHECK(ret);
+        spi_tx (buf, 2);
+        //uint32_t ret;
+        //ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, buf, 2, false);
+        //APP_ERROR_CHECK(ret);
 
 } /* oledWriteCommand() */
 
@@ -224,9 +183,10 @@ static void oledWriteCommand2(unsigned char c, unsigned char d)
 	buf[0] = 0x00;
 	buf[1] = c;
 	buf[2] = d;
-        uint32_t ret; 
-        ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, buf, 3, false);
-        APP_ERROR_CHECK(ret);
+        spi_tx (buf, 3);
+        //uint32_t ret; 
+        //ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, buf, 3, false);
+        //APP_ERROR_CHECK(ret);
 
 } /* oledWriteCommand2() */
 
@@ -256,9 +216,10 @@ static void oledWriteDataBlock(unsigned char *ucBuf, int iLen)
 
 	ucTemp[0] = 0x40; // data command
 	memcpy(&ucTemp[1], ucBuf, iLen);
-        uint32_t ret; 
-        ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, ucTemp, iLen+1, false);
-        APP_ERROR_CHECK(ret);
+        spi_tx (ucTemp, iLen+1);
+        //uint32_t ret; 
+        //ret = nrf_drv_twi_tx(&m_twi, SSD1306Addr, ucTemp, iLen+1, false);
+        //APP_ERROR_CHECK(ret);
 					
 	// Keep a copy in local buffer
 	memcpy(&ucScreen[iScreenOffset], ucBuf, iLen);

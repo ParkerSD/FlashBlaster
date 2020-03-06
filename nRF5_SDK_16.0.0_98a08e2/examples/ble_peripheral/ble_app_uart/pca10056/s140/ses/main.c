@@ -76,6 +76,7 @@
 #include "app_button.h"
 #include "nrf_gpio.h"
 #include "button.h"
+#include "ssd1351.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -702,19 +703,20 @@ int main(void)
     bool erase_bonds;
 
     // Initialize.
-    uart_init();
-    twi_init();
+    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
+    //twi_init(); //  not needed anymore, disable in sdk_config
     spi_init();
+    //TODO QSPI init here
     log_init();
     timers_init();
     //buttons_leds_init(&erase_bonds);
     power_management_init();
-    ble_stack_init();
-    gap_params_init();
-    gatt_init();
-    services_init();
-    advertising_init();
-    conn_params_init();
+//    ble_stack_init();
+//    gap_params_init();
+//    gatt_init();
+//    services_init();
+//    advertising_init();
+//    conn_params_init();
 
     // Start execution.
     //printf("\r\nUART started.\r\n");
@@ -736,14 +738,15 @@ int main(void)
     // mobile ide/debugger? 
     
     //notes: do as much debugging as can be done from a mobile device that the program was not developped on 
+    gpio_init(); 
 
-    oled_init(); //TODO: replace SPI screen writes with SPI 
+    oled_init(); 
     button_init();
     
     system_init();
     list_init();
 
-    draw_initial_screen();
+    //draw_initial_screen();
 
     //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
 

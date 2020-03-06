@@ -131,7 +131,7 @@
 // <4294967295=> Not connected 
 
 #ifndef SPI_SCK_PIN
-#define SPI_SCK_PIN 26
+#define SPI_SCK_PIN 41
 #endif
 
 // <o> SPI_MISO_PIN  - Pin number
@@ -171,7 +171,7 @@
 // <4294967295=> Not connected 
 
 #ifndef SPI_MISO_PIN
-#define SPI_MISO_PIN 30
+#define SPI_MISO_PIN 42 // pin not used 
 #endif
 
 // <o> SPI_MOSI_PIN  - Pin number
@@ -211,7 +211,7 @@
 // <4294967295=> Not connected 
 
 #ifndef SPI_MOSI_PIN
-#define SPI_MOSI_PIN 29
+#define SPI_MOSI_PIN 40
 #endif
 
 // <o> SPI_SS_PIN  - Pin number
@@ -251,7 +251,7 @@
 // <4294967295=> Not connected 
 
 #ifndef SPI_SS_PIN
-#define SPI_SS_PIN 31
+#define SPI_SS_PIN 38 
 #endif
 
 // <o> SPI_IRQ_PRIORITY  - Interrupt priority
@@ -7264,7 +7264,7 @@
 // <268435456=> 1000000 baud 
 
 #ifndef NRFX_UARTE_DEFAULT_CONFIG_BAUDRATE
-#define NRFX_UARTE_DEFAULT_CONFIG_BAUDRATE 30801920
+#define NRFX_UARTE_DEFAULT_CONFIG_BAUDRATE 115200
 #endif
 
 // <o> NRFX_UARTE_DEFAULT_CONFIG_IRQ_PRIORITY  - Interrupt priority
@@ -7385,7 +7385,7 @@
 // <268435456=> 1000000 baud 
 
 #ifndef NRFX_UART_DEFAULT_CONFIG_BAUDRATE
-#define NRFX_UART_DEFAULT_CONFIG_BAUDRATE 30924800
+#define NRFX_UART_DEFAULT_CONFIG_BAUDRATE 115200
 #endif
 
 // <o> NRFX_UART_DEFAULT_CONFIG_IRQ_PRIORITY  - Interrupt priority
@@ -8730,7 +8730,7 @@
 // <268435456=> 1000000 baud 
 
 #ifndef UART_DEFAULT_CONFIG_BAUDRATE
-#define UART_DEFAULT_CONFIG_BAUDRATE 30801920
+#define UART_DEFAULT_CONFIG_BAUDRATE 115200
 #endif
 
 // <o> UART_DEFAULT_CONFIG_IRQ_PRIORITY  - Interrupt priority
