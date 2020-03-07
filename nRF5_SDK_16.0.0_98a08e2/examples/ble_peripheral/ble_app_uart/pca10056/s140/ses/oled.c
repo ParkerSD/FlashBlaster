@@ -100,8 +100,10 @@ void oled_init(void)
     nrf_delay_ms(10); 
 
     SSD1351_init();
-  
-    //clear_display(0); // REPLACE WITH SSD1351 function
+    
+    SSD1351_fill(COLOR_BLUE); // for test
+    SSD1351_update();
+   
 }
 
 void oled_test(void)

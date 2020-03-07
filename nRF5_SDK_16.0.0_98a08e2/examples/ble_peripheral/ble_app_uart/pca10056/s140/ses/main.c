@@ -703,14 +703,11 @@ int main(void)
     bool erase_bonds;
 
     // Initialize.
-    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
-    //twi_init(); //  not needed anymore, disable in sdk_config
-    spi_init();
-    //TODO QSPI init here
+
     log_init();
     timers_init();
     //buttons_leds_init(&erase_bonds);
-    power_management_init();
+//    power_management_init();
 //    ble_stack_init();
 //    gap_params_init();
 //    gatt_init();
@@ -736,8 +733,13 @@ int main(void)
     // BT5 file transfer from phone app, firmware updates
     // barrel jack/micro usb/usb-C charger plus lipo, battery IC
     // mobile ide/debugger? 
-    
     //notes: do as much debugging as can be done from a mobile device that the program was not developped on 
+
+    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
+    //twi_init(); //  not needed anymore, disable in sdk_config
+    //TODO QSPI init here
+
+    spi_init(); //SPI in blocking mode, may cause issues with BLE later
     gpio_init(); 
 
     oled_init(); 

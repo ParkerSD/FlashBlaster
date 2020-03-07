@@ -30,14 +30,14 @@
 /* Buffer to hold the Display RAM Data */
 STATIC DRAM displayRAM;
 
-#define DRAM_16 displayRAM.halfw
-#define DRAM_8 displayRAM.byte
 
-uint8_t oledCmds[31] = {0x15, 0x75, 0x5C, 0x5D, 0xA0, 0xA1, 0xA2, 0xA4, 0xA5, 0xA6, 0xA7, 0xAB, 0xAE, 0xAF, 0xB1, 0xB2, 
-                        0xB3, 0xB4, 0xB5, 0xB6, 0xB8, 0xB9, 0xBB, 0xBE, 0xC1, 0xC7, 0xCA, 0xFD, 0x96, 0x9E, 0x9F};
+//#define DRAM_16 displayRAM.halfw
+//#define DRAM_8 displayRAM.byte
+
 
 #define SPI_INSTANCE  0 /**< SPI instance index. */
 static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE); 
+
 
 /*_________________ SPI START________________ */ 
 
@@ -57,7 +57,7 @@ void spi_init(void)
     spi_config.miso_pin = SPI_MISO_PIN;
     spi_config.mosi_pin = SPI_MOSI_PIN;
     spi_config.sck_pin  = SPI_SCK_PIN;
-    APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, spi_event_handler, NULL));
+    APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, NULL, NULL)); //arg3 spi_event_handler casuing errors
 }
 
 //rudimentary tx / rx fucntions, using global buffers and lengths
@@ -124,9 +124,24 @@ STATIC void SSD1351_write_data(uint8_t data){
   * @retval None
   */
 STATIC void SSD1351_write_data_buffer(uint8_t *data, uint32_t len){
-  nrf_gpio_pin_clear(DC_PIN);
-  nrf_delay_s(1);
-  spi_tx (data, len);
+  nrf_gpio_pin_set(DC_PIN);
+  nrf_delay_ms(1);
+
+  if(len > 255)
+  {
+    uint32_t times = (len/255);
+    for(int x = 0; x < times; x++)
+    { 
+      spi_tx (data + (255 * x), 255);   // chunk up data into 255 byte chunks 
+    }
+    uint32_t rem = (len % 255);         // transfer remainder
+    spi_tx (data, rem);
+  }
+  else                                  // if buffer is less than 255 bytes transfer all at once
+  {
+    spi_tx (data, len); 
+  }
+
 }
 
 /*
@@ -151,75 +166,72 @@ uint16_t SSD1351_get_rgb(uint8_t r, uint8_t g, uint8_t b){
   */
 void SSD1351_init(void){
   nrf_gpio_pin_set(RST_PIN);
-  nrf_delay_ms(100);
+  nrf_delay_ms(200);
   nrf_gpio_pin_clear(RST_PIN);
-  nrf_delay_ms(100);
+  nrf_delay_ms(200);
   nrf_gpio_pin_set(RST_PIN);
-  nrf_delay_ms(100);
-
-//  uint8_t array[5] = {1,2,3,4,5}; // for test
-//  spi_tx (array, 5);
-
-  SSD1351_write_command(oledCmds[SSD1351_CMD_COMMANDLOCK]);
-  SSD1351_write_data(0x12);
-  SSD1351_write_command(oledCmds[SSD1351_CMD_COMMANDLOCK]);
-  SSD1351_write_data(0xB1);
-
-  SSD1351_write_command(oledCmds[SSD1351_CMD_DISPLAYOFF]);
-  SSD1351_write_command(oledCmds[SSD1351_CMD_CLOCKDIV]);
-  SSD1351_write_data(0xF1);
-  SSD1351_write_command(oledCmds[SSD1351_CMD_MUXRATIO]);
-  SSD1351_write_data(127);
   nrf_delay_ms(200);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETREMAP]);
+  SSD1351_write_command(SSD1351_CMD_COMMANDLOCK);
+  SSD1351_write_data(0x12);
+  SSD1351_write_command(SSD1351_CMD_COMMANDLOCK);
+  SSD1351_write_data(0xB1);
+  
+  SSD1351_write_command(SSD1351_CMD_DISPLAYOFF);
+  SSD1351_write_command(SSD1351_CMD_CLOCKDIV);
+  SSD1351_write_data(0xF1);
+  SSD1351_write_command(SSD1351_CMD_MUXRATIO);
+  SSD1351_write_data(127);
+  nrf_delay_ms(300);
+
+  SSD1351_write_command(SSD1351_CMD_SETREMAP);
   SSD1351_write_data(0x20);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETCOLUMN]);
+  SSD1351_write_command(SSD1351_CMD_SETCOLUMN);
   SSD1351_write_data(0x00);
   SSD1351_write_data(0x7F);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETROW]);
+  SSD1351_write_command(SSD1351_CMD_SETROW);
   SSD1351_write_data(0x00);
   SSD1351_write_data(0x7F);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_STARTLINE]);
+  SSD1351_write_command(SSD1351_CMD_STARTLINE);
+  SSD1351_write_data(0x40); // was 00
+
+  SSD1351_write_command(SSD1351_CMD_DISPLAYOFFSET);
   SSD1351_write_data(0x00);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_DISPLAYOFFSET]);
+  SSD1351_write_command(SSD1351_CMD_SETGPIO);
   SSD1351_write_data(0x00);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETGPIO]);
-  SSD1351_write_data(0x00);
-
-  SSD1351_write_command(oledCmds[SSD1351_CMD_FUNCTIONSELECT]);
+  SSD1351_write_command(SSD1351_CMD_FUNCTIONSELECT);
   SSD1351_write_data(0x01);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_PRECHARGE]);
+  SSD1351_write_command(SSD1351_CMD_PRECHARGE);
   SSD1351_write_data(0x32);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_VCOMH]);
+  SSD1351_write_command(SSD1351_CMD_VCOMH);
   SSD1351_write_data(0x05);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_NORMALDISPLAY]);
+  SSD1351_write_command(SSD1351_CMD_NORMALDISPLAY);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_CONTRASTABC]);
+  SSD1351_write_command(SSD1351_CMD_CONTRASTABC);
   SSD1351_write_data(0x8A);                          // Color A: Blue
   SSD1351_write_data(0x51);                          // Color B: Green
   SSD1351_write_data(0x8A);                          // Color C: Red
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_CONTRASTMASTER]);
+  SSD1351_write_command(SSD1351_CMD_CONTRASTMASTER);
   SSD1351_write_data(0x0F);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETVSL]);
+  SSD1351_write_command(SSD1351_CMD_SETVSL);
   SSD1351_write_data(0xA0);
   SSD1351_write_data(0xB5);
   SSD1351_write_data(0x55);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_PRECHARGE2]);
+  SSD1351_write_command(SSD1351_CMD_PRECHARGE2);
   SSD1351_write_data(0x01);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_DISPLAYON]);
+  SSD1351_write_command(SSD1351_CMD_DISPLAYON);
 }
 
 /**
@@ -227,9 +239,12 @@ void SSD1351_init(void){
   * @retval None
   */
 void SSD1351_stop(void){
-  SSD1351_write_command(oledCmds[SSD1351_CMD_DISPLAYOFF]);
+  SSD1351_write_command(SSD1351_CMD_DISPLAYOFF);
 }
 
+void SSD1351_start(void){
+  SSD1351_write_command(SSD1351_CMD_DISPLAYON);
+}
 /**
   * @brief  Turns off the SSD1351 OLED Display
   * @param  color: Unsigned int16 containing color code
@@ -237,7 +252,7 @@ void SSD1351_stop(void){
   */
 void SSD1351_fill(uint16_t color){
   for (int i = 0; i < DRAM_SIZE_16; i++){
-    DRAM_16[i] = color;
+    displayRAM.halfw[i] = color;
   }
   //SSD1351_write_command(SSD1351_CMD_STOPSCROLL);
 }
@@ -247,8 +262,11 @@ void SSD1351_fill(uint16_t color){
   * @retval None
   */
 void SSD1351_update(void){
-  SSD1351_write_command(oledCmds[SSD1351_CMD_WRITERAM]);
-  SSD1351_write_data_buffer(DRAM_8, DRAM_SIZE_8);
+  
+  //nrf_delay_ms(1);
+  SSD1351_write_command(SSD1351_CMD_WRITERAM);
+  SSD1351_write_data_buffer(displayRAM.byte, DRAM_SIZE_8);
+  
 }
 
 /**
@@ -256,29 +274,29 @@ void SSD1351_update(void){
   * @retval None
   */
 /*void SSD1351_update_area(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETCOLUMN]);
+  SSD1351_write_command(SSD1351_CMD_SETCOLUMN);
   SSD1351_write_data(x0);
   SSD1351_write_data(y0);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETROW]);
+  SSD1351_write_command(SSD1351_CMD_SETROW);
   SSD1351_write_data(x1);
   SSD1351_write_data(x0);
 
   int a0 = x0 + (y0 * 128);
   int a1 = x1 + (y1 * 128);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_WRITERAM]);
+  SSD1351_write_command(SSD1351_CMD_WRITERAM);
   for (int i = a0; i < a1 * 2; i++){
     SSD1351_write_data(DRAM_8[i]);
   }
 
   // Back to default settings
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETCOLUMN]);
+  SSD1351_write_command(SSD1351_CMD_SETCOLUMN);
   SSD1351_write_data(x0);
   SSD1351_write_data(y0);
 
-  SSD1351_write_command(oledCmds[SSD1351_CMD_SETROW]);
+  SSD1351_write_command(SSD1351_CMD_SETROW);
   SSD1351_write_data(x1);
   SSD1351_write_data(x0);
 }*/
@@ -295,7 +313,7 @@ void SSD1351_write_pixel(int16_t x, int16_t y, uint16_t color){
     return;
   }
   int a = (127 - x) + (y * 128);
-  DRAM_16[a] = color;
+  displayRAM.halfw[a] = color;
 }
 
 
