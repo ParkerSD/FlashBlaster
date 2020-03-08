@@ -99,7 +99,7 @@ struct cursor{
   * @param  cmd: command to send
   * @retval None
   */
-STATIC void SSD1351_write_command(uint8_t cmd){
+void SSD1351_write_command(uint8_t cmd){
   
   nrf_gpio_pin_clear(DC_PIN);
   nrf_delay_ms(1);
@@ -111,7 +111,7 @@ STATIC void SSD1351_write_command(uint8_t cmd){
   * @param  data: data byte to send
   * @retval None
   */
-STATIC void SSD1351_write_data(uint8_t data){
+void SSD1351_write_data(uint8_t data){
   nrf_gpio_pin_set(DC_PIN); 
   nrf_delay_ms(1);
   spi_tx_byte (data);
@@ -123,7 +123,7 @@ STATIC void SSD1351_write_data(uint8_t data){
   * @param  len: integer with length of buffer to send
   * @retval None
   */
-STATIC void SSD1351_write_data_buffer(uint8_t *data, uint32_t len){
+void SSD1351_write_data_buffer(uint8_t *data, uint32_t len){
   nrf_gpio_pin_set(DC_PIN);
   nrf_delay_ms(1);
 
@@ -185,7 +185,7 @@ void SSD1351_init(void){
   nrf_delay_ms(300);
 
   SSD1351_write_command(SSD1351_CMD_SETREMAP);
-  SSD1351_write_data(0x20);
+  SSD1351_write_data(0b00110010);// was x20
 
   SSD1351_write_command(SSD1351_CMD_SETCOLUMN);
   SSD1351_write_data(0x00);
@@ -196,7 +196,7 @@ void SSD1351_init(void){
   SSD1351_write_data(0x7F);
 
   SSD1351_write_command(SSD1351_CMD_STARTLINE);
-  SSD1351_write_data(0x40); // was 00
+  SSD1351_write_data(0x00); // was x00
 
   SSD1351_write_command(SSD1351_CMD_DISPLAYOFFSET);
   SSD1351_write_data(0x00);

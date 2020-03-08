@@ -121,7 +121,8 @@ typedef union DisplayRAM{
 #define COLOR_RED 0x1F00
 #define COLOR_GREEN 0xE007
 #define COLOR_YELLOW 0xFF07
-#define COLOR_PURPLE 0x1FF8
+#define COLOR_PINK 0x1FF8
+#define COLOR_PURPLE 0x1EE0
 #define COLOR_AQUA 0xE0FF
 #define COLOR_BLACK 0x0000
 #define COLOR_WHITE 0xFFFF
@@ -131,6 +132,12 @@ typedef union DisplayRAM{
 extern struct cursor SSD1351_cursor;
 
 uint16_t SSD1351_get_rgb(uint8_t r, uint8_t g, uint8_t b);
+
+void SSD1351_write_command(uint8_t cmd);
+
+void SSD1351_write_data(uint8_t data);
+
+void SSD1351_write_data_buffer(uint8_t *data, uint32_t len);
 
 void SSD1351_init(void);
 

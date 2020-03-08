@@ -726,7 +726,7 @@
 // <7=> 7 
 
 #ifndef SPI_DEFAULT_CONFIG_IRQ_PRIORITY
-#define SPI_DEFAULT_CONFIG_IRQ_PRIORITY 6
+#define SPI_DEFAULT_CONFIG_IRQ_PRIORITY 2 // was 6
 #endif
 
 // <o> NRF_SPI_DRV_MISO_PULLUP_CFG  - MISO PIN pull-up configuration.

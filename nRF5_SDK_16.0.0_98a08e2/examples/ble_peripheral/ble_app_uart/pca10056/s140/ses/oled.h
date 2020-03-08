@@ -101,6 +101,18 @@ void twi_init(void);
 
 void oled_init(void); 
 
+void oled_fill_black(void);
+
+void oled_draw_target(uint16_t start_radius, uint16_t start_color);
+
+void oled_shoot_holes(uint8_t radius);
+
+void oled_draw_logo(void);
+
+
+
+// OLD //
+
 void oled_test(void);
 
 int oledInit(int iChannel, int iAddress, int iType, int bFlip, int bInvert);

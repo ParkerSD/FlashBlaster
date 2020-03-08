@@ -128,7 +128,13 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 
 
 
-
+/**@brief Function for starting advertising.
+ */
+static void advertising_start(void)
+{
+    uint32_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
+    APP_ERROR_CHECK(err_code);
+}
 
 /**@brief Function for assert macro callback.
  *
@@ -707,39 +713,32 @@ int main(void)
     log_init();
     timers_init();
     //buttons_leds_init(&erase_bonds);
-//    power_management_init();
+    power_management_init();
 //    ble_stack_init();
 //    gap_params_init();
 //    gatt_init();
 //    services_init();
 //    advertising_init();
 //    conn_params_init();
-
-    // Start execution.
-    //printf("\r\nUART started.\r\n");
-    //NRF_LOG_INFO("Debug logging for UART over RTT started.");
-
-    //advertising_start();
+//
+//    // Start execution.
+//    //printf("\r\nUART started.\r\n");
+//    //NRF_LOG_INFO("Debug logging for UART over RTT started.");
+//
+//    advertising_start();
 
 
     //TODO: 
-    // move to nrf52840 dev kit 
-    // implement file system for .bin/.hex storage and retrival in internal flash, then external flash once prototype complete
-    // change oled interface from I2C to SPI for speed 
-    // layout hardware 
-    // reimplement encoder navigation with hardware intrrupts instead of app_button.c functions 
-    // SWD bitbang protocol ref: black magic probe github 
-    // config menu (App Side?) for entering project/chip/file tree, and ability to upload new files
-    // BT5 file transfer from phone app, firmware updates
-    // barrel jack/micro usb/usb-C charger plus lipo, battery IC
-    // mobile ide/debugger? 
-    //notes: do as much debugging as can be done from a mobile device that the program was not developped on 
+    // SWD bitbang protocol ref: black magic probe github, and silicon labs swd app note
+    // either APP-side or Device-side controls
+    // BT5 file transfer from phone app, DFU firmware updates 
+    // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
 
     //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
     //twi_init(); //  not needed anymore, disable in sdk_config
     //TODO QSPI init here
 
-    spi_init(); //SPI in blocking mode, may cause issues with BLE later
+    spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     gpio_init(); 
 
     oled_init(); 
@@ -751,7 +750,6 @@ int main(void)
     //draw_initial_screen();
 
     //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
-
     // only store one file hierarchy in RAM, render and pop fucntions, set_current_project(), set_current_chip() , set_current_file()
     // file directory section in flash which is read at boot and can keep tracka of all current projects and their dependencies
 
