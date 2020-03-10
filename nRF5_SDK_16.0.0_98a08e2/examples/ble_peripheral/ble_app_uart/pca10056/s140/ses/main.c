@@ -77,6 +77,7 @@
 #include "nrf_gpio.h"
 #include "button.h"
 #include "ssd1351.h"
+#include "usb.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -737,7 +738,7 @@ int main(void)
     //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
     //twi_init(); //  not needed anymore, disable in sdk_config
     //TODO QSPI init here
-
+    usb_init();
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     gpio_init(); 
 
