@@ -60,6 +60,9 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/usb.o: \
  ../../../../../../modules/nrfx/drivers/include/nrfx_power.h \
  ../../../../../../modules/nrfx/hal/nrf_power.h \
  ../../../../../../modules/nrfx/drivers/include/nrfx_power_clock.h \
+ ../../../../../../integration/nrfx/legacy/nrf_drv_clock.h \
+ ../../../../../../modules/nrfx/drivers/include/nrfx_clock.h \
+ ../../../../../../modules/nrfx/hal/nrf_clock.h \
  ../../../../../../components/libraries/log/nrf_log.h \
  ../../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/string.h \

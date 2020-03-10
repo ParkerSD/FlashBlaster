@@ -735,10 +735,14 @@ int main(void)
     // BT5 file transfer from phone app, DFU firmware updates 
     // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
 
-    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
-    //twi_init(); //  not needed anymore, disable in sdk_config
-    //TODO QSPI init here
+    init_power_clock();
     usb_init();
+    usb_pwr_init();
+
+    //twi_init(); //  not needed anymore, disable in sdk_config
+
+    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
+    //TODO QSPI init here
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     gpio_init(); 
 
