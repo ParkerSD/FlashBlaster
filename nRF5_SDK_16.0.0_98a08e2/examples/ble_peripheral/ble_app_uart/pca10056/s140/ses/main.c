@@ -702,7 +702,12 @@ static void idle_state_handle(void)
 }
 
 
-
+void battery_pwr_init(void)
+{
+        //enable boost converter on boot, disable LDO
+    nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLUP);
+    nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLDOWN);
+}
 
 
 int main(void)
@@ -710,6 +715,8 @@ int main(void)
     // bool erase_bonds;
 
     // Initialize.
+    gpio_init(); 
+    battery_pwr_init();
 
     log_init();
     timers_init();
@@ -723,27 +730,17 @@ int main(void)
 //    conn_params_init();
 //    advertising_start();
 
-
-    //TODO: 
-    // SWD bitbang protocol ref: black magic probe github, and silicon labs swd app note
-    // either APP-side or Device-side controls
-    // BT5 file transfer from phone app, DFU firmware updates 
-    // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
-    gpio_init(); 
     power_clock_init();
     //usb_init(); // not needed utill usb data needed, should test before next rev 
     usb_pwr_init();
     button_init();
 
     //twi_init(); //  not needed anymore, disable in sdk_config
-
     //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
     //TODO QSPI init here
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     
-
     oled_init(); 
-    
     system_init();
     list_init();
 
@@ -752,6 +749,11 @@ int main(void)
     //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
     // only store one file hierarchy in RAM, render and pop fucntions, set_current_project(), set_current_chip() , set_current_file()
     // file directory section in flash which is read at boot and can keep tracka of all current projects and their dependencies
+    
+    // SWD bitbang protocol ref: black magic probe github, and silicon labs swd app note
+    // either APP-side or Device-side controls
+    // BT5 file transfer from phone app, DFU firmware updates 
+    // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
 
     // Enter main loop.
     for (;;)

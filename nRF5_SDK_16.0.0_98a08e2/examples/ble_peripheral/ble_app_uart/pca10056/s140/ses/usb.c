@@ -40,19 +40,21 @@ void power_usb_event_handler(nrf_drv_power_usb_evt_t event)
     switch (event)
     {
     case NRF_DRV_POWER_USB_EVT_DETECTED:
-
-        nrf_gpio_pin_set(LDO_EN);
-        nrf_gpio_pin_clear(BB_EN);
+        
+        nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLDOWN);
+        nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLUP);
+    
 //        if (!nrf_drv_usbd_is_enabled())
 //        {
 //            nrf_drv_usbd_enable();
 //        }
-        break;
+        break; 
     case NRF_DRV_POWER_USB_EVT_REMOVED:
 
         //TODO: add ADC battery voltage condition 
-        nrf_gpio_pin_set(BB_EN);
-        nrf_gpio_pin_clear(LDO_EN);
+        nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLUP);
+        nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLDOWN);
+   
 //        if (nrf_drv_usbd_is_started())
 //        {
 //            nrf_drv_usbd_stop();
