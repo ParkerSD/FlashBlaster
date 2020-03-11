@@ -64,12 +64,12 @@ char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "
 
 void gpio_init(void) // init gpio for oled drivers 
 {
-
     //nrf_gpio_cfg_output(CS_PIN); //now defined as SS_PIN in SPIO Init
     nrf_gpio_cfg_output(RST_PIN); 
     nrf_gpio_cfg_output(DC_PIN); 
     nrf_gpio_cfg_output(FET_PIN); 
-
+    nrf_gpio_cfg_output(LDO_EN); 
+    nrf_gpio_cfg_output(BB_EN); 
 }
 
 
@@ -106,7 +106,7 @@ void oled_init(void)
     oled_draw_target(50, COLOR_RED);
     nrf_delay_ms(500);
     oled_shoot_holes(3); 
-    oled_draw_logo();
+    //oled_draw_logo();
    
 }
 
@@ -132,7 +132,7 @@ void oled_draw_logo(void)
 
     nrf_delay_ms(500);
 
-    SSD1351_write_command(SSD1351_CMD_INVERTDISPLAY);
+    //SSD1351_write_command(SSD1351_CMD_INVERTDISPLAY);
     SSD1351_update();
 
 }

@@ -1,6 +1,6 @@
 
 
-void init_power_clock(void);
+void power_clock_init(void);
 
 void usb_pwr_init(void); 
 

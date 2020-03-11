@@ -27,142 +27,98 @@
 #include "app_button.h"
 #include "nrf_gpio.h"
 #include "button.h" 
+#include "ssd1351.h" 
 
-#define OFF 1
-#define ON 0 
 
- int8_t itemHighlighted = 0; 
- int8_t selectedItem = 0; 
- uint8_t screenStack = 0; 
+volatile bool enterFlag = false;
+volatile bool upFlag = false;
+volatile bool dualEnter = false;
+volatile bool dualUp = false;
 
-//volatile uint8_t buttonUp;
-
-//volatile uint8_t buttonDown; 
-
-//volatile uint8_t state; 
-
-/*
-void get_button_state(void)
-{
-    if(nrf_gpio_pin_read(BTN_UP)) // high level is logic false
-    {
-        buttonUp = 0; // ON
-    }
-    else 
-    {
-        buttonUp = 1; //OFF
-    }
-    if(nrf_gpio_pin_read(BTN_DOWN))
-    {
-        buttonDown = 0; 
-    }
-    else 
-    {
-        buttonDown = 1; 
-    }
-
-    state = (buttonUp << 1) | buttonDown; 
-}
-*/
-
-/*        // too slow 
-void encoder_callback(uint8_t pin_no, uint8_t button_action) // TODO: minimize work button interrupts do
-{
-    get_button_state();
-
-    if (pin_no == BTN_UP && button_action == APP_BUTTON_PUSH) // low level 
-    {
-        buttonUp = OFF; // 1 = off, 0 = on 
-        if(buttonDown == ON) //&& state == 3)
-        {
-            itemHighlighted--;
-        }
-    }
-
-    else if (pin_no == BTN_UP && button_action == APP_BUTTON_RELEASE) // high level
-    {
-        buttonUp = ON;
-        if(buttonDown == OFF) //&& state == 0)
-        {
-            itemHighlighted--;
-        }
-    }
-
-    else if (pin_no == BTN_DOWN && button_action == APP_BUTTON_PUSH) 
-    {
-        buttonDown == OFF;
-        if(buttonUp == ON) //&& state == 3)
-        {
-            itemHighlighted++;
-        }
-    }
-    
-    else if (pin_no == BTN_DOWN && button_action == APP_BUTTON_RELEASE) 
-    {
-        buttonDown == ON;
-        if(buttonUp == OFF) //&& state == 0)
-        {
-            itemHighlighted++;
-        }
-    }
-    
-    if(itemHighlighted < 0)
-    {
-        itemHighlighted = 0;
-    }
-
-    else if(itemHighlighted > 2)
-    {
-        itemHighlighted = 2;
-    }
-
-    rerender_screen(itemHighlighted);
-}
-*/
 
 void button_up_callback(uint8_t pin_no, uint8_t button_action)
-{
-    if(button_action == APP_BUTTON_PUSH)
-    {
-        itemHighlighted--;
-        if(itemHighlighted < 0)
-        {
-            itemHighlighted = 0;
-        }
-        rerender_list(itemHighlighted);
-    }
+{   
+   upFlag = true;
+   if(button_action == APP_BUTTON_PUSH)
+   { 
+      if(enterFlag && upFlag) //if enter duel press
+      {
+         if(!dualUp && !dualEnter) // only execute once
+         { 
+            //TODO: do dual press action (off/on device) 
+            // dualUp = dualPress(dualUp);
+            SSD1351_draw_filled_circle(64, 64, 50, COLOR_RED);
+            SSD1351_update();
+         }
+         else
+         {
+            dualUp = false; //reset flag 
+         }
+      }
+      else //button up only press 
+      {
+
+      }
+   }
+   if(button_action == APP_BUTTON_RELEASE)
+   {
+      upFlag = false;
+   }
 }
 
 void button_down_callback(uint8_t pin_no, uint8_t button_action)
 {
     if(button_action == APP_BUTTON_PUSH)
-    {
-        itemHighlighted++;
-        if(itemHighlighted > 5)
-        {
-            itemHighlighted = 5;
-        }
-        rerender_list(itemHighlighted);
+    {     
+//        itemHighlighted++;
+//        if(itemHighlighted > 5)
+//        {
+//            itemHighlighted = 5;
+//        }
+//        rerender_list(itemHighlighted);
     }
 }
 
 void enter_callback(uint8_t pin_no, uint8_t button_action)
-{
-    if(button_action == APP_BUTTON_PUSH)
-    {
-        screenStack++;
-        selectedItem = itemHighlighted; 
-        itemHighlighted = 0;
+{   
+   enterFlag = true;
+   if(button_action == APP_BUTTON_PUSH)
+   { 
+      if(enterFlag && upFlag) //if button up duel press
+      {
+         if(!dualEnter && !dualUp) // only execute once
+         {
+            //TODO: do dual press action (off/on device) 
+            //dualEnter = dualPress(dualEnter);
+            SSD1351_draw_filled_circle(64, 64, 50, COLOR_BLUE);
+            SSD1351_update();
+         }
+         else
+         {
+            dualEnter = false; //reset flag 
+         }
+//       screenStack++;
+//       selectedItem = itemHighlighted; 
+//       itemHighlighted = 0;
+//
+//       if(screenStack > 2)
+//       {   
+//         //execute SWD programming on itemSelected
+//         screenStack = 0; //reset to home screen?
+//       }
+//
+//       clear_display(0);
+//       rerender_screen(itemHighlighted, selectedItem, screenStack);
+      }
+      else //enter only press 
+      {
 
-        if(screenStack > 2)
-        {   
-          //execute SWD programming on itemSelected
-          screenStack = 0; //reset to home screen?
-        }
-
-        clear_display(0);
-      rerender_screen(itemHighlighted, selectedItem, screenStack);
-     }
+      }
+   }
+   if(button_action == APP_BUTTON_RELEASE)
+   {
+      enterFlag = false;
+   }
 }
 
 

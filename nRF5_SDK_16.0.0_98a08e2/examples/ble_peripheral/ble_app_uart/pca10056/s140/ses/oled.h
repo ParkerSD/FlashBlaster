@@ -10,9 +10,11 @@
 #define OLED_H_
 
 //#define CS_PIN 38 //P1.06
+#define LDO_EN 0 //P0.00
+#define BB_EN 1 //P0.01
 #define RST_PIN 36 //P1.04
 #define DC_PIN 37 //P1.05
-#define FET_PIN 33 //P1.05
+#define FET_PIN 33 //P1.01
 
 // OLED type for init function
 enum 

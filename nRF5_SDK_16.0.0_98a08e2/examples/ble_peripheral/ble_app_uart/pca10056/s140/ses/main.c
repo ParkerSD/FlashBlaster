@@ -707,7 +707,7 @@ static void idle_state_handle(void)
 
 int main(void)
 {
-    bool erase_bonds;
+    // bool erase_bonds;
 
     // Initialize.
 
@@ -721,11 +721,6 @@ int main(void)
 //    services_init();
 //    advertising_init();
 //    conn_params_init();
-//
-//    // Start execution.
-//    //printf("\r\nUART started.\r\n");
-//    //NRF_LOG_INFO("Debug logging for UART over RTT started.");
-//
 //    advertising_start();
 
 
@@ -734,20 +729,20 @@ int main(void)
     // either APP-side or Device-side controls
     // BT5 file transfer from phone app, DFU firmware updates 
     // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
-
-    init_power_clock();
-    usb_init();
+    gpio_init(); 
+    power_clock_init();
+    //usb_init(); // not needed utill usb data needed, should test before next rev 
     usb_pwr_init();
+    button_init();
 
     //twi_init(); //  not needed anymore, disable in sdk_config
 
     //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
     //TODO QSPI init here
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
-    gpio_init(); 
+    
 
     oled_init(); 
-    button_init();
     
     system_init();
     list_init();
