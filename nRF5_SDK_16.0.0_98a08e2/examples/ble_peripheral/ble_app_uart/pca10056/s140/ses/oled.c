@@ -26,6 +26,7 @@
 #include "oled.h"
 #include "ssd1351.h" 
 #include "fonts.h" 
+#include "button.h" 
 
 #define SSD1306Addr 0b0111100
 
@@ -68,9 +69,14 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(RST_PIN); 
     nrf_gpio_cfg_output(DC_PIN); 
     nrf_gpio_cfg_output(FET_PIN); 
-    //nrf_gpio_cfg_output(LDO_EN); // now config as inputs
-    //nrf_gpio_cfg_output(BB_EN);
     nrf_gpio_cfg_output(iRST); 
+
+    nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
+    nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);
+    nrf_gpio_cfg_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP);
+
+    nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLUP);
+    nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLDOWN);
 }
 
 
@@ -104,10 +110,12 @@ void oled_init(void)
     SSD1351_init();
     
     oled_fill_black();
-    oled_draw_target(50, COLOR_RED);
-    nrf_delay_ms(500);
-    oled_shoot_holes(3); 
-    //oled_draw_logo();
+
+
+    //oled_draw_target(50, COLOR_RED);
+    //nrf_delay_ms(500);
+    //oled_shoot_holes(3); 
+    oled_draw_logo();
    
 }
 
@@ -120,20 +128,32 @@ void oled_fill_black(void)
 
 void oled_draw_logo(void)
 {   
+
     oled_fill_black();
-    SSD1351_set_cursor(21,44);
-    SSD1351_printf(COLOR_YELLOW, Font_16x26, "FLASH");
-    SSD1351_update();
-
-    nrf_delay_ms(500);
-
+    
     SSD1351_set_cursor(5,64);
-    SSD1351_printf(COLOR_AQUA, Font_16x26, "BLASTER");
+    SSD1351_printf(COLOR_BLUE, big_font, "BLASTER");
     SSD1351_update();
 
     nrf_delay_ms(500);
 
-    //SSD1351_write_command(SSD1351_CMD_INVERTDISPLAY);
+    for(int x = 0; x < 12; x++)
+    {
+      SSD1351_set_cursor(21,44);
+      SSD1351_printf(COLOR_BLACK, big_font, "FLASH");
+      SSD1351_update();
+      // nrf_delay_ms(x);
+      SSD1351_set_cursor(21,44);
+      SSD1351_printf(COLOR_YELLOW, big_font, "FLASH");
+      SSD1351_update();
+      // nrf_delay_ms(x);
+    }
+
+    SSD1351_write_command(SSD1351_CMD_INVERTDISPLAY);
+    SSD1351_update();
+    SSD1351_write_command(SSD1351_CMD_NORMALDISPLAY);
+    SSD1351_set_cursor(12,115);
+    SSD1351_printf(COLOR_WHITE, small_font, "By Parker Davis");
     SSD1351_update();
 
 }

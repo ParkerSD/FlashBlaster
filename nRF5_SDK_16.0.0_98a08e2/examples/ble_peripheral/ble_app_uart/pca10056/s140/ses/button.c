@@ -28,42 +28,29 @@
 #include "nrf_gpio.h"
 #include "button.h" 
 #include "ssd1351.h" 
+#include "app_timer.h" 
+#include "app_error.h" 
 
+APP_TIMER_DEF(long_press_timer_id);
 
 volatile bool enterFlag = false;
 volatile bool upFlag = false;
-volatile bool dualEnter = false;
-volatile bool dualUp = false;
+volatile bool longTimerStarted = false;
 
 
 void button_up_callback(uint8_t pin_no, uint8_t button_action)
-{   
-   upFlag = true;
-   if(button_action == APP_BUTTON_PUSH)
-   { 
-      if(enterFlag && upFlag) //if enter duel press
-      {
-         if(!dualUp && !dualEnter) // only execute once
-         { 
-            //TODO: do dual press action (off/on device) 
-            // dualUp = dualPress(dualUp);
-            SSD1351_draw_filled_circle(64, 64, 50, COLOR_RED);
-            SSD1351_update();
-         }
-         else
-         {
-            dualUp = false; //reset flag 
-         }
-      }
-      else //button up only press 
-      {
+{  
+    if(button_action == APP_BUTTON_PUSH)
+    { 
+        upFlag = true;
+        timer_start();
+    }
 
-      }
-   }
-   if(button_action == APP_BUTTON_RELEASE)
-   {
-      upFlag = false;
-   }
+    if(button_action == APP_BUTTON_RELEASE)
+    {
+        upFlag = false;
+        timer_stop();
+    }
 }
 
 void button_down_callback(uint8_t pin_no, uint8_t button_action)
@@ -81,22 +68,11 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action)
 
 void enter_callback(uint8_t pin_no, uint8_t button_action)
 {   
-   enterFlag = true;
-   if(button_action == APP_BUTTON_PUSH)
-   { 
-      if(enterFlag && upFlag) //if button up duel press
-      {
-         if(!dualEnter && !dualUp) // only execute once
-         {
-            //TODO: do dual press action (off/on device) 
-            //dualEnter = dualPress(dualEnter);
-            SSD1351_draw_filled_circle(64, 64, 50, COLOR_BLUE);
-            SSD1351_update();
-         }
-         else
-         {
-            dualEnter = false; //reset flag 
-         }
+    if(button_action == APP_BUTTON_PUSH)
+    { 
+        enterFlag = true;
+        timer_start();
+
 //       screenStack++;
 //       selectedItem = itemHighlighted; 
 //       itemHighlighted = 0;
@@ -109,16 +85,13 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
 //
 //       clear_display(0);
 //       rerender_screen(itemHighlighted, selectedItem, screenStack);
-      }
-      else //enter only press 
-      {
-
-      }
-   }
-   if(button_action == APP_BUTTON_RELEASE)
-   {
-      enterFlag = false;
-   }
+    }
+    if(button_action == APP_BUTTON_RELEASE)
+    {
+        enterFlag = false;
+        timer_stop();
+        
+    }
 }
 
 
@@ -132,13 +105,47 @@ static app_button_cfg_t btn_config[] =
 
 void button_init(void)
 {
-    nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
-    nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);
-    nrf_gpio_cfg_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP);
+    timer_init();
 
     uint32_t err_code; 
     err_code = app_button_init(btn_config, BUTTON_COUNT, BUTTON_DEBOUNCE_DELAY);
     APP_ERROR_CHECK(err_code);
     err_code = app_button_enable();
     APP_ERROR_CHECK(err_code);
+}
+
+
+void long_press_timeout_handler(void* p_context)
+{
+    if(enterFlag && upFlag) //if dual press
+    {
+        hibernate();
+    }
+}
+
+
+void timer_init(void)
+{
+    uint32_t ret = app_timer_create(&long_press_timer_id, APP_TIMER_MODE_SINGLE_SHOT, long_press_timeout_handler);
+    APP_ERROR_CHECK(ret); 
+}
+
+
+void timer_start(void)
+{
+    if(!longTimerStarted)
+    {
+        uint32_t ret = app_timer_start(long_press_timer_id, APP_TIMER_TICKS(LONG_PRESS_THRESHOLD), NULL); 
+        APP_ERROR_CHECK(ret); 
+    }
+
+    longTimerStarted = true; 
+}
+
+
+void timer_stop(void)
+{
+    longTimerStarted = false;
+    uint32_t ret = app_timer_stop(long_press_timer_id);
+    APP_ERROR_CHECK(ret); 
 }

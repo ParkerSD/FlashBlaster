@@ -16,12 +16,17 @@
 #define BUTTON_COUNT 3
 #define BUTTON_DEBOUNCE_DELAY 30
 
+#define LONG_PRESS_THRESHOLD 1000
+
 
 void button_init(void);
 
 void get_button_state(void);
 
+void timer_start(void);
+void timer_stop(void); 
+void timer_init(void); 
 
-
+void hibernate(void);
 
 #endif /* BUTTON_H_ */ 

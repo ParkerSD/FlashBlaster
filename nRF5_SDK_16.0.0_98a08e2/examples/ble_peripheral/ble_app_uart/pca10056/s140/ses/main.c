@@ -702,33 +702,22 @@ static void idle_state_handle(void)
 }
 
 
-void battery_pwr_init(void)
-{
-        //enable boost converter on boot, disable LDO
-    nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLUP);
-    nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLDOWN);
-}
-
-
-int main(void)
+void flashblaster_init(void)
 {
     // bool erase_bonds;
-
     // Initialize.
-    gpio_init(); 
-    battery_pwr_init();
-
+//  gpio_init(); 
     log_init();
     timers_init();
-    //buttons_leds_init(&erase_bonds);
+  //buttons_leds_init(&erase_bonds);
     power_management_init();
-//    ble_stack_init();
-//    gap_params_init();
-//    gatt_init();
-//    services_init();
-//    advertising_init();
-//    conn_params_init();
-//    advertising_start();
+//  ble_stack_init();
+//  gap_params_init();
+//  gatt_init();
+//  services_init();
+//  advertising_init();
+//  conn_params_init();
+//  advertising_start();
 
     power_clock_init();
     //usb_init(); // not needed utill usb data needed, should test before next rev 
@@ -746,6 +735,30 @@ int main(void)
 
     //draw_initial_screen();
 
+}
+
+void hibernate(void)
+{
+    //nrf_delay_ms(500);
+    nrf_gpio_pin_clear(RST_PIN); // turn off display
+    nrf_gpio_pin_clear(FET_PIN);
+    nrf_delay_ms(1000); // delay to avoid reboot after turn off
+    nrf_gpio_cfg_sense_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
+    NRF_POWER->SYSTEMOFF = 1;
+   
+}
+
+int main(void)
+{   
+    gpio_init();
+    if(!nrf_gpio_pin_read(BTN_ENTER) && !nrf_gpio_pin_read(BTN_UP))
+    {
+        flashblaster_init();
+    }
+    else
+    {
+        hibernate(); 
+    }
     //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
     // only store one file hierarchy in RAM, render and pop fucntions, set_current_project(), set_current_chip() , set_current_file()
     // file directory section in flash which is read at boot and can keep tracka of all current projects and their dependencies
