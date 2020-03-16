@@ -71,6 +71,10 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(FET_PIN); 
     nrf_gpio_cfg_output(iRST); 
 
+    nrf_gpio_cfg_output(LED_BLUE); 
+    nrf_gpio_cfg_output(LED_RED); 
+    nrf_gpio_cfg_output(LED_GREEN);
+
     nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP);

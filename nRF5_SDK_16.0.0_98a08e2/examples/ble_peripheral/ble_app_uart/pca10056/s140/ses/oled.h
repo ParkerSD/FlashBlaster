@@ -17,6 +17,10 @@
 #define iRST 11 //P1.01
 #define FET_PIN 33 //P1.01
 
+#define LED_BLUE 27 //P1.01
+#define LED_RED 26 //P1.01
+#define LED_GREEN 30 //P1.01
+
 // OLED type for init function
 enum 
 {

@@ -92,7 +92,7 @@
 
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
-#define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "FLASHBLASTER"                               /**< Name of device. Will be included in the advertising data. */
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
 
 #define APP_BLE_OBSERVER_PRIO           3                                           /**< Application's BLE observer priority. You shouldn't need to modify this value. */
@@ -380,16 +380,20 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
-            NRF_LOG_INFO("Connected");
-            err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
-            APP_ERROR_CHECK(err_code);
+//          NRF_LOG_INFO("Connected");
+//          err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
+//          APP_ERROR_CHECK(err_code);
+
+            nrf_gpio_pin_set(LED_BLUE);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
             err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
             APP_ERROR_CHECK(err_code);
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
-            NRF_LOG_INFO("Disconnected");
+ //         NRF_LOG_INFO("Disconnected");
+
+            nrf_gpio_pin_clear(LED_BLUE);
             // LED indication will be changed when advertising starts.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             break;
@@ -706,26 +710,29 @@ void flashblaster_init(void)
 {
     // bool erase_bonds;
     // Initialize.
-//  gpio_init(); 
+    
+    power_clock_init();
     log_init();
     timers_init();
+  //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
   //buttons_leds_init(&erase_bonds);
     power_management_init();
-//  ble_stack_init();
-//  gap_params_init();
-//  gatt_init();
-//  services_init();
-//  advertising_init();
-//  conn_params_init();
-//  advertising_start();
 
-    power_clock_init();
+    ble_stack_init();
+    gap_params_init();
+    gatt_init();
+    services_init();
+    advertising_init();
+    conn_params_init();
+    advertising_start();
+
+ 
     //usb_init(); // not needed utill usb data needed, should test before next rev 
     usb_pwr_init();
     button_init();
 
     //twi_init(); //  not needed anymore, disable in sdk_config
-    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
+    
     //TODO QSPI init here
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     
