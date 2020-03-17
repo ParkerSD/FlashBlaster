@@ -78,6 +78,8 @@
 #include "button.h"
 #include "ssd1351.h"
 #include "usb.h"
+#include "app_scheduler.h"
+#include "nrf_power.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -99,7 +101,7 @@
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
 
-#define APP_ADV_DURATION                18000                                       /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
+#define APP_ADV_DURATION                0 //no timeout                            /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
 #define MIN_CONN_INTERVAL               MSEC_TO_UNITS(20, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
 #define MAX_CONN_INTERVAL               MSEC_TO_UNITS(75, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
@@ -114,6 +116,12 @@
 #define UART_TX_BUF_SIZE                256                                         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                256                                         /**< UART RX buffer size. */
 
+#define SCHED_MAX_EVENT_DATA_SIZE       APP_TIMER_SCHED_EVENT_DATA_SIZE     // Maximum size of scheduler events.  
+#ifdef SVCALL_AS_NORMAL_FUNCTION 
+#define SCHED_QUEUE_SIZE                20                                  // Maximum number of events in the scheduler queue. More is needed in case of Serialization.  
+#else 
+#define SCHED_QUEUE_SIZE                10                                  // Maximum number of events in the scheduler queue.  
+#endif 
 
 BLE_NUS_DEF(m_nus, NRF_SDH_BLE_TOTAL_LINK_COUNT);                                   /**< BLE NUS service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
@@ -637,7 +645,7 @@ static void advertising_init(void)
 
     init.advdata.name_type          = BLE_ADVDATA_FULL_NAME;
     init.advdata.include_appearance = false;
-    init.advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
+    init.advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
 
     init.srdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
     init.srdata.uuids_complete.p_uuids  = m_adv_uuids;
@@ -705,6 +713,18 @@ static void idle_state_handle(void)
     }
 }
 
+//------------------------------------------------------------------------------ 
+//  Function Name:  static void scheduler_init(void) 
+//  Description:    Function for the Event Scheduler initialization. 
+//  Input:          None 
+//  Output:         None 
+//  Return:         None 
+//------------------------------------------------------------------------------ 
+ 
+static void scheduler_init(void) 
+{ 
+    APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE); 
+} 
 
 void flashblaster_init(void)
 {
@@ -719,6 +739,7 @@ void flashblaster_init(void)
     power_management_init();
 
     ble_stack_init();
+    scheduler_init(); 
     gap_params_init();
     gatt_init();
     services_init();
@@ -758,6 +779,7 @@ void hibernate(void)
 int main(void)
 {   
     gpio_init();
+    nrf_power_dcdcen_set(true);
     if(!nrf_gpio_pin_read(BTN_ENTER) && !nrf_gpio_pin_read(BTN_UP))
     {
         flashblaster_init();
