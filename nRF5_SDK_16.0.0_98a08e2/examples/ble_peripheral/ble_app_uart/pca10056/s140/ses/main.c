@@ -226,15 +226,35 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
         uint32_t err_code;
-
-        NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
-        NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
+      
+//        NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
+//        NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
 
         for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
         {
             do
             {
-                err_code = app_uart_put(p_evt->params.rx_data.p_data[i]);
+                //handle ble data here -- p_evt->rx_data;
+                if(*p_evt->params.rx_data.p_data == '1')
+                {
+                    nrf_gpio_pin_clear(LED_BLUE);
+                    nrf_gpio_pin_clear(LED_RED);
+                    nrf_gpio_pin_set(LED_GREEN);
+                }
+                if(*p_evt->params.rx_data.p_data == '2')
+                {   
+                    nrf_gpio_pin_set(LED_BLUE);
+                    nrf_gpio_pin_clear(LED_GREEN);
+                    nrf_gpio_pin_set(LED_RED);
+                }
+                if(*p_evt->params.rx_data.p_data == '3')
+                {
+                    nrf_gpio_pin_clear(LED_GREEN);
+                    nrf_gpio_pin_clear(LED_RED);
+                    nrf_gpio_pin_set(LED_BLUE);
+                }
+ 
+                //err_code = app_uart_put(p_evt->params.rx_data.p_data[i]);
                 if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
                 {
                     NRF_LOG_ERROR("Failed receiving NUS message. Error 0x%x. ", err_code);
@@ -242,6 +262,9 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
                 }
             } while (err_code == NRF_ERROR_BUSY);
         }
+
+        //nrf_gpio_pin_clear(LED_GREEN); 
+
         if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
         {
             while (app_uart_put('\n') == NRF_ERROR_BUSY);
@@ -734,8 +757,8 @@ void flashblaster_init(void)
     power_clock_init();
     log_init();
     timers_init();
-  //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
-  //buttons_leds_init(&erase_bonds);
+    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
+    //buttons_leds_init(&erase_bonds);
     power_management_init();
 
     ble_stack_init();
@@ -747,7 +770,6 @@ void flashblaster_init(void)
     conn_params_init();
     advertising_start();
 
- 
     //usb_init(); // not needed utill usb data needed, should test before next rev 
     usb_pwr_init();
     button_init();
@@ -773,7 +795,6 @@ void hibernate(void)
     nrf_delay_ms(1000); // delay to avoid reboot after turn off
     nrf_gpio_cfg_sense_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
     NRF_POWER->SYSTEMOFF = 1;
-   
 }
 
 int main(void)
@@ -788,6 +809,7 @@ int main(void)
     {
         hibernate(); 
     }
+
     //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
     // only store one file hierarchy in RAM, render and pop fucntions, set_current_project(), set_current_chip() , set_current_file()
     // file directory section in flash which is read at boot and can keep tracka of all current projects and their dependencies
@@ -798,6 +820,7 @@ int main(void)
     // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
 
     // Enter main loop.
+
     for (;;)
     {
         idle_state_handle();
