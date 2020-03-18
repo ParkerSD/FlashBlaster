@@ -249,7 +249,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
                 }
                 if(*p_evt->params.rx_data.p_data == '3')
                 {
-                    nrf_gpio_pin_clear(LED_GREEN);
+                    nrf_gpio_pin_set(LED_GREEN);
                     nrf_gpio_pin_clear(LED_RED);
                     nrf_gpio_pin_set(LED_BLUE);
                 }
@@ -757,7 +757,7 @@ void flashblaster_init(void)
     power_clock_init();
     log_init();
     timers_init();
-    //uart_init(); // error here, check sdk_config for error, where is nrf_drv_uart_init?
+    //uart_init(); // error here, possible resource conflict.
     //buttons_leds_init(&erase_bonds);
     power_management_init();
 
@@ -774,11 +774,10 @@ void flashblaster_init(void)
     usb_pwr_init();
     button_init();
 
-    //twi_init(); //  not needed anymore, disable in sdk_config
-    
-    //TODO QSPI init here
+    //TODO qspi_init(); init here
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     
+    //ext_flash_init();
     oled_init(); 
     system_init();
     list_init();
@@ -787,9 +786,11 @@ void flashblaster_init(void)
 
 }
 
+
 void hibernate(void)
 {
     //nrf_delay_ms(500);
+    clear_leds();
     nrf_gpio_pin_clear(RST_PIN); // turn off display
     nrf_gpio_pin_clear(FET_PIN);
     nrf_delay_ms(1000); // delay to avoid reboot after turn off

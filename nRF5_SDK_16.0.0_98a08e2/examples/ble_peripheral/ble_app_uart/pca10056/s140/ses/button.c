@@ -117,7 +117,17 @@ void button_init(void)
 
 void long_press_timeout_handler(void* p_context)
 {
-    if(enterFlag && upFlag) //if dual press
+    if(upFlag && !enterFlag)// up long press
+    {   
+        clear_leds();
+        nrf_gpio_pin_set(LED_BLUE);
+    }
+    else if(enterFlag && !upFlag)// enter long press
+    {
+        clear_leds();
+        nrf_gpio_pin_set(LED_GREEN);
+    }
+    else if(enterFlag && upFlag) //if dual press
     {
         hibernate();
     }

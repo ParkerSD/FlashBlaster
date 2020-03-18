@@ -211,7 +211,7 @@ ret_code_t nrf_sdh_enable_request(void)
 #ifdef ANT_LICENSE_KEY
     ret_code = sd_softdevice_enable(&clock_lf_cfg, app_error_fault_handler, ANT_LICENSE_KEY);
 #else
-    ret_code = sd_softdevice_enable(NULL, app_error_fault_handler);
+    ret_code = sd_softdevice_enable(NULL, app_error_fault_handler); // If NULL the clock will be configured as an RC source with rc_ctiv = 16 and .rc_temp_ctiv = 2
 #endif
     m_nrf_sdh_enabled = (ret_code == NRF_SUCCESS);
     CRITICAL_REGION_EXIT();

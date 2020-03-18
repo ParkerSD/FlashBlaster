@@ -61,7 +61,12 @@ char fileHeader[] = {"Select File:"}; // or Chip Name
 char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "that.bin", "banshee.bin", "pastry.elf", "killme.hex", "reget.bin", "mistakes.hex"}; 
 
 
-
+void clear_leds(void)
+{
+    nrf_gpio_pin_clear(LED_BLUE);
+    nrf_gpio_pin_clear(LED_RED);
+    nrf_gpio_pin_clear(LED_GREEN);
+}
 
 void gpio_init(void) // init gpio for oled drivers 
 {
@@ -74,6 +79,7 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(LED_BLUE); 
     nrf_gpio_cfg_output(LED_RED); 
     nrf_gpio_cfg_output(LED_GREEN);
+    clear_leds();
 
     nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);

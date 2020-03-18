@@ -116,7 +116,7 @@ void oled_shoot_holes(uint8_t radius);
 
 void oled_draw_logo(void);
 
-
+void clear_leds(void);
 
 // OLD //
 
