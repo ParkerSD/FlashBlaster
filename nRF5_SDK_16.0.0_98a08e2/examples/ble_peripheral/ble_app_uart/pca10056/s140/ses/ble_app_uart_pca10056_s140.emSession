@@ -69,23 +69,29 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="719" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="1" top="697" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="38" y="203" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/common/nrf_sdh.c" selected="0" top="185" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="button.c" selected="0" top="88" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="208" useTextEdit="1" useBinaryEdit="0" left="11" path="../../../../../../components/softdevice/common/nrf_sdh.c" selected="0" top="23" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="32" useTextEdit="1" useBinaryEdit="0" left="0" path="button.c" selected="0" top="23" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="button.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="34" useTextEdit="1" useBinaryEdit="0" left="0" path="usb.c" selected="0" top="24" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="42" y="8580" useTextEdit="1" useBinaryEdit="0" left="0" path="sdk_config.h" selected="0" top="8565" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="7" y="7076" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="7060" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="103" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error_weak.c" selected="0" top="68" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="4" y="30" useTextEdit="1" useBinaryEdit="0" left="0" path="usb.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="8587" useTextEdit="1" useBinaryEdit="0" left="0" path="sdk_config.h" selected="0" top="8565" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="74" y="9002" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="9009" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="108" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error_weak.c" selected="0" top="94" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="72" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error.c" selected="0" top="56" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="695" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s140/headers/nrf_soc.h" selected="0" top="674" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="360" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" selected="0" top="344" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="293" useTextEdit="1" useBinaryEdit="0" left="0" path="C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.30a/source/thumb_crt0.s" selected="0" top="277" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="86" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="74" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="13" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="5" y="439" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="428" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="22" y="94" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.h" selected="0" top="62" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="291" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../integration/nrfx/legacy/nrf_drv_clock.c" selected="0" top="290" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="770" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/mdk/nrf52840_bitfields.h" selected="0" top="754" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="306" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/common/nrf_sdh_ble.c" selected="0" top="269" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="25" y="314" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s140/headers/nrf_sdm.h" selected="0" top="304" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="339" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s140/headers/ble_gap.h" selected="0" top="292" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="132" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/ble/ble_services/ble_nus/ble_nus.h" selected="0" top="123" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="3" y="67" useTextEdit="1" useBinaryEdit="0" left="0" path="system.c" selected="0" top="51" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="41" y="26" useTextEdit="1" useBinaryEdit="0" left="0" path="system.h" selected="0" top="15" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="usb.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="782" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="1" top="764" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_uart_pca10056_s140" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/davispa/Desktop/FlashBlaster Git/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/examples/ble_peripheral/ble_app_uart/pca10056/s140/config" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

@@ -135,6 +135,8 @@
       <file file_name="fonts.h" />
       <file file_name="usb.c" />
       <file file_name="usb.h" />
+      <file file_name="system.c" />
+      <file file_name="system.h" />
     </folder>
     <folder Name="nRF_Segger_RTT">
       <file file_name="../../../../../../external/segger_rtt/SEGGER_RTT.c" />

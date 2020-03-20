@@ -80,6 +80,7 @@
 #include "usb.h"
 #include "app_scheduler.h"
 #include "nrf_power.h"
+#include "system.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -782,7 +783,7 @@ void flashblaster_init(void)
     system_init();
     list_init();
 
-    //draw_initial_screen();
+    draw_initial_screen();
 
 }
 

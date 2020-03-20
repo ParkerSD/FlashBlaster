@@ -30,6 +30,7 @@
 #include "ssd1351.h" 
 #include "app_timer.h" 
 #include "app_error.h" 
+#include "system.h" 
 
 APP_TIMER_DEF(long_press_timer_id);
 
@@ -37,6 +38,9 @@ volatile bool enterFlag = false;
 volatile bool upFlag = false;
 volatile bool longTimerStarted = false;
 
+int8_t itemHighlighted = 0;
+int8_t selectedItem = 0; 
+uint8_t screenStack = 0; 
 
 void button_up_callback(uint8_t pin_no, uint8_t button_action)
 {  
@@ -44,8 +48,14 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
     { 
         upFlag = true;
         timer_start();
+    
+        itemHighlighted--;
+        if(itemHighlighted < 0)
+        {
+            itemHighlighted = 0;
+        }
+        rerender_list(itemHighlighted, screenStack);
     }
-
     if(button_action == APP_BUTTON_RELEASE)
     {
         upFlag = false;
@@ -53,18 +63,20 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
     }
 }
 
-void button_down_callback(uint8_t pin_no, uint8_t button_action)
+
+void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long press timer 
 {
     if(button_action == APP_BUTTON_PUSH)
     {     
-//        itemHighlighted++;
-//        if(itemHighlighted > 5)
-//        {
-//            itemHighlighted = 5;
-//        }
-//        rerender_list(itemHighlighted);
+        itemHighlighted++;
+        if(itemHighlighted > 5)
+        {
+            itemHighlighted = 5;
+        }
+        rerender_list(itemHighlighted, screenStack);
     }
 }
+
 
 void enter_callback(uint8_t pin_no, uint8_t button_action)
 {   
@@ -73,18 +85,18 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
         enterFlag = true;
         timer_start();
 
-//       screenStack++;
-//       selectedItem = itemHighlighted; 
-//       itemHighlighted = 0;
-//
-//       if(screenStack > 2)
-//       {   
-//         //execute SWD programming on itemSelected
-//         screenStack = 0; //reset to home screen?
-//       }
-//
-//       clear_display(0);
-//       rerender_screen(itemHighlighted, selectedItem, screenStack);
+        screenStack++;
+        selectedItem = itemHighlighted; 
+        itemHighlighted = 0;
+        
+        if(screenStack > 2)
+        {   
+           //execute SWD programming on itemSelected
+          screenStack = 0; //reset to home screen?
+        }
+
+        clear_screen();
+        rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
     if(button_action == APP_BUTTON_RELEASE)
     {

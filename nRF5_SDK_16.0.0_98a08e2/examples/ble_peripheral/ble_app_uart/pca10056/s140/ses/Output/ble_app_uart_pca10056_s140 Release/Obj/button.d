@@ -120,4 +120,5 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/button.o: \
  ../../../../../../modules/nrfx/hal/nrf_spim.h \
  ../../../../../../modules/nrfx/drivers/include/nrfx_spi.h \
  ../../../../../../modules/nrfx/hal/nrf_spi.h \
- ../../../../../../components/libraries/delay/nrf_delay.h
+ ../../../../../../components/libraries/delay/nrf_delay.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\system.h
