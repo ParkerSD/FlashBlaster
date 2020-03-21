@@ -799,6 +799,7 @@ void hibernate(void)
     NRF_POWER->SYSTEMOFF = 1;
 }
 
+
 int main(void)
 {   
     gpio_init();

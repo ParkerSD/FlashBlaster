@@ -33,15 +33,15 @@
 
 #define curr_font small_font
 
+recents_struct* recents_singleton;
 list_struct* list_singleton;
-
 system_struct* system_singleton; //TODO init global system stuct based on file system
 
 
- uint8_t projectIterator = 0; 
- uint8_t chipIterator = 0; 
- uint8_t fileIterator = 0;
- uint8_t selectedProject; 
+uint8_t projectIterator = 0; 
+uint8_t chipIterator = 0; 
+uint8_t fileIterator = 0;
+uint8_t selectedProject; 
  
 
 // Hardcoded Values
@@ -57,6 +57,26 @@ char fileHeader[] = {"Select File:"}; // or Chip Name
 char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "that.bin", "banshee.bin", "pastry.elf", "killme.hex", "reget.bin", "mistakes.hex"}; 
 
 
+recents_struct* recents_init(void)
+{
+    recents_struct* recentsx = malloc(sizeof(recentsx));
+    recentsx->file0 = NULL;
+    recentsx->file1 = NULL;
+    recentsx->file2 = NULL;
+    recentsx->file3 = NULL;
+    return recentsx;
+}
+
+
+void push_file_to_recents(void)
+{
+    recents_singleton->file0 = list_singleton->recent; // member recent never assigned value
+    recents_singleton->file1 = recents_singleton->file0;
+    recents_singleton->file2 = recents_singleton->file1;
+    recents_singleton->file3 = recents_singleton->file2;
+}
+
+
 void clear_screen(void)
 {
     SSD1351_fill(COLOR_BLACK);
@@ -65,6 +85,7 @@ void clear_screen(void)
     list_singleton->headerPresent = false;
 }
 
+
 void draw_selection_box(void) // top left corner of full width box = point (0, y) 
 {
     //SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
@@ -72,6 +93,7 @@ void draw_selection_box(void) // top left corner of full width box = point (0, y
     SSD1351_update();
     list_singleton->boxPresent = true; 
 }
+
 
 void draw_header(void)
 {
@@ -91,6 +113,8 @@ void draw_initial_screen(void)
     list_singleton->item2 = system_singleton->project3->projectName;
     list_singleton->item3 = system_singleton->project4->projectName;
     list_singleton->item4 = system_singleton->project5->projectName;
+
+    recents_singleton = recents_init();
     
     clear_screen();
     draw_selection_box();
@@ -110,6 +134,7 @@ list_struct* list_new(void)
     
     listx->currentList = NULL;
     listx->header = NULL;
+    listx->recent = NULL;
     listx->item0 = NULL; // based on button presses the order will change and items will be rerendered
     listx->item1 = NULL; 
     listx->item2 = NULL; 
@@ -261,14 +286,12 @@ project_struct* project_new(void) //TODO: render only existing chips
     return projectx; 
 }
 
-void clear_list(int8_t itemHighlighted) //TODO: This argument for future optimizing, write over exact text with black
+void clear_list(void) //TODO: This argument for future optimizing, write over exact text with black
 {
-
       //SSD1351_draw_filled_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
       SSD1351_draw_filled_rect(10, 53, 110, 20, COLOR_BLACK);
       SSD1351_draw_filled_rect(10, 80, 110, 20, COLOR_BLACK);
       SSD1351_draw_filled_rect(10, 105, 110, 20, COLOR_BLACK);
-
 }
 
 
@@ -277,7 +300,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
 
     if(itemHighlighted == 0)
     {
-        clear_list(itemHighlighted);
+        clear_list();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item0);
         SSD1351_set_cursor(10,83);
@@ -288,7 +311,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     }
     else if(itemHighlighted == 1)
     {   
-        clear_list(itemHighlighted);
+        clear_list();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item1);
         SSD1351_set_cursor(10,83);
@@ -299,7 +322,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     }
     else if(itemHighlighted == 2)
     {
-        clear_list(itemHighlighted);
+        clear_list();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item2);
         SSD1351_set_cursor(10,83);
@@ -310,7 +333,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     }
     else if(itemHighlighted == 3)
     {
-        clear_list(itemHighlighted);
+        clear_list();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item3);
         SSD1351_set_cursor(10,83);
@@ -319,7 +342,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     }
     else if(itemHighlighted == 4)
     {
-        clear_list(itemHighlighted);
+        clear_list();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item4);
         SSD1351_update();

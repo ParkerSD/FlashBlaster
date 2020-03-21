@@ -93,6 +93,8 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
         {   
            //execute SWD programming on itemSelected
           screenStack = 0; //reset to home screen?
+      
+          push_file_to_recents(); //add file to recents, push last off stack
         }
 
         clear_screen();
