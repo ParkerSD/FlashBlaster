@@ -59,7 +59,7 @@ char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "
 
 recents_struct* recents_init(void)
 {
-    recents_struct* recentsx = malloc(sizeof(recentsx));
+    recents_struct* recentsx = malloc(sizeof(recents_struct));
     recentsx->file0 = NULL;
     recentsx->file1 = NULL;
     recentsx->file2 = NULL;
@@ -68,7 +68,7 @@ recents_struct* recents_init(void)
 }
 
 
-void push_file_to_recents(void)
+void push_file_to_recents(void) //shift recent files, pushing oldest off stack
 {
     recents_singleton->file0 = list_singleton->recent; // member recent never assigned value
     recents_singleton->file1 = recents_singleton->file0;
@@ -106,13 +106,13 @@ void draw_header(void)
 
 void draw_initial_screen(void)
 {   
-    list_singleton->currentList = project;
-    list_singleton->header = projectHeader; 
-    list_singleton->item0 = system_singleton->project1->projectName; 
-    list_singleton->item1 = system_singleton->project2->projectName;
-    list_singleton->item2 = system_singleton->project3->projectName;
-    list_singleton->item3 = system_singleton->project4->projectName;
-    list_singleton->item4 = system_singleton->project5->projectName;
+   list_singleton->currentList = project;
+   list_singleton->header = projectHeader; 
+   list_singleton->item0 = system_singleton->project_first->project_name;
+//   list_singleton->item1 = system_singleton->project_first->project_next->project_name;
+//   list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
+//   list_singleton->item3 = system_singleton->project_first->project_next->project_next->project_next->project_name;
+//   list_singleton->item4 = system_singleton->project_first->project_next->project_next->project_next->project_next->project_name;
 
     recents_singleton = recents_init();
     
@@ -130,7 +130,7 @@ void draw_initial_screen(void)
 
 list_struct* list_new(void)
 {
-    list_struct* listx = malloc(sizeof(listx)); 
+    list_struct* listx = malloc(sizeof(list_struct)); 
     
     listx->currentList = NULL;
     listx->header = NULL;
@@ -159,132 +159,123 @@ void list_init(void)
 
 system_struct* system_new(void) //TODO file system, shoulf be constructed in Flash, only NAMES fetched from flash here for later display (CURRENTLY INITING WHOLE FILESSYTEM IN RAM)
 {                                                            
-    system_struct* systemx = malloc(sizeof(systemx)); 
-    systemx->systemName = firmware_version_fetch(); 
+    system_struct* systemx = malloc(sizeof(system_struct)); 
+    systemx->system_name = firmware_version_fetch(); 
+    systemx->project_num = 0;
+    systemx->project_first = NULL; //project_init();
 
-    if (projectNames[0] != NULL) // replace with Flash value fetch function to determine presence
-    {
-        systemx->project1 = project_new();
-    }
-    else
-    {
-        systemx->project1 = NULL;
-    }
-        systemx->project2 = project_new();
-        systemx->project3 = project_new();
-        systemx->project4 = project_new();
-        systemx->project5 = project_new();
     return systemx;
 }
+
 
 void system_init(void)
 {
     system_singleton = system_new();  // formerly global
+    system_singleton->project_first = project_init();
+    system_singleton->project_first->chip_first = chip_init();
+    system_singleton->project_first->chip_first->file_first = file_init();
+    //system_singleton->project_first->chip_first->file_first->file_name = fileNames[0];
 }
+
 
 char* firmware_version_fetch(void)
 {
     //fetch FW version from flash 
-
     return systemFirmware;
 }
+
 
 char* project_name_fetch(void)
 {
     //fetch project name from flash 
-
     return projectNames[projectIterator];
-
 }
+
 
 char* chip_name_fetch(void)
 {
     //fetch chip name from flash 
-
     return chipNames[chipIterator];
-
 }
+
 
 char* file_name_fetch(void)
 {
     //fetch file name from flash 
-
-    return fileNames[fileIterator];
-
+    return fileNames[fileIterator]; 
 }
 
+//TODO: create file_new, project_new, chip_new functions for adding nodes, add menu item to allow creation, at bottom of menu? 
 
-
-file_struct* file_new(void)
+/*
+    chip_struct* chip_parent; 
+    uint8_t file_index; 
+    file_struct* file_next; 
+    char* file_name; 
+    uint8_t* file_data; // pointer to program data
+*/
+file_struct* file_init(void)
 {
-    file_struct* filex = malloc(sizeof(filex)); 
-
-    filex->fileName = file_name_fetch(); 
-    filex->filePtr = NULL;
+    file_struct* filex = malloc(sizeof(file_struct)); 
+    
+    filex->file_name = "Empty"; //file_name_fetch(); 
+    filex->file_index = 0;
+    filex->file_next = NULL;
+    filex->file_data = NULL;
+    filex->chip_parent = NULL;
 
     fileIterator++; 
     return filex;
 }
 
 
-
-chip_struct* chip_new(void) //TODO: render only existing files 
+/*
+    project_struct* project_parent;
+    char* chip_name; 
+    uint8_t chip_index; 
+    chip_struct* chip_next; 
+    uint8_t file_num; //total num of files associated with the chip 
+    file_struct* file_first; // pointer to head
+*/
+chip_struct* chip_init(void) //TODO: render only existing files 
 {
-    chip_struct* chipx = malloc(sizeof(chipx));
-
-    chipx->chipName = chip_name_fetch(); 
-
-    if (fileNames[0] != NULL) // replace with Flash value fetch function to determine presence
-    {
-        chipx->file1 = file_new();
-    }
-    else
-    {
-        chipx->file1 = NULL;
-    }
-
-    if (fileNames[1] != NULL)
-    {
-        chipx->file2 = file_new();
-    }
-    else
-    {
-        chipx->file2 = NULL;
-    }
+    chip_struct* chipx = malloc(sizeof(chip_struct));
     
+    chipx->chip_name = "Empty"; //chip_name_fetch(); 
+    chipx->chip_index = 0;
+    chipx->chip_next = NULL; 
+    chipx->file_num = 0;
+    // do for files_num in chip, fetch from flash
+    chipx->file_first = NULL; //file_init();
+    chipx->project_parent = NULL;
     chipIterator++;
     return chipx;
 }
 
 
+    /*
+    char* project_name; 
+    uint8_t project_index; 
+    project_struct* project_next;
+    uint8_t chip_num; // total number of chips
+    chip_struct* chip_first;
+    */
 
-project_struct* project_new(void) //TODO: render only existing chips
+project_struct* project_init(void) //TODO: render only existing chips
 {
-    project_struct* projectx = malloc(sizeof(projectx));
-
-    projectx->projectName = project_name_fetch();
-
-    if (chipNames[0] != NULL) // replace with Flash value fetch function to determine presence
-    {
-        projectx->chip1 = chip_new();
-    }
-    else
-    {
-        projectx->chip1 = NULL;
-    }
-
-    if (chipNames[1] != NULL)
-    {
-        projectx->chip2 = chip_new();
-    }
-    else
-    {
-        projectx->chip2 = NULL;
-    }
+    project_struct* projectx = malloc(sizeof(project_struct));
+    
+    projectx->project_name = "Empty"; //project_name_fetch();
+    projectx->project_index = 0;
+    projectx->project_next = NULL;
+    projectx->chip_num = 0;
+    // do for chip_num in project, fetch from flash
+    projectx->chip_first = NULL; // chip_init();
     
     projectIterator++;
     return projectx; 
 }
+
 
 void clear_list(void) //TODO: This argument for future optimizing, write over exact text with black
 {
@@ -354,149 +345,149 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, uint8_t screen
 {   
     switch(screenStack)
     {
-        case 0: 
+        case 0: //project screen
             list_singleton->currentList = project;
             list_singleton->header = projectHeader; //set initial values for display 
-            list_singleton->item0 = system_singleton->project1->projectName; 
-            list_singleton->item1 = system_singleton->project2->projectName;
-            list_singleton->item2 = system_singleton->project3->projectName;
-            list_singleton->item3 = system_singleton->project4->projectName;
-            list_singleton->item4 = system_singleton->project5->projectName;
+            list_singleton->item0 = system_singleton->project_first->project_name; 
+//            list_singleton->item1 = system_singleton->project_first->project_next->project_name;
+//            list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
+//            list_singleton->item3 = system_singleton->project_first->project_next->project_next->project_next->project_name;
+//            list_singleton->item4 = system_singleton->project_first->project_next->project_next->project_next->project_next->project_name;
             break;
 
-        case 1: 
+        case 1: //chip screen
             list_singleton->currentList = chip;
             list_singleton->header = chipHeader;
             if(selectedItem == 0)
             {
                 selectedProject = 0; 
-                list_singleton->item0 = system_singleton->project1->chip1->chipName;
-                list_singleton->item1 = system_singleton->project1->chip2->chipName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
+                list_singleton->item0 = system_singleton->project_first->chip_first->chip_name;
+//                list_singleton->item1 = system_singleton->project_first->chip_first->chip_next->chip_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
             }
-            else if(selectedItem == 1)
-            {
-                selectedProject = 1; 
-                list_singleton->item0 = system_singleton->project2->chip1->chipName;
-                list_singleton->item1 = system_singleton->project2->chip2->chipName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 2)
-            {
-                selectedProject = 2; 
-                list_singleton->item0 = system_singleton->project3->chip1->chipName;
-                list_singleton->item1 = system_singleton->project3->chip2->chipName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 3)
-            {
-                selectedProject = 3; 
-                list_singleton->item0 = system_singleton->project4->chip1->chipName;
-                list_singleton->item1 = system_singleton->project4->chip2->chipName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 4)
-            {
-                selectedProject = 4; 
-                list_singleton->item0 = system_singleton->project5->chip1->chipName;
-                list_singleton->item1 = system_singleton->project5->chip2->chipName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
+//            else if(selectedItem == 1)
+//            {
+//                selectedProject = 1; 
+//                list_singleton->item0 = system_singleton->project_first->project_next->chip_first->chip_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->chip_first->chip_next->chip_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 2)
+//            {
+//                selectedProject = 2; 
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->chip_first->chip_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->chip_first->chip_next->chip_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 3)
+//            {
+//                selectedProject = 3; 
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_next->chip_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 4)
+//            {
+//                selectedProject = 4; 
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->chip_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
             break;
 
-        case 2: 
+        case 2: //file screen
             list_singleton->currentList = file;
             list_singleton->header = fileHeader;
             if(selectedItem == 0 && selectedProject == 0) // project 1 chip 1 selected
             {
-                list_singleton->item0 = system_singleton->project1->chip1->file1->fileName;
-                list_singleton->item1 = system_singleton->project1->chip1->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
+                list_singleton->item0 = system_singleton->project_first->chip_first->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->chip_first->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
             }
-            else if(selectedItem == 1 && selectedProject == 0) // project 1 chip 2 selected
-            {
-                list_singleton->item0 = system_singleton->project1->chip2->file1->fileName;
-                list_singleton->item1 = system_singleton->project1->chip2->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 0 && selectedProject == 1) // project 2 chip 1 selected
-            {
-                list_singleton->item0 = system_singleton->project2->chip1->file1->fileName;
-                list_singleton->item1 = system_singleton->project2->chip1->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 1 && selectedProject == 1) // project 2 chip 2 selected
-            {
-                list_singleton->item0 = system_singleton->project2->chip2->file1->fileName;
-                list_singleton->item1 = system_singleton->project2->chip2->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 0 && selectedProject == 2) // project 3 chip 1 selected
-            {
-                list_singleton->item0 = system_singleton->project3->chip1->file1->fileName;
-                list_singleton->item1 = system_singleton->project3->chip1->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 1 && selectedProject == 2) // project 3 chip 2 selected
-            {
-                list_singleton->item0 = system_singleton->project3->chip2->file1->fileName; //runs out of filenames here
-                list_singleton->item1 = system_singleton->project3->chip2->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 0 && selectedProject == 3) // project 4 chip 1 selected
-            {
-                list_singleton->item0 = system_singleton->project4->chip1->file1->fileName;
-                list_singleton->item1 = system_singleton->project4->chip1->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 1 && selectedProject == 3) // project 4 chip 2 selected
-            {
-                list_singleton->item0 = system_singleton->project4->chip2->file1->fileName;
-                list_singleton->item1 = system_singleton->project4->chip2->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 0 && selectedProject == 4) // project 5 chip 1 selected
-            {
-                list_singleton->item0 = system_singleton->project5->chip1->file1->fileName;
-                list_singleton->item1 = system_singleton->project5->chip1->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
-            else if(selectedItem == 1 && selectedProject == 4) // project 5 chip 2 selected
-            {
-                list_singleton->item0 = system_singleton->project5->chip2->file1->fileName;
-                list_singleton->item1 = system_singleton->project5->chip2->file2->fileName;
-                list_singleton->item2 = NULL;
-                list_singleton->item3 = NULL;
-                list_singleton->item4 = NULL;
-            }
+//            else if(selectedItem == 1 && selectedProject == 0) // project 1 chip 2 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->chip_first->chip_next->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->chip_first->chip_next->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 0 && selectedProject == 1) // project 2 chip 1 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->chip_first->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->chip_first->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 1 && selectedProject == 1) // project 2 chip 2 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->chip_first->chip_next->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 0 && selectedProject == 2) // project 3 chip 1 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->chip_first->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->chip_first->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 1 && selectedProject == 2) // project 3 chip 2 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->chip_first->chip_next->file_first->file_name; //runs out of filenames here
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 0 && selectedProject == 3) // project 4 chip 1 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->chip_first->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 1 && selectedProject == 3) // project 4 chip 2 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 0 && selectedProject == 4) // project 5 chip 1 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
+//            else if(selectedItem == 1 && selectedProject == 4) // project 5 chip 2 selected
+//            {
+//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
+//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                list_singleton->item2 = NULL;
+//                list_singleton->item3 = NULL;
+//                list_singleton->item4 = NULL;
+//            }
             break; 
 
         default:
