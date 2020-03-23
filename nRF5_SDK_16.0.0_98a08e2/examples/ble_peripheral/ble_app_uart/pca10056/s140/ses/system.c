@@ -59,12 +59,12 @@ char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "
 
 recents_struct* recents_init(void)
 {
-    recents_struct* recentsx = malloc(sizeof(recents_struct));
-    recentsx->file0 = NULL;
-    recentsx->file1 = NULL;
-    recentsx->file2 = NULL;
-    recentsx->file3 = NULL;
-    return recentsx;
+    recents_struct* recentsX = malloc(sizeof(recents_struct));
+    recentsX->file0 = NULL;
+    recentsX->file1 = NULL;
+    recentsX->file2 = NULL;
+    recentsX->file3 = NULL;
+    return recentsX;
 }
 
 
@@ -130,24 +130,21 @@ void draw_initial_screen(void)
 
 list_struct* list_new(void)
 {
-    list_struct* listx = malloc(sizeof(list_struct)); 
+    list_struct* listX = malloc(sizeof(list_struct)); 
     
-    listx->currentList = NULL;
-    listx->header = NULL;
-    listx->recent = NULL;
-    listx->item0 = NULL; // based on button presses the order will change and items will be rerendered
-    listx->item1 = NULL; 
-    listx->item2 = NULL; 
-    listx->item3 = NULL; 
-    listx->item4 = NULL; 
+    listX->currentList = NULL;
+    listX->header = NULL;
+    listX->recent = NULL;
+    listX->item0 = NULL; // based on button presses the order will change and items will be rerendered
+    listX->item1 = NULL; 
+    listX->item2 = NULL; 
+    listX->item3 = NULL; 
+    listX->item4 = NULL; 
 
-    listx->boxPresent = false; 
-    listx->headerPresent = false; 
+    listX->boxPresent = false; 
+    listX->headerPresent = false; 
 
-    return listx;
-
-    //x->item0 = flash_fetch(item0); //need to create entire list struct here from file system
-    //x->item1 = flash_fetch(item1);
+    return listX;
 }
 
 void list_init(void)
@@ -159,22 +156,22 @@ void list_init(void)
 
 system_struct* system_new(void) //TODO file system, shoulf be constructed in Flash, only NAMES fetched from flash here for later display (CURRENTLY INITING WHOLE FILESSYTEM IN RAM)
 {                                                            
-    system_struct* systemx = malloc(sizeof(system_struct)); 
-    systemx->system_name = firmware_version_fetch(); 
-    systemx->project_num = 0;
-    systemx->project_first = NULL; //project_init();
+    system_struct* systemX = malloc(sizeof(system_struct)); 
+    systemX->system_name = firmware_version_fetch(); 
+    systemX->project_num = NULL;
+    systemX->project_first = NULL; //project_create();
 
-    return systemx;
+    return systemX;
 }
 
 
 void system_init(void)
 {
-    system_singleton = system_new();  // formerly global
-    system_singleton->project_first = project_init();
-    system_singleton->project_first->chip_first = chip_init();
-    system_singleton->project_first->chip_first->file_first = file_init();
-    //system_singleton->project_first->chip_first->file_first->file_name = fileNames[0];
+    system_singleton = system_new();  
+    // NOTE create functions called below for test 
+    system_singleton->project_first = project_create();
+    system_singleton->project_first->chip_first = chip_create();
+    system_singleton->project_first->chip_first->file_first = file_create();
 }
 
 
@@ -205,7 +202,71 @@ char* file_name_fetch(void)
     return fileNames[fileIterator]; 
 }
 
+chip_struct* chip_parent_fetch(void)
+{
+    // TODO: fetch chip_parent member from newly create file
+    // read external flash here
+    return NULL;
+}
+
+project_struct* project_parent_fetch(void)
+{
+    // TODO: fetch project_parent member from newly created chip
+    // read external flash here
+    return NULL; 
+}
+
+
 //TODO: create file_new, project_new, chip_new functions for adding nodes, add menu item to allow creation, at bottom of menu? 
+
+file_struct* file_list_index(file_struct* file, int olderSiblingIndex) 
+{ 
+    file_struct* fileN;
+    fileN = file->chip_parent->file_first; 
+
+    for(int i = 0; i < olderSiblingIndex; i++) // should index older sibling of file passed in as argument
+    {
+        fileN = fileN->file_next; // minus 1 since file_first was already factored in? 
+    }
+    return fileN; 
+}
+
+
+file_struct* file_new(void)
+{   
+    file_struct* fileY = file_create(); //create file
+    
+    fileY->chip_parent = chip_parent_fetch(); // data needs to be sent in payload and fetched from flash
+    fileY->file_name = file_name_fetch();  // send in payload, fetch from flash
+    fileY->file_next = NULL;
+    fileY->file_data = NULL; // send in payload, pointer to data in flash 
+    
+    fileY->file_index = fileY->chip_parent->file_num; // update file index
+    fileY->chip_parent->file_num += 1; //increment file counter on chip_parent
+    
+
+    if(fileY->file_index != 0) //push node, add to file_next of last file
+    {   
+        int olderSiblingIndex = fileY->file_index - 1;  // older sibling is one made previously
+        file_struct* fileZ = file_list_index(fileY, olderSiblingIndex); 
+        fileZ->file_next = fileY; //assign newly created file as file_next of last file
+    }
+
+    return fileY; //should return newly created to globa
+}
+
+
+chip_struct* chip_new(void)
+{
+
+}
+
+
+project_struct* project_new(void)
+{
+
+}
+
 
 /*
     chip_struct* chip_parent; 
@@ -214,18 +275,17 @@ char* file_name_fetch(void)
     char* file_name; 
     uint8_t* file_data; // pointer to program data
 */
-file_struct* file_init(void)
+file_struct* file_create(void)
 {
-    file_struct* filex = malloc(sizeof(file_struct)); 
+    file_struct* fileX = malloc(sizeof(file_struct)); 
     
-    filex->file_name = "Empty"; //file_name_fetch(); 
-    filex->file_index = 0;
-    filex->file_next = NULL;
-    filex->file_data = NULL;
-    filex->chip_parent = NULL;
-
-    fileIterator++; 
-    return filex;
+    fileX->file_name = "Empty"; //file_name_fetch(); 
+    fileX->file_index = NULL;
+    fileX->file_next = NULL;
+    fileX->file_data = NULL;
+    fileX->chip_parent = NULL;
+ 
+    return fileX;
 }
 
 
@@ -237,19 +297,20 @@ file_struct* file_init(void)
     uint8_t file_num; //total num of files associated with the chip 
     file_struct* file_first; // pointer to head
 */
-chip_struct* chip_init(void) //TODO: render only existing files 
+chip_struct* chip_create(void) //TODO: render only existing files 
 {
-    chip_struct* chipx = malloc(sizeof(chip_struct));
+    chip_struct* chipX = malloc(sizeof(chip_struct));
     
-    chipx->chip_name = "Empty"; //chip_name_fetch(); 
-    chipx->chip_index = 0;
-    chipx->chip_next = NULL; 
-    chipx->file_num = 0;
+    chipX->chip_name = "Empty"; //chip_name_fetch(); 
+    chipX->chip_index = NULL;
+    chipX->chip_next = NULL; 
+    chipX->file_num = 0;
     // do for files_num in chip, fetch from flash
-    chipx->file_first = NULL; //file_init();
-    chipx->project_parent = NULL;
+    chipX->file_first = NULL; //file_init();
+    chipX->project_parent = NULL;
+
     chipIterator++;
-    return chipx;
+    return chipX;
 }
 
 
@@ -261,19 +322,19 @@ chip_struct* chip_init(void) //TODO: render only existing files
     chip_struct* chip_first;
     */
 
-project_struct* project_init(void) //TODO: render only existing chips
+project_struct* project_create(void) //TODO: render only existing chips
 {
-    project_struct* projectx = malloc(sizeof(project_struct));
+    project_struct* projectX = malloc(sizeof(project_struct));
     
-    projectx->project_name = "Empty"; //project_name_fetch();
-    projectx->project_index = 0;
-    projectx->project_next = NULL;
-    projectx->chip_num = 0;
+    projectX->project_name = "Empty"; //project_name_fetch();
+    projectX->project_index = NULL;
+    projectX->project_next = NULL;
+    projectX->chip_num = 0;
     // do for chip_num in project, fetch from flash
-    projectx->chip_first = NULL; // chip_init();
+    projectX->chip_first = NULL; // chip_create();
     
     projectIterator++;
-    return projectx; 
+    return projectX; 
 }
 
 

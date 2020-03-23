@@ -18,21 +18,21 @@ typedef struct recents recents_struct;
 
 typedef struct chip 
 {   
-    project_struct* project_parent;
     char* chip_name; 
+    chip_struct* chip_next; 
     uint16_t chip_index; 
     uint16_t file_num; //total num of files associated with the chip 
-    chip_struct* chip_next; 
     file_struct* file_first; // pointer to head
+    project_struct* project_parent;
 }chip_struct; 
 
 
 typedef struct project
 {
-    uint16_t  project_index; 
-    uint16_t  chip_num; // total number of chips
     char* project_name; 
     project_struct* project_next;
+    uint16_t  project_index;
+    uint16_t  chip_num; // total number of chips
     chip_struct* chip_first;
 }project_struct;
 
@@ -40,11 +40,10 @@ typedef struct project
 typedef struct file 
 {   
     char* file_name;
-    char* file_data; // was uint8_t, pointer to program data
     file_struct* file_next; 
-    chip_struct* chip_parent; 
+    uint8_t* file_data; // was uint8_t, pointer to program data
     int file_index;
-    
+    chip_struct* chip_parent; 
 }file_struct; 
 
 
@@ -55,7 +54,9 @@ typedef struct system
     project_struct* project_first;
 }system_struct; 
 
-                    
+
+
+
 typedef struct list //the data that is actually displayed on oled, MAX 10 items, increase in future
 {   
     list_type currentList; 
@@ -90,13 +91,18 @@ char* project_name_fetch(void);
 char* chip_name_fetch(void);
 char* file_name_fetch(void);
 
-file_struct* file_init(void);
-chip_struct* chip_init(void);
-project_struct* project_init(void);
+chip_struct* chip_parent_fetch(void);
+project_struct* project_parent_fetch(void);
+
+file_struct* file_create(void);
+chip_struct* chip_create(void);
+project_struct* project_create(void);
 list_struct* list_new(void);
-//file_struct* file_new(void);
-//chip_struct* chip_new(void);
-//project_struct* project_new(void);
+file_struct* file_new(void);
+chip_struct* chip_new(void);
+project_struct* project_new(void);
+
+file_struct* file_list_index(file_struct*, int);
 
 void draw_selection_box(void);
 void draw_header(void);
