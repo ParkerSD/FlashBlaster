@@ -64,7 +64,7 @@ typedef nrfx_qspi_config_t nrf_drv_qspi_config_t;
 #endif
 #if QSPI_PIN_CSN == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_CSN
-    #define QSPI_PIN_CSN  18
+    #define QSPI_PIN_CSN  17
 #endif
 #if QSPI_PIN_IO0 == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_IO0

@@ -5906,7 +5906,7 @@
 // <15=> 32MHz/16 
 
 #ifndef NRFX_QSPI_CONFIG_FREQUENCY
-#define NRFX_QSPI_CONFIG_FREQUENCY 15
+#define NRFX_QSPI_CONFIG_FREQUENCY 1
 #endif
 
 // <s> NRFX_QSPI_PIN_SCK - SCK pin value.
@@ -5916,7 +5916,7 @@
 
 // <s> NRFX_QSPI_PIN_CSN - CSN pin value.
 #ifndef NRFX_QSPI_PIN_CSN
-#define NRFX_QSPI_PIN_CSN 18
+#define NRFX_QSPI_PIN_CSN 17
 #endif
 
 // <s> NRFX_QSPI_PIN_IO0 - IO0 pin value.
@@ -8036,7 +8036,7 @@
 // <15=> 32MHz/16 
 
 #ifndef QSPI_CONFIG_FREQUENCY
-#define QSPI_CONFIG_FREQUENCY 15
+#define QSPI_CONFIG_FREQUENCY 1
 #endif
 
 // <s> QSPI_PIN_SCK - SCK pin value.
@@ -8046,7 +8046,7 @@
 
 // <s> QSPI_PIN_CSN - CSN pin value.
 #ifndef QSPI_PIN_CSN
-#define QSPI_PIN_CSN 18
+#define QSPI_PIN_CSN 17
 #endif
 
 // <s> QSPI_PIN_IO0 - IO0 pin value.
@@ -9062,7 +9062,7 @@
 // <e> APP_UART_ENABLED - app_uart - UART driver
 //==========================================================
 #ifndef APP_UART_ENABLED
-#define APP_UART_ENABLED 1
+#define APP_UART_ENABLED 0
 #endif
 // <o> APP_UART_DRIVER_INSTANCE  - UART instance used
  

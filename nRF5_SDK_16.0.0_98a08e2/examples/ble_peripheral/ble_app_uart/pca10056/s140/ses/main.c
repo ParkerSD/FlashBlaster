@@ -269,7 +269,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 
         if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
         {
-            while (app_uart_put('\n') == NRF_ERROR_BUSY);
+           // while (app_uart_put('\n') == NRF_ERROR_BUSY);
         }
     }
 
@@ -779,7 +779,6 @@ void flashblaster_init(void)
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     qspi_init();
     
-    //ext_flash_init();
     oled_init(); 
     system_init();
     list_init();
