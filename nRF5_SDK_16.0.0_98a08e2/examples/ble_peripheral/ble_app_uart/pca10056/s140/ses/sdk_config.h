@@ -5911,32 +5911,32 @@
 
 // <s> NRFX_QSPI_PIN_SCK - SCK pin value.
 #ifndef NRFX_QSPI_PIN_SCK
-#define NRFX_QSPI_PIN_SCK NRF_QSPI_PIN_NOT_CONNECTED
+#define NRFX_QSPI_PIN_SCK 19
 #endif
 
 // <s> NRFX_QSPI_PIN_CSN - CSN pin value.
 #ifndef NRFX_QSPI_PIN_CSN
-#define NRFX_QSPI_PIN_CSN NRF_QSPI_PIN_NOT_CONNECTED
+#define NRFX_QSPI_PIN_CSN 18
 #endif
 
 // <s> NRFX_QSPI_PIN_IO0 - IO0 pin value.
 #ifndef NRFX_QSPI_PIN_IO0
-#define NRFX_QSPI_PIN_IO0 NRF_QSPI_PIN_NOT_CONNECTED
+#define NRFX_QSPI_PIN_IO0 32
 #endif
 
 // <s> NRFX_QSPI_PIN_IO1 - IO1 pin value.
 #ifndef NRFX_QSPI_PIN_IO1
-#define NRFX_QSPI_PIN_IO1 NRF_QSPI_PIN_NOT_CONNECTED
+#define NRFX_QSPI_PIN_IO1 21
 #endif
 
 // <s> NRFX_QSPI_PIN_IO2 - IO2 pin value.
 #ifndef NRFX_QSPI_PIN_IO2
-#define NRFX_QSPI_PIN_IO2 NRF_QSPI_PIN_NOT_CONNECTED
+#define NRFX_QSPI_PIN_IO2 22
 #endif
 
 // <s> NRFX_QSPI_PIN_IO3 - IO3 pin value.
 #ifndef NRFX_QSPI_PIN_IO3
-#define NRFX_QSPI_PIN_IO3 NRF_QSPI_PIN_NOT_CONNECTED
+#define NRFX_QSPI_PIN_IO3 23
 #endif
 
 // <o> NRFX_QSPI_CONFIG_IRQ_PRIORITY  - Interrupt priority
@@ -8041,32 +8041,32 @@
 
 // <s> QSPI_PIN_SCK - SCK pin value.
 #ifndef QSPI_PIN_SCK
-#define QSPI_PIN_SCK NRF_QSPI_PIN_NOT_CONNECTED
+#define QSPI_PIN_SCK 19
 #endif
 
 // <s> QSPI_PIN_CSN - CSN pin value.
 #ifndef QSPI_PIN_CSN
-#define QSPI_PIN_CSN NRF_QSPI_PIN_NOT_CONNECTED
+#define QSPI_PIN_CSN 18
 #endif
 
 // <s> QSPI_PIN_IO0 - IO0 pin value.
 #ifndef QSPI_PIN_IO0
-#define QSPI_PIN_IO0 NRF_QSPI_PIN_NOT_CONNECTED
+#define QSPI_PIN_IO0 32
 #endif
 
 // <s> QSPI_PIN_IO1 - IO1 pin value.
 #ifndef QSPI_PIN_IO1
-#define QSPI_PIN_IO1 NRF_QSPI_PIN_NOT_CONNECTED
+#define QSPI_PIN_IO1 21
 #endif
 
 // <s> QSPI_PIN_IO2 - IO2 pin value.
 #ifndef QSPI_PIN_IO2
-#define QSPI_PIN_IO2 NRF_QSPI_PIN_NOT_CONNECTED
+#define QSPI_PIN_IO2 22
 #endif
 
 // <s> QSPI_PIN_IO3 - IO3 pin value.
 #ifndef QSPI_PIN_IO3
-#define QSPI_PIN_IO3 NRF_QSPI_PIN_NOT_CONNECTED
+#define QSPI_PIN_IO3 23
 #endif
 
 // <o> QSPI_CONFIG_IRQ_PRIORITY  - Interrupt priority

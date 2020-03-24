@@ -81,6 +81,7 @@
 #include "app_scheduler.h"
 #include "nrf_power.h"
 #include "system.h"
+#include "flash.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -775,8 +776,8 @@ void flashblaster_init(void)
     usb_pwr_init();
     button_init();
 
-    //TODO qspi_init(); init here
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
+    qspi_init();
     
     //ext_flash_init();
     oled_init(); 

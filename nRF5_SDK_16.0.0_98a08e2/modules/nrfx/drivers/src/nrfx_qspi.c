@@ -124,6 +124,7 @@ static nrfx_err_t qspi_ready_wait(void)
     return NRFX_SUCCESS;
 }
 
+
 nrfx_err_t nrfx_qspi_init(nrfx_qspi_config_t const * p_config,
                           nrfx_qspi_handler_t        handler,
                           void *                     p_context)
@@ -168,6 +169,7 @@ nrfx_err_t nrfx_qspi_init(nrfx_qspi_config_t const * p_config,
 
     return qspi_ready_wait();
 }
+
 
 nrfx_err_t nrfx_qspi_cinstr_xfer(nrf_qspi_cinstr_conf_t const * p_config,
                                  void const *                   p_tx_buffer,

@@ -1,6 +1,4 @@
 
-
-
 #include "nrf_drv_usbd.h"
 #include "nrf_drv_power.h"
 #include "nrf_drv_clock.h"
@@ -12,6 +10,7 @@
 #include "nrfx_usbd.h"
 #include "nrf_gpio.h"
 #include "oled.h"
+
 
 void power_clock_init(void)
 {

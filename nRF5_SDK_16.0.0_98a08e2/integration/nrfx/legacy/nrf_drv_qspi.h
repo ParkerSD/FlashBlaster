@@ -60,27 +60,27 @@ typedef nrfx_qspi_config_t nrf_drv_qspi_config_t;
 
 #if QSPI_PIN_SCK == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_SCK
-    #define QSPI_PIN_SCK  BSP_QSPI_SCK_PIN
+    #define QSPI_PIN_SCK  19
 #endif
 #if QSPI_PIN_CSN == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_CSN
-    #define QSPI_PIN_CSN  BSP_QSPI_CSN_PIN
+    #define QSPI_PIN_CSN  18
 #endif
 #if QSPI_PIN_IO0 == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_IO0
-    #define QSPI_PIN_IO0  BSP_QSPI_IO0_PIN
+    #define QSPI_PIN_IO0  32
 #endif
 #if QSPI_PIN_IO1 == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_IO1
-    #define QSPI_PIN_IO1  BSP_QSPI_IO1_PIN
+    #define QSPI_PIN_IO1  21
 #endif
 #if QSPI_PIN_IO2 == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_IO2
-    #define QSPI_PIN_IO2  BSP_QSPI_IO2_PIN
+    #define QSPI_PIN_IO2  22
 #endif
 #if QSPI_PIN_IO3 == NRF_QSPI_PIN_NOT_CONNECTED
     #undef QSPI_PIN_IO3
-    #define QSPI_PIN_IO3  BSP_QSPI_IO3_PIN
+    #define QSPI_PIN_IO3  23
 #endif
 
 /** @brief Macro for forwarding the new implementation. */
