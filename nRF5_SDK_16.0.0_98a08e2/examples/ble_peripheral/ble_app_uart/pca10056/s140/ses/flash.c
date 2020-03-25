@@ -8,6 +8,8 @@
 #include "app_error.h"
 #include "flash.h" 
 #include "sdk_config.h" 
+#include "oled.h"
+#include "nrf_gpio.h"
 
 #define QSPI_STD_CMD_WRSR   0x01
 #define QSPI_STD_CMD_RSTEN  0x66
@@ -20,20 +22,24 @@
         m_finished = false;    \
     } while (0)
 
+
 static volatile bool m_finished = false;
 static uint8_t m_buffer_tx[QSPI_TEST_DATA_SIZE];
 static uint8_t m_buffer_rx[QSPI_TEST_DATA_SIZE];
 
+
 static void qspi_handler(nrf_drv_qspi_evt_t event, void * p_context)
 {
-    UNUSED_PARAMETER(event);
-    UNUSED_PARAMETER(p_context);
-    m_finished = true;
+    if(event == NRF_DRV_QSPI_EVENT_DONE)
+    {
+        m_finished = true;
+    }
 }
+
 
 static void configure_memory()
 {
-    uint8_t temporary = 0x40;
+    uint8_t temporary = 0x40; //NOTE was 0x40
     uint32_t err_code;
     nrf_qspi_cinstr_conf_t cinstr_cfg = {
         .opcode    = QSPI_STD_CMD_RSTEN,
@@ -70,17 +76,15 @@ void qspi_init(void)
     uint32_t i;
     uint32_t err_code;
 
-    srand(0);
     for (i = 0; i < QSPI_TEST_DATA_SIZE; ++i)
     {
-        m_buffer_tx[i] = (uint8_t)rand();
+        m_buffer_tx[i] = 1;
     }
 
     nrf_drv_qspi_config_t config = NRF_DRV_QSPI_DEFAULT_CONFIG;
 
     err_code = nrf_drv_qspi_init(&config, qspi_handler, NULL); // used qspi_handler for arg 2
     APP_ERROR_CHECK(err_code);
-    //NRF_LOG_INFO("QSPI example started.");
 
     configure_memory();
 
@@ -88,22 +92,22 @@ void qspi_init(void)
     err_code = nrf_drv_qspi_erase(NRF_QSPI_ERASE_LEN_64KB, 0);
     APP_ERROR_CHECK(err_code);
     WAIT_FOR_PERIPH();
-    //NRF_LOG_INFO("Process of erasing first block start");
+   // while(nrf_drv_qspi_mem_busy_check() == NRF_ERROR_BUSY); 
 
     err_code = nrf_drv_qspi_write(m_buffer_tx, QSPI_TEST_DATA_SIZE, 0);
     APP_ERROR_CHECK(err_code);
     WAIT_FOR_PERIPH();
-    //NRF_LOG_INFO("Process of writing data start");
 
     err_code = nrf_drv_qspi_read(m_buffer_rx, QSPI_TEST_DATA_SIZE, 0);
     APP_ERROR_CHECK(err_code);
     WAIT_FOR_PERIPH();
-    //NRF_LOG_INFO("Data read");
+
 
     //    NRF_LOG_INFO("Compare...");
     if (memcmp(m_buffer_tx, m_buffer_rx, QSPI_TEST_DATA_SIZE) == 0)
     {
-    //   while(1); //"Data consistent"
+       nrf_gpio_pin_set(LED_GREEN);
+       while(1); 
     }
     else
     {

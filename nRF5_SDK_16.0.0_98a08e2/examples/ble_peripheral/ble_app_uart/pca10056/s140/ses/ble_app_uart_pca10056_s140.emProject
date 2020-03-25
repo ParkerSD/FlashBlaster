@@ -82,6 +82,8 @@
       <file file_name="../../../../../../components/libraries/usbd/app_usbd_string_desc.c" />
       <file file_name="../../../../../../components/libraries/usbd/app_usbd_string_desc.h" />
       <file file_name="../../../../../../components/libraries/usbd/app_usbd_types.h" />
+      <file file_name="../../../../../../components/libraries/block_dev/qspi/nrf_serial_flash_params.c" />
+      <file file_name="../../../../../../components/libraries/block_dev/qspi/nrf_serial_flash_params.h" />
     </folder>
     <folder Name="None">
       <file file_name="../../../../../../modules/nrfx/mdk/ses_startup_nrf52840.s" />

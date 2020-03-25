@@ -33,6 +33,7 @@
 "Output/ble_app_uart_pca10056_s140 Release/Obj/app_usbd_core.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/app_usbd_serial_num.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/app_usbd_string_desc.o"
+"Output/ble_app_uart_pca10056_s140 Release/Obj/nrf_serial_flash_params.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/ses_startup_nrf52840.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/ses_startup_nrf_common.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/system_nrf52840.o"

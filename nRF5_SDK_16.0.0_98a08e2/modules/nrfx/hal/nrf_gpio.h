@@ -522,7 +522,7 @@ __STATIC_INLINE void nrf_gpio_cfg_output(uint32_t pin_number)
         NRF_GPIO_PIN_DIR_OUTPUT,
         NRF_GPIO_PIN_INPUT_DISCONNECT,
         NRF_GPIO_PIN_NOPULL,
-        NRF_GPIO_PIN_S0S1,
+        NRF_GPIO_PIN_H0H1,
         NRF_GPIO_PIN_NOSENSE);
 }
 

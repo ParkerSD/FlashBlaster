@@ -5907,7 +5907,7 @@
 // <15=> 32MHz/16 
 
 #ifndef NRFX_QSPI_CONFIG_FREQUENCY
-#define NRFX_QSPI_CONFIG_FREQUENCY 1
+#define NRFX_QSPI_CONFIG_FREQUENCY 15
 #endif
 
 // <s> NRFX_QSPI_PIN_SCK - SCK pin value.
@@ -8037,7 +8037,7 @@
 // <15=> 32MHz/16 
 
 #ifndef QSPI_CONFIG_FREQUENCY
-#define QSPI_CONFIG_FREQUENCY 1
+#define QSPI_CONFIG_FREQUENCY 15
 #endif
 
 // <s> QSPI_PIN_SCK - SCK pin value.
