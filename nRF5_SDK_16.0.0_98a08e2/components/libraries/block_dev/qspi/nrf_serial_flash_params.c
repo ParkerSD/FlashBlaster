@@ -41,9 +41,9 @@
 
 static const nrf_serial_flash_params_t m_sflash_params[] = {
     {    /*MXIC MX25R6435F*/
-        .read_id = { 0xC2, 0x28, 0x17 },
+        .read_id = { 0x01, 0x28, 0x17 }, //was 0xC2, 0x28, 0x17
         .capabilities = 0x00,
-        .size = 8 * 1024 * 1024,
+        .size = 16 * 1024 * 1024, //was 8 * 1024 * 1024,
         .erase_size = 4 * 1024,
         .program_size = 256,
     }

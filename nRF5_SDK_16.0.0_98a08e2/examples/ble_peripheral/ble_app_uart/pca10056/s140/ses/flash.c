@@ -11,11 +11,15 @@
 #include "oled.h"
 #include "nrf_gpio.h"
 
+#define QSPI_TEST 0 //set true to enable qspi test 
 #define QSPI_STD_CMD_WRSR   0x01
 #define QSPI_STD_CMD_RSTEN  0x66
 #define QSPI_STD_CMD_RST    0x99
+#define QSPI_STD_CMD_REMS 0x90 // REMS - 2 bytes
+#define QSPI_STD_CMD_RES 0xAB // RES Read Electronic Signature - 1 byte
+#define QSPI_STD_CMD_RDID 0x9F // RDID
 
-#define QSPI_TEST_DATA_SIZE 256
+#define QSPI_TEST_DATA_SIZE 32
 
 #define WAIT_FOR_PERIPH() do { \
         while (!m_finished) {} \
@@ -40,6 +44,7 @@ static void qspi_handler(nrf_drv_qspi_evt_t event, void * p_context)
 static void configure_memory()
 {
     uint8_t temporary = 0x40; //NOTE was 0x40
+
     uint32_t err_code;
     nrf_qspi_cinstr_conf_t cinstr_cfg = {
         .opcode    = QSPI_STD_CMD_RSTEN,
@@ -60,10 +65,10 @@ static void configure_memory()
     APP_ERROR_CHECK(err_code);
 
     // Switch to qspi mode
-    cinstr_cfg.opcode = QSPI_STD_CMD_WRSR;
-    cinstr_cfg.length = NRF_QSPI_CINSTR_LEN_2B;
-    err_code = nrf_drv_qspi_cinstr_xfer(&cinstr_cfg, &temporary, NULL);
-    APP_ERROR_CHECK(err_code);
+//    cinstr_cfg.opcode = QSPI_STD_CMD_WRSR; //TODO: NOT CONVERTING TO QUAD MODE
+//    cinstr_cfg.length = NRF_QSPI_CINSTR_LEN_2B;
+//    err_code = nrf_drv_qspi_cinstr_xfer(&cinstr_cfg, &temporary, NULL);
+//    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -73,13 +78,10 @@ static void configure_memory()
 //write function, writing can only drop bits so erase by sector and write
 void qspi_init(void)
 {
-    uint32_t i;
+
     uint32_t err_code;
 
-    for (i = 0; i < QSPI_TEST_DATA_SIZE; ++i)
-    {
-        m_buffer_tx[i] = 1;
-    }
+
 
     nrf_drv_qspi_config_t config = NRF_DRV_QSPI_DEFAULT_CONFIG;
 
@@ -88,6 +90,12 @@ void qspi_init(void)
 
     configure_memory();
 
+#if QSPI_TEST
+    uint32_t i;
+    for (i = 0; i < QSPI_TEST_DATA_SIZE; ++i)
+    {
+        m_buffer_tx[i] = 0x7;
+    }
     m_finished = false;
     err_code = nrf_drv_qspi_erase(NRF_QSPI_ERASE_LEN_64KB, 0);
     APP_ERROR_CHECK(err_code);
@@ -103,16 +111,36 @@ void qspi_init(void)
     WAIT_FOR_PERIPH();
 
 
-    //    NRF_LOG_INFO("Compare...");
+    // Compare Buffers
     if (memcmp(m_buffer_tx, m_buffer_rx, QSPI_TEST_DATA_SIZE) == 0)
     {
-       nrf_gpio_pin_set(LED_GREEN);
-       while(1); 
+       nrf_gpio_pin_set(LED_GREEN); //"Data Consistent"
     }
-    else
-    {
-    //   while(1); //"Data inconsistent"
-    }
+#endif
 
+}
 
+void flash_erase(uint32_t start_addr, nrf_qspi_erase_len_t length) // NRF_QSPI_ERASE_LEN_4KB, NRF_QSPI_ERASE_LEN_64KB, NRF_QSPI_ERASE_LEN_ALL
+{
+    m_finished = false;
+    uint32_t err_code;
+    err_code = nrf_drv_qspi_erase(length, start_addr); 
+    APP_ERROR_CHECK(err_code);
+    WAIT_FOR_PERIPH();
+
+}
+void flash_write(uint8_t* buffer_tx, size_t DATA_SIZE_BYTES)
+{
+    uint32_t err_code;
+    err_code = nrf_drv_qspi_write(buffer_tx, DATA_SIZE_BYTES, 0);
+    APP_ERROR_CHECK(err_code);
+    WAIT_FOR_PERIPH();
+}
+
+void flash_read(uint8_t* buffer_rx, size_t DATA_SIZE_BYTES)
+{
+    uint32_t err_code;
+    err_code = nrf_drv_qspi_read(buffer_rx, DATA_SIZE_BYTES, 0);
+    APP_ERROR_CHECK(err_code);
+    WAIT_FOR_PERIPH();
 }

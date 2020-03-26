@@ -126,6 +126,9 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/main.o: \
  ../../../../../../modules/nrfx/hal/nrf_power.h \
  C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\system.h \
  C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\flash.h \
+ ../../../../../../integration/nrfx/legacy/nrf_drv_qspi.h \
+ ../../../../../../modules/nrfx/drivers/include/nrfx_qspi.h \
+ ../../../../../../modules/nrfx/hal/nrf_qspi.h \
  ../../../../../../modules/nrfx/hal/nrf_uart.h \
  ../../../../../../modules/nrfx/hal/nrf_uarte.h \
  ../../../../../../components/libraries/log/nrf_log.h \
