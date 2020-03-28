@@ -12,6 +12,7 @@
 #include "nrf_gpio.h"
 
 #define QSPI_TEST 0 //set true to enable qspi test 
+
 #define QSPI_STD_CMD_WRSR   0x01
 #define QSPI_STD_CMD_RSTEN  0x66
 #define QSPI_STD_CMD_RST    0x99
@@ -78,10 +79,7 @@ static void configure_memory()
 //write function, writing can only drop bits so erase by sector and write
 void qspi_init(void)
 {
-
     uint32_t err_code;
-
-
 
     nrf_drv_qspi_config_t config = NRF_DRV_QSPI_DEFAULT_CONFIG;
 
@@ -99,8 +97,7 @@ void qspi_init(void)
     m_finished = false;
     err_code = nrf_drv_qspi_erase(NRF_QSPI_ERASE_LEN_64KB, 0);
     APP_ERROR_CHECK(err_code);
-    WAIT_FOR_PERIPH();
-   // while(nrf_drv_qspi_mem_busy_check() == NRF_ERROR_BUSY); 
+    WAIT_FOR_PERIPH(); 
 
     err_code = nrf_drv_qspi_write(m_buffer_tx, QSPI_TEST_DATA_SIZE, 0);
     APP_ERROR_CHECK(err_code);
@@ -117,7 +114,6 @@ void qspi_init(void)
        nrf_gpio_pin_set(LED_GREEN); //"Data Consistent"
     }
 #endif
-
 }
 
 void flash_erase(uint32_t start_addr, nrf_qspi_erase_len_t length) // NRF_QSPI_ERASE_LEN_4KB, NRF_QSPI_ERASE_LEN_64KB, NRF_QSPI_ERASE_LEN_ALL
@@ -127,20 +123,25 @@ void flash_erase(uint32_t start_addr, nrf_qspi_erase_len_t length) // NRF_QSPI_E
     err_code = nrf_drv_qspi_erase(length, start_addr); 
     APP_ERROR_CHECK(err_code);
     WAIT_FOR_PERIPH();
-
 }
-void flash_write(uint8_t* buffer_tx, size_t DATA_SIZE_BYTES)
+
+void flash_write(uint8_t* buffer_tx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
 {
+    m_finished = false;
     uint32_t err_code;
-    err_code = nrf_drv_qspi_write(buffer_tx, DATA_SIZE_BYTES, 0);
+    err_code = nrf_drv_qspi_write(buffer_tx, DATA_SIZE_BYTES, start_addr);
     APP_ERROR_CHECK(err_code);
     WAIT_FOR_PERIPH();
 }
 
-void flash_read(uint8_t* buffer_rx, size_t DATA_SIZE_BYTES)
-{
+void flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
+{ 
+    m_finished = false;
     uint32_t err_code;
-    err_code = nrf_drv_qspi_read(buffer_rx, DATA_SIZE_BYTES, 0);
+    err_code = nrf_drv_qspi_read(buffer_rx, DATA_SIZE_BYTES, start_addr);
     APP_ERROR_CHECK(err_code);
     WAIT_FOR_PERIPH();
 }
+
+
+//directory_load();

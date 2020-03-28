@@ -49,7 +49,7 @@ typedef struct file
 
 typedef struct system
 {
-    int project_num;
+    uint32_t project_num;
     char* system_name;
     project_struct* project_first;
 }system_struct; 
@@ -87,7 +87,7 @@ system_struct* system_new(void);
 void system_init(void);
 void list_init(void);
 char* firmware_version_fetch(void);
-char* project_name_fetch(void);
+char* project_name_fetch(char* data);
 char* chip_name_fetch(void);
 char* file_name_fetch(void);
 
@@ -100,9 +100,10 @@ project_struct* project_create(void);
 list_struct* list_new(void);
 file_struct* file_new(void);
 chip_struct* chip_new(void);
-project_struct* project_new(void);
+project_struct* project_new(char* data);
 
 file_struct* file_list_index(file_struct*, int);
+project_struct* project_list_index(int); 
 
 void draw_selection_box(void);
 void draw_header(void);
@@ -111,3 +112,5 @@ void rerender_screen(int8_t, int8_t , uint8_t);
 void clear_list(void);
 void rerender_list(int8_t, uint8_t);
 void clear_screen(void);
+
+uint32_t bytes_to_word(uint8_t* bytes);
