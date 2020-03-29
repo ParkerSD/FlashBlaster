@@ -34,6 +34,10 @@
 
 #define ADDR_NUM_PROJECTS 0
 #define ADDR_PROJECT_PTR_FIRST 4
+#define PROJECT_SIZE 24 //project size with first pointer
+#define WORD_SIZE 4
+#define MAX_STRING_SIZE 16
+
 
 #define curr_font small_font
 
@@ -113,8 +117,8 @@ void draw_initial_screen(void)
    list_singleton->currentList = project;
    list_singleton->header = projectHeader; 
    list_singleton->item0 = system_singleton->project_first->project_name;
-//   list_singleton->item1 = system_singleton->project_first->project_next->project_name;
-//   list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
+   list_singleton->item1 = system_singleton->project_first->project_next->project_name;
+   list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
 //   list_singleton->item3 = system_singleton->project_first->project_next->project_next->project_next->project_name;
 //   list_singleton->item4 = system_singleton->project_first->project_next->project_next->project_next->project_next->project_name;
 
@@ -162,16 +166,17 @@ system_struct* system_new(void) //TODO file system, shoulf be constructed in Fla
 {                                                            
     system_struct* systemX = malloc(sizeof(system_struct)); 
     systemX->system_name = firmware_version_fetch(); 
-    systemX->project_num = NULL;
+    systemX->projects_total = NULL;
     systemX->project_first = NULL; //project_create();
+    systemX->project_curr = 0;
 
     return systemX;
 }
 
 
-uint32_t bytes_to_word(uint8_t* bytes) // bytes stored MSB 
+uint32_t bytes_to_word(uint8_t* bytes, uint32_t word) // bytes stored MSB 
 {
-    uint32_t word = *bytes << 24 | *(bytes + 1) << 16 | *(bytes + 2) << 8 | *(bytes + 3);
+    word = *bytes << 24 | *(bytes + 1) << 16 | *(bytes + 2) << 8 | *(bytes + 3);
 
     return word; 
 }
@@ -187,50 +192,52 @@ void system_init(void) // create global system struct and read directory info fr
     // TODO: init system flash function
 
     // init flash for test below 
-    uint8_t test_buff[32] = {0, 0, 0, 1, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
-    uint8_t project_test_string[] = {"This is a test"};
-    uint8_t chip_num_test[4] = {0, 0, 0, 1};
+    uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 0, 32, 0, 0, 0, 100, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
+    uint8_t project_string_test0[] = {"This is a test0"};
+    uint8_t project_string_test1[] = {"This is a test1"};
+    uint8_t project_string_test2[] = {"This is a test2"};
+    uint8_t chip_num_test[WORD_SIZE] = {0, 0, 0, 1};
+    uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 0, 64};
     flash_erase(0, NRF_QSPI_ERASE_LEN_4KB); // erase all 
-    flash_write(test_buff, 0, 32);
-    flash_write(project_test_string, 32, sizeof(char[16])); // name sting 16 bytes long 
-    flash_write(chip_num_test, 48, 4); // chip num 4 bytes, address 48 (after string) 
+    flash_write(directory, 0, 32); // write test directory 
+    flash_write(project_string_test0, 32, sizeof(char[MAX_STRING_SIZE])); // name sting 16 bytes long 
+    flash_write(chip_num_test, 48, WORD_SIZE); // chip num 4 bytes, address 48 (after string) 
+    flash_write(chip_ptr_first_test, 52, WORD_SIZE); // write first chip ptr after chip_num value of first project
+
+    flash_write(project_string_test1, 100, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
+    flash_write(project_string_test2, 200, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
 
     
     //determine number of projects from directory value
     uint8_t* num_projects = malloc(sizeof(int)); //TODO FREE
-    flash_read(num_projects, ADDR_NUM_PROJECTS, 4); // read num projects // flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
-    uint32_t project_count = bytes_to_word(num_projects); // function to convert byte array to 32bit word 
-    system_singleton->project_num = project_count; // populate system struct with project num value from flash
+    flash_read(num_projects, ADDR_NUM_PROJECTS, WORD_SIZE); // read num projects // flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
+    uint32_t project_count = bytes_to_word(num_projects, project_count); // function to convert byte array to 32bit word 
+    system_singleton->projects_total = project_count; // populate system struct with project num value from flash
     
 
     if(project_count != 0)
     {   
         // buffer all project pointers 
-        uint32_t total_projects_length = project_count * 4; 
+        uint32_t total_projects_length = project_count * WORD_SIZE; 
         uint8_t project_addr[total_projects_length]; // array sized for all project addresses 
         flash_read(project_addr, ADDR_PROJECT_PTR_FIRST, total_projects_length); // buffer for all project addresses
         
         // create first project in RAM, extract to function
-        char* project_buffer = malloc(sizeof(char[20])); //TODO FREE,  name string plus num_chips malloc 
+        char* project_buffer = malloc(sizeof(char[PROJECT_SIZE])); //TODO FREE,  name string plus num_chips malloc 
         uint32_t current_addr = project_addr[0]  << 24 | project_addr[1] << 16 | project_addr[2] << 8 | project_addr[3]; // shift bytes into 32bit int
-        flash_read(project_buffer, current_addr, 20);
-        
+        flash_read(project_buffer, current_addr, PROJECT_SIZE);
         system_singleton->project_first = project_new(project_buffer); // create first project(head of list) 
-        // populate project_first struct with project_buffer values
 
-        // when project is selected, based on chip_num value, read the total number of chip pointers in project
         
-    
-        /* // create remainder of projects
-        for(int i = 1; i < project_count; i++) 
+         // create remainder of projects, first proejct already made 
+        for(int i = 0; i < project_count; i++) 
         {   
             // convert 4 bytes into 32bit number 
-            current_addr = project_addr[1 + (i*4)]  << 24 | project_addr[2 + (i*4)] << 16 | project_addr[3 + (i*4)] << 8 | project_addr[4 + (i*4)];
-            flash_read(project_buffer, current_addr, 31);// read project data 
-
-            // create project in RAM, use project index function which takes i as an argument
+            current_addr = project_addr[0 + (i*4)]  << 24 | project_addr[1 + (i*4)] << 16 | project_addr[2 + (i*4)] << 8 | project_addr[3 + (i*4)];
+            flash_read(project_buffer, current_addr, PROJECT_SIZE);// read project data 
+            project_new(project_buffer);
         }
-        */ 
+        
 
         // char* project[project_count]; // string of project names if needed
     }
@@ -252,8 +259,8 @@ char* firmware_version_fetch(void)
 
 char* project_name_fetch(char* data)
 {
-    char* name_string = malloc(sizeof(char[16])); //TODO FREE 
-    memcpy(name_string, data, 16);
+    char* name_string = malloc(sizeof(char[MAX_STRING_SIZE])); //TODO FREE 
+    memcpy(name_string, data, MAX_STRING_SIZE); //16 bytes = max string length 
     return name_string;
 }
 
@@ -347,21 +354,22 @@ project_struct* project_list_index(int index)
 project_struct* project_new(char* data) //input flash data
 {
     project_struct* projectY = project_create(); //create project
-    
+   
     projectY->project_name = project_name_fetch(data);  // send in payload, fetch from flash
     projectY->chip_num = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);//TODO: chip_num_fetch(data) - last 4 bytes of 20 bytes;
     projectY->project_next = NULL;
-    projectY->chip_first = NULL; // address starts at 21st byte of project
+    projectY->chip_first = NULL; 
+    projectY->addr_chip_first = *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23); // address starts at 20th byte of project
     
-    if(system_singleton->project_num != 0) //push node, add to project_next
+    if(system_singleton->project_curr != 0) //push node, add to project_next
     {  
-        int olderSiblingIndex = (system_singleton->project_num - 1);  
+        int olderSiblingIndex = (system_singleton->project_curr - 1);  
         project_struct* projectZ = project_list_index(olderSiblingIndex);    //index olderSibling and assign project to project_next node of last created project, older sibling is at index of system_singleton->project_num
         projectZ->project_next = projectY;
     }
     
-    projectY->project_index = system_singleton->project_num; // update project index
-    system_singleton->project_num += 1; // increment total project number
+    projectY->project_index = system_singleton->project_curr; // update project index
+    system_singleton->project_curr += 1; 
     
     return projectY; //should return newly created to global
 }
@@ -509,8 +517,8 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, uint8_t screen
             list_singleton->currentList = project;
             list_singleton->header = projectHeader; //set initial values for display 
             list_singleton->item0 = system_singleton->project_first->project_name; 
-//            list_singleton->item1 = system_singleton->project_first->project_next->project_name;
-//            list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
+            list_singleton->item1 = system_singleton->project_first->project_next->project_name;
+            list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
 //            list_singleton->item3 = system_singleton->project_first->project_next->project_next->project_next->project_name;
 //            list_singleton->item4 = system_singleton->project_first->project_next->project_next->project_next->project_next->project_name;
             break;

@@ -34,6 +34,7 @@ typedef struct project
     uint16_t  project_index;
     uint16_t  chip_num; // total number of chips
     chip_struct* chip_first;
+    uint32_t addr_chip_first; // flash address of first chip 
 }project_struct;
 
 
@@ -49,9 +50,10 @@ typedef struct file
 
 typedef struct system
 {
-    uint32_t project_num;
+    uint32_t projects_total;
     char* system_name;
     project_struct* project_first;
+    uint32_t project_curr; 
 }system_struct; 
 
 
@@ -113,4 +115,4 @@ void clear_list(void);
 void rerender_list(int8_t, uint8_t);
 void clear_screen(void);
 
-uint32_t bytes_to_word(uint8_t* bytes);
+uint32_t bytes_to_word(uint8_t* bytes, uint32_t word); // converts four byte array to word
