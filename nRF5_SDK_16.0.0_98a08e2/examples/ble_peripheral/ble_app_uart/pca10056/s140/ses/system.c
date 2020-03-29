@@ -38,6 +38,9 @@
 #define WORD_SIZE 4
 #define MAX_STRING_SIZE 16
 
+#define SYS_ system_singleton->
+#define L_ list_singleton->
+#define REC_ recents_singleton-> 
 
 #define curr_font small_font
 
@@ -78,10 +81,10 @@ recents_struct* recents_init(void)
 
 void push_file_to_recents(void) //shift recent files, pushing oldest off stack
 {
-    recents_singleton->file0 = list_singleton->recent; // member recent never assigned value
-    recents_singleton->file1 = recents_singleton->file0;
-    recents_singleton->file2 = recents_singleton->file1;
-    recents_singleton->file3 = recents_singleton->file2;
+    REC_ file0 = L_ recent; // member recent never assigned value
+    REC_ file1 = REC_ file0;
+    REC_ file2 = REC_ file1;
+    REC_ file3 = REC_ file2;
 }
 
 
@@ -89,8 +92,8 @@ void clear_screen(void)
 {
     SSD1351_fill(COLOR_BLACK);
     SSD1351_update();
-    list_singleton->boxPresent = false;
-    list_singleton->headerPresent = false;
+    L_ boxPresent = false;
+    L_ headerPresent = false;
 }
 
 
@@ -99,28 +102,28 @@ void draw_selection_box(void) // top left corner of full width box = point (0, y
     //SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
     SSD1351_draw_rect(2, 45, 124, 30, COLOR_BLUE);
     SSD1351_update();
-    list_singleton->boxPresent = true; 
+    L_ boxPresent = true; 
 }
 
 
 void draw_header(void)
 {
     SSD1351_set_cursor(1,1);
-    SSD1351_printf(COLOR_WHITE, small_font, list_singleton->header);
+    SSD1351_printf(COLOR_WHITE, small_font, L_ header);
     SSD1351_update();
-    list_singleton->headerPresent = true;
+    L_ headerPresent = true;
 }
 
 
 void draw_initial_screen(void)
 {   
-   list_singleton->currentList = project;
-   list_singleton->header = projectHeader; 
-   list_singleton->item0 = system_singleton->project_first->project_name;
-   list_singleton->item1 = system_singleton->project_first->project_next->project_name;
-   list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
-//   list_singleton->item3 = system_singleton->project_first->project_next->project_next->project_next->project_name;
-//   list_singleton->item4 = system_singleton->project_first->project_next->project_next->project_next->project_next->project_name;
+   L_ currentList = project;
+   L_ header = projectHeader; 
+   L_ item0 = SYS_ project_first->project_name;
+   L_ item1 = SYS_ project_first->project_next->project_name;
+   L_ item2 = SYS_ project_first->project_next->project_next->project_name;
+// L_ item3 = SYS_ project_first->project_next->project_next->project_next->project_name;
+// L_ item4 = SYS_ project_first->project_next->project_next->project_next->project_next->project_name;
 
     recents_singleton = recents_init();
     
@@ -128,11 +131,11 @@ void draw_initial_screen(void)
     draw_selection_box();
     draw_header();
     SSD1351_set_cursor(10,57);
-    SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item0);
+    SSD1351_printf(COLOR_WHITE, curr_font, L_ item0);
     SSD1351_set_cursor(10,83);
-    SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item1);
+    SSD1351_printf(COLOR_WHITE, curr_font, L_ item1);
     SSD1351_set_cursor(10,105);
-    SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item2);
+    SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
     SSD1351_update();
 }
 
@@ -181,39 +184,13 @@ uint32_t bytes_to_word(uint8_t* bytes, uint32_t word) // bytes stored MSB
     return word; 
 }
 
-
-void system_init(void) // create global system struct and read directory info from flash, create project structs 
-{   
-    // ADDR_NUM_PROJECTS 0
-    // ADDR_PROJECT_PTR_FIRST 4
-
-    system_singleton = system_new();  
-
-    // TODO: init system flash function
-
-    // init flash for test below 
-    uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 0, 32, 0, 0, 0, 100, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
-    uint8_t project_string_test0[] = {"This is a test0"};
-    uint8_t project_string_test1[] = {"This is a test1"};
-    uint8_t project_string_test2[] = {"This is a test2"};
-    uint8_t chip_num_test[WORD_SIZE] = {0, 0, 0, 1};
-    uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 0, 64};
-    flash_erase(0, NRF_QSPI_ERASE_LEN_4KB); // erase all 
-    flash_write(directory, 0, 32); // write test directory 
-    flash_write(project_string_test0, 32, sizeof(char[MAX_STRING_SIZE])); // name sting 16 bytes long 
-    flash_write(chip_num_test, 48, WORD_SIZE); // chip num 4 bytes, address 48 (after string) 
-    flash_write(chip_ptr_first_test, 52, WORD_SIZE); // write first chip ptr after chip_num value of first project
-
-    flash_write(project_string_test1, 100, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
-    flash_write(project_string_test2, 200, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
-
-    
+void projects_sync(void) //sync projects from flash
+{
     //determine number of projects from directory value
     uint8_t* num_projects = malloc(sizeof(int)); //TODO FREE
     flash_read(num_projects, ADDR_NUM_PROJECTS, WORD_SIZE); // read num projects // flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
     uint32_t project_count = bytes_to_word(num_projects, project_count); // function to convert byte array to 32bit word 
-    system_singleton->projects_total = project_count; // populate system struct with project num value from flash
-    
+    SYS_ projects_total = project_count; // populate system struct with project num value from flash
 
     if(project_count != 0)
     {   
@@ -226,10 +203,9 @@ void system_init(void) // create global system struct and read directory info fr
         char* project_buffer = malloc(sizeof(char[PROJECT_SIZE])); //TODO FREE,  name string plus num_chips malloc 
         uint32_t current_addr = project_addr[0]  << 24 | project_addr[1] << 16 | project_addr[2] << 8 | project_addr[3]; // shift bytes into 32bit int
         flash_read(project_buffer, current_addr, PROJECT_SIZE);
-        system_singleton->project_first = project_new(project_buffer); // create first project(head of list) 
+        SYS_ project_first = project_new(project_buffer); // create first project(head of list) 
 
-        
-         // create remainder of projects, first proejct already made 
+        // create remainder of projects, first proejct already made 
         for(int i = 0; i < project_count; i++) 
         {   
             // convert 4 bytes into 32bit number 
@@ -237,16 +213,59 @@ void system_init(void) // create global system struct and read directory info fr
             flash_read(project_buffer, current_addr, PROJECT_SIZE);// read project data 
             project_new(project_buffer);
         }
-        
-
         // char* project[project_count]; // string of project names if needed
     }
     else
     {
-        system_singleton->project_first = project_create(); // create empty project - chip - file structures
-        system_singleton->project_first->chip_first = chip_create();
-        system_singleton->project_first->chip_first->file_first = file_create();
+        SYS_ project_first = project_create(); // create empty project - chip - file structures
+        SYS_ project_first->chip_first = chip_create();
+        SYS_ project_first->chip_first->file_first = file_create();
     }
+}
+
+void flash_init(void)
+{   
+    // ADDR_NUM_PROJECTS 0
+    // ADDR_PROJECT_PTR_FIRST 4
+
+    // init flash for test below 
+    flash_erase(0, NRF_QSPI_ERASE_LEN_4KB); // erase all 
+
+    //DIRECTORY
+    uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 0, 32, 0, 0, 0, 100, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
+    flash_write(directory, 0, 32); // write test directory
+
+    //PROJECT 1 - 24 bytes (including first chip addr) 
+    uint8_t project_string_test0[] = {"This is a test0"};
+    uint8_t chip_num_test[WORD_SIZE] = {0, 0, 0, 1};
+    uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 0, 255};
+    flash_write(project_string_test0, 32, sizeof(char[MAX_STRING_SIZE])); // name sting 16 bytes long 
+    flash_write(chip_num_test, 48, WORD_SIZE); // chip num 4 bytes, address 48 (after string) 
+    flash_write(chip_ptr_first_test, 52, WORD_SIZE); // write first chip ptr after chip_num value of first project
+    //CHIP 1 - 28 bytes (including first file addr) 
+    uint8_t chip_string_test0[] = {"chip0"}; //16 bytes
+    uint8_t chip_type_ID[] = {0, 0, 0, 1}; 
+    uint8_t files_num[] = {0, 0, 0, 1}; 
+    uint8_t files_first_addr[] = {0, 0, 255, 255}; 
+    flash_write(chip_string_test0, 255, sizeof(char[MAX_STRING_SIZE]));
+    flash_write(chip_type_ID, 255 + MAX_STRING_SIZE, WORD_SIZE);
+    flash_write(files_num, 255 + MAX_STRING_SIZE + WORD_SIZE, WORD_SIZE);
+    flash_write(files_first_addr, 255 + MAX_STRING_SIZE + WORD_SIZE + WORD_SIZE, WORD_SIZE);
+   
+    //PROJECT 2
+    uint8_t project_string_test1[] = {"This is a test1"};
+    flash_write(project_string_test1, 100, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
+    //PROJECT 3 
+    uint8_t project_string_test2[] = {"This is a test2"};
+    flash_write(project_string_test2, 200, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
+}
+
+
+void system_init(void) // create global system struct and read directory info from flash, create project structs 
+{   
+    system_singleton = system_new();  
+    flash_init(); 
+    projects_sync(); 
 }
 
 
@@ -341,7 +360,7 @@ chip_struct* chip_new(void)
 project_struct* project_list_index(int index) 
 { 
     project_struct* projectN;
-    projectN = system_singleton->project_first; 
+    projectN = SYS_ project_first; 
 
     for(int i = 1; i < index; i++) // minus 1 loop since file_first was already factored in
     {
@@ -351,7 +370,7 @@ project_struct* project_list_index(int index)
 }
 
 
-project_struct* project_new(char* data) //input flash data
+project_struct* project_new(char* data) //input 24 byte project data, string, num_chips, and chip_first address
 {
     project_struct* projectY = project_create(); //create project
    
@@ -359,17 +378,17 @@ project_struct* project_new(char* data) //input flash data
     projectY->chip_num = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);//TODO: chip_num_fetch(data) - last 4 bytes of 20 bytes;
     projectY->project_next = NULL;
     projectY->chip_first = NULL; 
-    projectY->addr_chip_first = *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23); // address starts at 20th byte of project
+    projectY->chip_first_addr = *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23); // address starts at 20th byte of project
     
-    if(system_singleton->project_curr != 0) //push node, add to project_next
+    if(SYS_ project_curr != 0) //push node, add to project_next
     {  
-        int olderSiblingIndex = (system_singleton->project_curr - 1);  
-        project_struct* projectZ = project_list_index(olderSiblingIndex);    //index olderSibling and assign project to project_next node of last created project, older sibling is at index of system_singleton->project_num
+        int olderSiblingIndex = (SYS_ project_curr - 1);  
+        project_struct* projectZ = project_list_index(olderSiblingIndex);    //index olderSibling and assign project to project_next node of last created project, older sibling is at index of SYS_ project_num
         projectZ->project_next = projectY;
     }
     
-    projectY->project_index = system_singleton->project_curr; // update project index
-    system_singleton->project_curr += 1; 
+    projectY->project_index = SYS_ project_curr; // update project index
+    SYS_ project_curr += 1; 
     
     return projectY; //should return newly created to global
 }
@@ -461,49 +480,49 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     {
         clear_list();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item0);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item0);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item1);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item1);
         SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item2);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
         SSD1351_update();
     }
     else if(itemHighlighted == 1)
     {   
         clear_list();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item1);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item1);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item2);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
         SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item3);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item3);
         SSD1351_update();
     }
     else if(itemHighlighted == 2)
     {
         clear_list();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item2);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item3);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item3);
         SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item4);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item4);
         SSD1351_update();
     }
     else if(itemHighlighted == 3)
     {
         clear_list();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item3);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item3);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item4);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item4);
         SSD1351_update();
     }
     else if(itemHighlighted == 4)
     {
         clear_list();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, list_singleton->item4);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ item4);
         SSD1351_update();
     }
 }
@@ -514,147 +533,147 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, uint8_t screen
     switch(screenStack)
     {
         case 0: //project screen
-            list_singleton->currentList = project;
-            list_singleton->header = projectHeader; //set initial values for display 
-            list_singleton->item0 = system_singleton->project_first->project_name; 
-            list_singleton->item1 = system_singleton->project_first->project_next->project_name;
-            list_singleton->item2 = system_singleton->project_first->project_next->project_next->project_name;
-//            list_singleton->item3 = system_singleton->project_first->project_next->project_next->project_next->project_name;
-//            list_singleton->item4 = system_singleton->project_first->project_next->project_next->project_next->project_next->project_name;
+            L_ currentList = project;
+            L_ header = projectHeader; //set initial values for display 
+            L_ item0 = SYS_ project_first->project_name; 
+            L_ item1 = SYS_ project_first->project_next->project_name;
+            L_ item2 = SYS_ project_first->project_next->project_next->project_name;
+//            L_ item3 = SYS_ project_first->project_next->project_next->project_next->project_name;
+//            L_ item4 = SYS_ project_first->project_next->project_next->project_next->project_next->project_name;
             break;
 
         case 1: //chip screen
-            list_singleton->currentList = chip;
-            list_singleton->header = chipHeader;
+            L_ currentList = chip;
+            L_ header = chipHeader;
             if(selectedItem == 0)
             {
                 selectedProject = 0; 
-                list_singleton->item0 = system_singleton->project_first->chip_first->chip_name;
-//                list_singleton->item1 = system_singleton->project_first->chip_first->chip_next->chip_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+                L_ item0 = SYS_ project_first->chip_first->chip_name;
+//                L_ item1 = SYS_ project_first->chip_first->chip_next->chip_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
             }
 //            else if(selectedItem == 1)
 //            {
 //                selectedProject = 1; 
-//                list_singleton->item0 = system_singleton->project_first->project_next->chip_first->chip_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->chip_first->chip_next->chip_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->chip_first->chip_name;
+//                L_ item1 = SYS_ project_first->project_next->chip_first->chip_next->chip_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 2)
 //            {
 //                selectedProject = 2; 
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->chip_first->chip_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->chip_first->chip_next->chip_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->chip_first->chip_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->chip_first->chip_next->chip_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 3)
 //            {
 //                selectedProject = 3; 
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_next->chip_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_next->chip_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 4)
 //            {
 //                selectedProject = 4; 
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->chip_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->chip_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
             break;
 
         case 2: //file screen
-            list_singleton->currentList = file;
-            list_singleton->header = fileHeader;
+            L_ currentList = file;
+            L_ header = fileHeader;
             if(selectedItem == 0 && selectedProject == 0) // project 1 chip 1 selected
             {
-                list_singleton->item0 = system_singleton->project_first->chip_first->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->chip_first->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+                L_ item0 = SYS_ project_first->chip_first->file_first->file_name;
+//                L_ item1 = SYS_ project_first->chip_first->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
             }
 //            else if(selectedItem == 1 && selectedProject == 0) // project 1 chip 2 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->chip_first->chip_next->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->chip_first->chip_next->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->chip_first->chip_next->file_first->file_name;
+//                L_ item1 = SYS_ project_first->chip_first->chip_next->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 0 && selectedProject == 1) // project 2 chip 1 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->chip_first->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->chip_first->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->chip_first->file_first->file_name;
+//                L_ item1 = SYS_ project_first->project_next->chip_first->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 1 && selectedProject == 1) // project 2 chip 2 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->chip_first->chip_next->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->chip_first->chip_next->file_first->file_name;
+//                L_ item1 = SYS_ project_first->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 0 && selectedProject == 2) // project 3 chip 1 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->chip_first->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->chip_first->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->chip_first->file_first->file_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->chip_first->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 1 && selectedProject == 2) // project 3 chip 2 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->chip_first->chip_next->file_first->file_name; //runs out of filenames here
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->chip_first->chip_next->file_first->file_name; //runs out of filenames here
+//                L_ item1 = SYS_ project_first->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 0 && selectedProject == 3) // project 4 chip 1 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->chip_first->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->chip_first->file_first->file_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 1 && selectedProject == 3) // project 4 chip 2 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 0 && selectedProject == 4) // project 5 chip 1 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
 //            else if(selectedItem == 1 && selectedProject == 4) // project 5 chip 2 selected
 //            {
-//                list_singleton->item0 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
-//                list_singleton->item1 = system_singleton->project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                list_singleton->item2 = NULL;
-//                list_singleton->item3 = NULL;
-//                list_singleton->item4 = NULL;
+//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
+//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
+//                L_ item2 = NULL;
+//                L_ item3 = NULL;
+//                L_ item4 = NULL;
 //            }
             break; 
 
@@ -664,12 +683,12 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, uint8_t screen
 
     rerender_list(itemHighlighted,screenStack);
 
-    if(list_singleton->boxPresent == false)
+    if(L_ boxPresent == false)
     {
         draw_selection_box();
     }
 
-    if(list_singleton->headerPresent == false)
+    if(L_ headerPresent == false)
     {
         draw_header();
     }

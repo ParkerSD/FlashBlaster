@@ -34,7 +34,7 @@ typedef struct project
     uint16_t  project_index;
     uint16_t  chip_num; // total number of chips
     chip_struct* chip_first;
-    uint32_t addr_chip_first; // flash address of first chip 
+    uint32_t chip_first_addr; // flash address of first chip 
 }project_struct;
 
 
@@ -84,6 +84,7 @@ typedef struct recents
 
 
 void push_file_to_recents(void);
+void flash_init(void); 
 recents_struct* recents_init(void);
 system_struct* system_new(void);
 void system_init(void);
@@ -106,6 +107,8 @@ project_struct* project_new(char* data);
 
 file_struct* file_list_index(file_struct*, int);
 project_struct* project_list_index(int); 
+
+void projects_sync(void);
 
 void draw_selection_box(void);
 void draw_header(void);
