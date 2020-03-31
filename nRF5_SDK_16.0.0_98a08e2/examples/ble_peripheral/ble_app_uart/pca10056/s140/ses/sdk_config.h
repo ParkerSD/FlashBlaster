@@ -5951,7 +5951,7 @@
 // <7=> 7 
 
 #ifndef NRFX_QSPI_CONFIG_IRQ_PRIORITY
-#define NRFX_QSPI_CONFIG_IRQ_PRIORITY 6
+#define NRFX_QSPI_CONFIG_IRQ_PRIORITY 3
 #endif
 
 // </e>
@@ -8083,7 +8083,7 @@
 // <7=> 7 
 
 #ifndef QSPI_CONFIG_IRQ_PRIORITY
-#define QSPI_CONFIG_IRQ_PRIORITY 6
+#define QSPI_CONFIG_IRQ_PRIORITY 3
 #endif
 
 // </e>

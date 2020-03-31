@@ -18,6 +18,13 @@
 
 #define LONG_PRESS_THRESHOLD 1000
 
+enum
+{
+    project_screen,
+    chip_screen,
+    file_screen,
+    exe_screen
+};
 
 void button_init(void);
 

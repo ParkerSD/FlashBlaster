@@ -34,7 +34,7 @@ typedef struct project
     uint16_t  project_index;
     uint16_t  chip_num; // total number of chips
     chip_struct* chip_first;
-    uint32_t chip_first_addr; // flash address of first chip 
+    uint32_t chip_first_addr; //NOTE NEED ALL CHIP ADDRESSES 
 }project_struct;
 
 
@@ -55,8 +55,6 @@ typedef struct system
     project_struct* project_first;
     uint32_t project_curr; 
 }system_struct; 
-
-
 
 
 typedef struct list //the data that is actually displayed on oled, MAX 10 items, increase in future
@@ -102,12 +100,13 @@ chip_struct* chip_create(void);
 project_struct* project_create(void);
 list_struct* list_new(void);
 file_struct* file_new(void);
-chip_struct* chip_new(void);
+chip_struct* chip_new(char*);
 project_struct* project_new(char* data);
 
 file_struct* file_list_index(file_struct*, int);
 project_struct* project_list_index(int); 
 
+void chips_sync(int8_t);
 void projects_sync(void);
 
 void draw_selection_box(void);
@@ -118,4 +117,4 @@ void clear_list(void);
 void rerender_list(int8_t, uint8_t);
 void clear_screen(void);
 
-uint32_t bytes_to_word(uint8_t* bytes, uint32_t word); // converts four byte array to word
+uint32_t bytes_to_word(uint8_t* bytes, uint32_t word); //  converts four byte array to word

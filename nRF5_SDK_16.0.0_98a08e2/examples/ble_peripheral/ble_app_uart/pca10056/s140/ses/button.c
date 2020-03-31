@@ -85,18 +85,31 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
         enterFlag = true;
         timer_start();
 
-        screenStack++;
         selectedItem = itemHighlighted; 
         itemHighlighted = 0;
         
-        if(screenStack > 2)
-        {   
-           //execute SWD programming on itemSelected
-          screenStack = 0; //reset to home screen?
-      
-          //push_file_to_recents(); //add file to recents, push last off stack
-        }
+        screenStack++;
+        switch(screenStack)
+        {
+            case project_screen:
+                // never reached? destroy all create structs and resync projects?
+                break;
+            case chip_screen:
+                // load chips of selected project, use selectedItem 
+                chips_sync(selectedItem); 
+                break;
+            case file_screen: 
+                // load files of selected chip
+                break;
+            case exe_screen:
+                // execute programming 
+                // push_file_to_recents(); //add file to recents, push last off stack
+                screenStack = 0;
+            default: 
+                break; 
 
+        }
+        
         clear_screen(); // remove for speed if possible
         rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
