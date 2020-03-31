@@ -24,6 +24,7 @@ typedef struct chip
     uint16_t file_num; //total num of files associated with the chip 
     file_struct* file_first; // pointer to head
     project_struct* project_parent;
+    uint32_t file_list_addr; 
 }chip_struct; 
 
 
@@ -34,7 +35,7 @@ typedef struct project
     uint16_t  project_index;
     uint16_t  chip_num; // total number of chips
     chip_struct* chip_first;
-    uint32_t chip_first_addr; //NOTE NEED ALL CHIP ADDRESSES 
+    uint32_t chip_list_addr; //NOTE Flash Addr
 }project_struct;
 
 
