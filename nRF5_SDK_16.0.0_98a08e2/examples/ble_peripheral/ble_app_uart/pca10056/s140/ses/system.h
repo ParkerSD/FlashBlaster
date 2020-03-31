@@ -22,6 +22,7 @@ typedef struct chip
     chip_struct* chip_next; 
     uint16_t chip_index; 
     uint16_t file_num; //total num of files associated with the chip 
+    uint32_t chip_type_id;
     file_struct* file_first; // pointer to head
     project_struct* project_parent;
     uint32_t file_list_addr; 
@@ -36,6 +37,7 @@ typedef struct project
     uint16_t  chip_num; // total number of chips
     chip_struct* chip_first;
     uint32_t chip_list_addr; //NOTE Flash Addr
+    uint32_t chip_curr; 
 }project_struct;
 
 
@@ -89,9 +91,8 @@ system_struct* system_new(void);
 void system_init(void);
 void list_init(void);
 char* firmware_version_fetch(void);
-char* project_name_fetch(char* data);
-char* chip_name_fetch(void);
-char* file_name_fetch(void);
+char* name_fetch(char* data);
+
 
 chip_struct* chip_parent_fetch(void);
 project_struct* project_parent_fetch(void);
@@ -101,11 +102,12 @@ chip_struct* chip_create(void);
 project_struct* project_create(void);
 list_struct* list_new(void);
 file_struct* file_new(void);
-chip_struct* chip_new(char*);
+chip_struct* chip_new(char*, project_struct*);
 project_struct* project_new(char* data);
 
 file_struct* file_list_index(file_struct*, int);
 project_struct* project_list_index(int); 
+chip_struct* chip_list_index(int index, project_struct* project_curr);
 
 void chips_sync(int8_t);
 void projects_sync(void);
