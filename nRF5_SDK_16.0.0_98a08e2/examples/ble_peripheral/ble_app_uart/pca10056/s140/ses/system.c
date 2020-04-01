@@ -98,7 +98,7 @@ recents_struct* recents_init(void)
 }
 
 
-void push_file_to_recents(void) //shift recent files, pushing oldest off stack
+void push_file_to_recents(int8_t selectedItem) //shift recent files, pushing oldest off stack
 {
     REC_ file0 = L_ recent; // member recent never assigned value
     REC_ file1 = REC_ file0;
@@ -205,7 +205,100 @@ uint32_t bytes_to_word(uint8_t* bytes, uint32_t word) // bytes stored MSB
     return word; 
 }
 
-void chips_sync(int8_t selectedItem)
+
+//**************************************************************  FILE FUNCTIONS  **************************************************************//
+
+void files_sync(int8_t selectedItem, project_struct* project_selected)
+{
+    chip_struct* chip_selected = chip_list_index(selectedItem, project_selected); 
+    uint16_t total_files = chip_selected->file_num;
+    uint32_t total_file_list_size = total_files * WORD_SIZE; 
+
+    if(total_files != 0)
+    {
+        //get file list 
+        uint32_t file_list_address = chip_selected->file_list_addr;
+        char* file_list_buffer = malloc(sizeof(char[total_file_list_size]));
+        flash_read(file_list_buffer, file_list_address, total_file_list_size);
+
+        //create first file
+        uint32_t file_addr0 = *file_list_buffer << 24 | *(file_list_buffer + 1) << 16 | *(file_list_buffer + 2) << 8 | *(file_list_buffer + 3);
+        char* file_buffer = malloc(sizeof(char[FILE_HEADER_SIZE]));
+        flash_read(file_buffer, file_addr0, FILE_HEADER_SIZE);
+        chip_selected->file_first = file_new(file_buffer, chip_selected);
+
+        // create remainder of projects, first proejct already made 
+        for(int i = 0; i < total_files; i++) 
+        {   
+            // convert 4 bytes into 32bit number 
+            uint32_t file_addr = *(file_list_buffer + (i*4)) << 24 | *(file_list_buffer + 1 + (i*4)) << 16 | *(file_list_buffer + 2 + (i*4)) << 8 | *(file_list_buffer + 3 + (i*4));
+            flash_read(file_buffer, file_addr, FILE_HEADER_SIZE);// read project data 
+            file_new(file_buffer, chip_selected);
+        }
+
+        free(file_list_buffer);
+        free(file_buffer);
+    }
+    else
+    {
+        chip_selected->file_first = file_create(); 
+    }
+}
+
+file_struct* file_list_index(int index, chip_struct* chip_curr)  
+{ 
+    file_struct* fileN;
+    fileN = chip_curr->file_first; 
+
+    for(int i = 1; i < index; i++) // minus 1 loop since file_first was already factored in
+    {
+        fileN = fileN->file_next; 
+    }
+    return fileN; 
+}
+
+file_struct* file_new(char* data, chip_struct* chip_curr)
+{
+    file_struct* fileY = file_create();
+
+    fileY->chip_parent = chip_curr;
+    fileY->file_name = name_fetch(data);
+    fileY->file_next = NULL;
+    fileY->time_stamp = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);
+    fileY->data_length = *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23);
+    fileY->file_data = *(data+24) << 24 | *(data+25) << 16 | *(data+26) << 8 | *(data+27);
+
+    if(chip_curr->file_curr != 0) //push node, add to project_next
+    {  
+        int olderSiblingIndex = (chip_curr->file_curr - 1);  
+        file_struct* fileZ = file_list_index(olderSiblingIndex, chip_curr);    //index olderSibling and assign project to project_next node of last created project, older sibling is at index of SYS_ project_num
+        fileZ->file_next = fileY;  
+    }
+
+    fileY->file_index = chip_curr->file_curr; // NOTE: POSSIBLE BUG HERE, should index from zero
+    chip_curr->file_curr += 1; 
+
+    return fileY;
+}
+
+file_struct* file_create(void)
+{
+    file_struct* fileX = malloc(sizeof(file_struct)); 
+    
+    fileX->file_name = "Empty";
+    fileX->file_index = NULL;
+    fileX->file_next = NULL;
+    fileX->file_data = NULL;
+    fileX->chip_parent = NULL;
+    fileX->time_stamp = NULL;
+    fileX->data_length = NULL;
+ 
+    return fileX;
+}
+
+//**************************************************************  CHIP FUNCTIONS  **************************************************************//
+
+project_struct* chips_sync(int8_t selectedItem)
 {
     //index project                                        
     project_struct* project_selected = project_list_index(selectedItem); // NOTE: passing int8_t argument to int parameter
@@ -221,7 +314,7 @@ void chips_sync(int8_t selectedItem)
         
         //create first chip
         uint32_t chip_addr0 = *chip_list_buffer << 24 | *(chip_list_buffer + 1) << 16 | *(chip_list_buffer + 2) << 8 | *(chip_list_buffer + 3);
-        char* chip_buffer = malloc(sizeof(char[CHIP_HEADER_SIZE]));  //TODO FREE
+        char* chip_buffer = malloc(sizeof(char[CHIP_HEADER_SIZE])); 
         flash_read(chip_buffer, chip_addr0, CHIP_HEADER_SIZE);
         project_selected->chip_first = chip_new(chip_buffer, project_selected); // create first project(head of list) 
 
@@ -242,6 +335,8 @@ void chips_sync(int8_t selectedItem)
         project_selected->chip_first = chip_create(); 
         project_selected->chip_first->file_first = file_create();
     }
+
+    return project_selected; 
 }
 
 
@@ -256,6 +351,7 @@ chip_struct* chip_list_index(int index, project_struct* project_curr)
     }
     return chipN; 
 }
+
 
 chip_struct* chip_new(char* data, project_struct* project_curr)
 {  
@@ -283,6 +379,26 @@ chip_struct* chip_new(char* data, project_struct* project_curr)
     return chipY; 
 }
 
+
+chip_struct* chip_create(void) //TODO: render only existing files 
+{
+    chip_struct* chipX = malloc(sizeof(chip_struct));
+    
+    chipX->chip_name = "Empty"; //chip_name_fetch(); 
+    chipX->chip_index = NULL;
+    chipX->chip_next = NULL; 
+    chipX->file_num = 0;
+    chipX->file_curr = 0; 
+    chipX->file_list_addr = NULL;
+    chipX->file_first = NULL; //file_init();
+    chipX->project_parent = NULL;
+    chipX->chip_type_id = NULL;
+
+    chipIterator++;
+    return chipX;
+}
+
+//**************************************************************  PROJECT FUNCTIONS  **************************************************************//
 
 void projects_sync(void) //sync projects from flash
 {
@@ -360,6 +476,25 @@ project_struct* project_new(char* data) //input 24 byte project data, string, nu
 
     return projectY; //should return newly created to global
 }
+
+
+project_struct* project_create(void) //TODO: render only existing chips
+{
+    project_struct* projectX = malloc(sizeof(project_struct));
+    
+    projectX->project_name = "Empty"; //project_name_fetch();
+    projectX->project_index = NULL;
+    projectX->project_next = NULL;
+    projectX->chip_num = 0;
+    projectX->chip_curr = 0;
+    projectX->chip_first = NULL; // chip_create();
+    projectX->chip_list_addr = NULL;
+    
+    projectIterator++;
+    return projectX; 
+}
+
+//**************************************************************************************************************************************************//
 
 void flash_init(void)
 {   
@@ -482,106 +617,7 @@ char* name_fetch(char* data)
 }
 
 
-chip_struct* chip_parent_fetch(void)
-{
-    // TODO: fetch chip_parent member from newly create file
-    // read external flash here
-    return NULL;
-}
-
-
-project_struct* project_parent_fetch(void)
-{
-    // TODO: fetch project_parent member from newly created chip
-    // read external flash here
-    return NULL; 
-}
-
-
-//TODO: create file_new, project_new, chip_new functions for adding nodes, add menu item to allow creation, at bottom of menu?
-file_struct* file_list_index(file_struct* file, int index) 
-{ 
-    file_struct* fileN;
-    fileN = file->chip_parent->file_first; 
-
-    for(int i = 1; i < index; i++) // minus 1 loop since file_first was already factored in
-    {
-        fileN = fileN->file_next; 
-    }
-    return fileN; 
-}
-
-
-file_struct* file_new(void) //fetches file from Flash and adds to linked list in RAM 
-{   
-    file_struct* fileY = file_create(); //create file
-    
-    fileY->chip_parent = chip_parent_fetch(); // data needs to be sent in payload and fetched from flash
-    fileY->file_name = NULL;//name_fetch();  // send in payload, fetch from flash
-    fileY->file_next = NULL;
-    fileY->file_data = NULL; // send in payload, pointer to data in flash 
-    
-    fileY->file_index = fileY->chip_parent->file_num; // update file index
-    fileY->chip_parent->file_num += 1; //increment file counter on chip_parent
-    
-
-    if(fileY->file_index != 0) //push node, add to file_next of last file
-    {   
-        int olderSiblingIndex = fileY->file_index - 1;  // older sibling is one made previously
-        file_struct* fileZ = file_list_index(fileY, olderSiblingIndex); 
-        fileZ->file_next = fileY; //assign newly created file as file_next of last file
-    }
-
-    return fileY; //should return newly created to global
-}
-
-
-file_struct* file_create(void)
-{
-    file_struct* fileX = malloc(sizeof(file_struct)); 
-    
-    fileX->file_name = "Empty";
-    fileX->file_index = NULL;
-    fileX->file_next = NULL;
-    fileX->file_data = NULL;
-    fileX->chip_parent = NULL;
- 
-    return fileX;
-}
-
-
-chip_struct* chip_create(void) //TODO: render only existing files 
-{
-    chip_struct* chipX = malloc(sizeof(chip_struct));
-    
-    chipX->chip_name = "Empty"; //chip_name_fetch(); 
-    chipX->chip_index = NULL;
-    chipX->chip_next = NULL; 
-    chipX->file_num = 0;
-    // do for files_num in chip, fetch from flash
-    chipX->file_first = NULL; //file_init();
-    chipX->project_parent = NULL;
-
-    chipIterator++;
-    return chipX;
-}
-
-
-project_struct* project_create(void) //TODO: render only existing chips
-{
-    project_struct* projectX = malloc(sizeof(project_struct));
-    
-    projectX->project_name = "Empty"; //project_name_fetch();
-    projectX->project_index = NULL;
-    projectX->project_next = NULL;
-    projectX->chip_num = 0;
-    // do for chip_num in project, fetch from flash
-    projectX->chip_first = NULL; // chip_create();
-    
-    projectIterator++;
-    return projectX; 
-}
-
+//**************************************************************  DISPLAY FUNCTIONS  **************************************************************//
 
 void clear_list(void) //TODO: This argument for future optimizing, write over exact text with black
 {
@@ -719,8 +755,8 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, uint8_t screen
                 L_ item0 = SYS_ project_first->chip_first->file_first->file_name;
                 L_ item1 = SYS_ project_first->chip_first->file_first->file_next->file_name;
                 L_ item2 = SYS_ project_first->chip_first->file_first->file_next->file_next->file_name;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
+                L_ item3 = NULL;
+                L_ item4 = NULL;
             }
 //            else if(selectedItem == 1 && selectedProject == 0) // project 1 chip 2 selected
 //            {

@@ -26,6 +26,7 @@ typedef struct chip
     file_struct* file_first; // pointer to head
     project_struct* project_parent;
     uint32_t file_list_addr; 
+    uint32_t file_curr;
 }chip_struct; 
 
 
@@ -48,7 +49,8 @@ typedef struct file
     uint32_t file_data; // address program data in flash
     int file_index;
     chip_struct* chip_parent; 
-    uint32_t file_curr;
+    uint32_t time_stamp; 
+    uint32_t data_length;
 }file_struct; 
 
 
@@ -85,7 +87,7 @@ typedef struct recents
 }recents_struct;
 
 
-void push_file_to_recents(void);
+void push_file_to_recents(int8_t selectedItem);
 void flash_init(void); 
 recents_struct* recents_init(void);
 system_struct* system_new(void);
@@ -94,24 +96,20 @@ void list_init(void);
 char* firmware_version_fetch(void);
 char* name_fetch(char* data);
 
-
-chip_struct* chip_parent_fetch(void);
-project_struct* project_parent_fetch(void);
-
 file_struct* file_create(void);
 chip_struct* chip_create(void);
 project_struct* project_create(void);
 list_struct* list_new(void);
-file_struct* file_new(void);
+file_struct* file_new(char* data, chip_struct* chip_curr);
 chip_struct* chip_new(char*, project_struct*);
 project_struct* project_new(char* data);
 
-file_struct* file_list_index(file_struct*, int);
+file_struct* file_list_index(int index, chip_struct* chip_curr);
 project_struct* project_list_index(int); 
 chip_struct* chip_list_index(int index, project_struct* project_curr);
 
-void files_sync(int8_t);
-void chips_sync(int8_t);
+void files_sync(int8_t, project_struct*);
+project_struct* chips_sync(int8_t);
 void projects_sync(void);
 
 void draw_selection_box(void);

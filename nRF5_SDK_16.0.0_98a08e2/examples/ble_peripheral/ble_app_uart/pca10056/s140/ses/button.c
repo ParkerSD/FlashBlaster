@@ -34,6 +34,7 @@
 
 APP_TIMER_DEF(long_press_timer_id);
 
+project_struct* project_selected; 
 volatile bool enterFlag = false;
 volatile bool upFlag = false;
 volatile bool longTimerStarted = false;
@@ -96,15 +97,15 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 break;
             case chip_screen:
                 // load chips of selected project 
-                chips_sync(selectedItem); 
+                project_selected = chips_sync(selectedItem); 
                 break;
             case file_screen: 
                 // load files of selected chip
-                //files_sync(selectedItem);
+                files_sync(selectedItem, project_selected); // NOTE: return chip_struct? 
                 break;
             case exe_screen:
                 // execute programming 
-                // push_file_to_recents(); //add file to recents, push last off stack
+                // push_file_to_recents(selectedItem); //add file to recents, push last off stack
                 screenStack = 0;
             default: 
                 break; 
