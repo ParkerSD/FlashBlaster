@@ -92,14 +92,15 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
         switch(screenStack)
         {
             case project_screen:
-                // never reached? destroy all create structs and resync projects?
+                //NOTE: never reached? destroy all - system_init and resync projects?
                 break;
             case chip_screen:
-                // load chips of selected project, use selectedItem 
+                // load chips of selected project 
                 chips_sync(selectedItem); 
                 break;
             case file_screen: 
                 // load files of selected chip
+                //files_sync(selectedItem);
                 break;
             case exe_screen:
                 // execute programming 
@@ -107,7 +108,6 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 screenStack = 0;
             default: 
                 break; 
-
         }
         
         clear_screen(); // remove for speed if possible

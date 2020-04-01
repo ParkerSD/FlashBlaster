@@ -45,9 +45,10 @@ typedef struct file
 {   
     char* file_name;
     file_struct* file_next; 
-    uint8_t* file_data; // was uint8_t, pointer to program data
+    uint32_t file_data; // address program data in flash
     int file_index;
     chip_struct* chip_parent; 
+    uint32_t file_curr;
 }file_struct; 
 
 
@@ -109,6 +110,7 @@ file_struct* file_list_index(file_struct*, int);
 project_struct* project_list_index(int); 
 chip_struct* chip_list_index(int index, project_struct* project_curr);
 
+void files_sync(int8_t);
 void chips_sync(int8_t);
 void projects_sync(void);
 

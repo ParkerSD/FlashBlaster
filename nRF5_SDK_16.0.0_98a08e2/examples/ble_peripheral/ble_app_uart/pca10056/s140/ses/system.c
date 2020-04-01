@@ -39,17 +39,19 @@
 #define WORD_SIZE 4
 #define MAX_STRING_SIZE 16
 
-#define DIRECTORY_OFFSET 32
+#define DIRECTORY_OFFSET 32 //NOTE this will change
 #define PROJECT_SECTOR_OFFSET 480 //NOTE this will change
+#define CHIP_SECTOR_OFFSET 384 //NOTE this will change
 
-
-#define PROJECT_HEADER_OFFSET 20 //chip size without pointers
+#define PROJECT_HEADER_SIZE 20 //chip size without pointers
 #define MAX_PROJECT_SIZE 128 // allows for 27 chips
 #define CHIP_LIST_SIZE 108 //chip list of project
 
-#define CHIP_HEADER_OFFSET 24 // ship size without pointers
+#define CHIP_HEADER_SIZE 24 // ship size without pointers
 #define MAX_CHIP_SIZE 128
-#define FILE_LIST_SIZE 108 //chip list of project
+#define FILE_LIST_SIZE 104 //chip list of project
+
+#define FILE_HEADER_SIZE 28 // ship size without pointers
 
 
 
@@ -63,7 +65,7 @@
 
 recents_struct* recents_singleton;
 list_struct* list_singleton;
-system_struct* system_singleton; //TODO init global system stuct based on file system
+system_struct* system_singleton; 
 
 
 uint8_t projectIterator = 0; 
@@ -219,29 +221,27 @@ void chips_sync(int8_t selectedItem)
         
         //create first chip
         uint32_t chip_addr0 = *chip_list_buffer << 24 | *(chip_list_buffer + 1) << 16 | *(chip_list_buffer + 2) << 8 | *(chip_list_buffer + 3);
-        char* chip_buffer = malloc(sizeof(char[CHIP_HEADER_OFFSET]));  //TODO FREE
-        flash_read(chip_buffer, chip_addr0, CHIP_HEADER_OFFSET);
+        char* chip_buffer = malloc(sizeof(char[CHIP_HEADER_SIZE]));  //TODO FREE
+        flash_read(chip_buffer, chip_addr0, CHIP_HEADER_SIZE);
         project_selected->chip_first = chip_new(chip_buffer, project_selected); // create first project(head of list) 
 
         // create remainder of projects, first proejct already made 
-        for(int i = 0; i < total_chips; i++) //NOTE i=0 maybe better here
+        for(int i = 0; i < total_chips; i++) 
         {   
             // convert 4 bytes into 32bit number 
             uint32_t chip_addr = *(chip_list_buffer + (i*4)) << 24 | *(chip_list_buffer + 1 + (i*4)) << 16 | *(chip_list_buffer + 2 + (i*4)) << 8 | *(chip_list_buffer + 3 + (i*4));
-            flash_read(chip_buffer, chip_addr, CHIP_HEADER_OFFSET);// read project data 
+            flash_read(chip_buffer, chip_addr, CHIP_HEADER_SIZE);// read project data 
             chip_new(chip_buffer, project_selected);
         }
+
+        free(chip_list_buffer);
+        free(chip_buffer);
     }
     else
     {
         project_selected->chip_first = chip_create(); 
         project_selected->chip_first->file_first = file_create();
     }
-    
-    // read num chips from selected item project address 
-    // buffer all chip addresses 
-    // buffer each chip and create structs
-    // assign chips to each chip_next in order 
 }
 
 
@@ -256,16 +256,7 @@ chip_struct* chip_list_index(int index, project_struct* project_curr)
     }
     return chipN; 
 }
-/*
-    char* chip_name; 
-    chip_struct* chip_next; 
-    uint16_t chip_index; 
-    uint16_t file_num; //total num of files associated with the chip 
-    uint32_t chip_type_id;
-    file_struct* file_first; // pointer to head
-    project_struct* project_parent;
-    uint32_t file_list_addr;
-*/
+
 chip_struct* chip_new(char* data, project_struct* project_curr)
 {  
     chip_struct* chipY = chip_create(); 
@@ -277,7 +268,7 @@ chip_struct* chip_new(char* data, project_struct* project_curr)
     chipY->file_first = NULL;
     chipY->chip_next = NULL;
     
-    //TODO assign file_list_addr to chip based on address offsets, chipY->file_list_addr = DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + 
+    chipY->file_list_addr = DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_HEADER_SIZE + (project_curr->chip_curr * MAX_CHIP_SIZE);
 
     if(project_curr->chip_curr != 0) //push node, add to project_next
     {  
@@ -296,7 +287,7 @@ chip_struct* chip_new(char* data, project_struct* project_curr)
 void projects_sync(void) //sync projects from flash
 {
     //determine number of projects from directory value
-    uint8_t* num_projects = malloc(sizeof(int)); //TODO FREE
+    uint8_t* num_projects = malloc(sizeof(int)); 
     flash_read(num_projects, ADDR_NUM_PROJECTS, WORD_SIZE); // read num projects // flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
     uint32_t project_count = bytes_to_word(num_projects, project_count); // function to convert byte array to 32bit word 
     SYS_ projects_total = project_count; // populate system struct with project num value from flash
@@ -310,9 +301,9 @@ void projects_sync(void) //sync projects from flash
         flash_read(project_addr, ADDR_PROJECT_PTR_FIRST, total_projects_length); // buffer for all project addresses
         
         // create first project in RAM, extract to function
-        char* project_buffer = malloc(sizeof(char[PROJECT_HEADER_OFFSET])); //TODO FREE,  name string plus num_chips malloc 
+        char* project_buffer = malloc(sizeof(char[PROJECT_HEADER_SIZE])); // name string plus num_chips malloc 
         uint32_t current_addr = project_addr[0] << 24 | project_addr[1] << 16 | project_addr[2] << 8 | project_addr[3]; // shift bytes into 32bit int
-        flash_read(project_buffer, current_addr, PROJECT_HEADER_OFFSET);
+        flash_read(project_buffer, current_addr, PROJECT_HEADER_SIZE);
         SYS_ project_first = project_new(project_buffer); // create first project(head of list) 
 
         // create remainder of projects, first project already made 
@@ -320,9 +311,10 @@ void projects_sync(void) //sync projects from flash
         {   
             // convert 4 bytes into 32bit number 
             current_addr = project_addr[0 + (i*4)]  << 24 | project_addr[1 + (i*4)] << 16 | project_addr[2 + (i*4)] << 8 | project_addr[3 + (i*4)];
-            flash_read(project_buffer, current_addr, PROJECT_HEADER_OFFSET);// read project data 
+            flash_read(project_buffer, current_addr, PROJECT_HEADER_SIZE);// read project data 
             project_new(project_buffer);
         }
+        free(project_buffer);
     }
     else
     {
@@ -353,7 +345,7 @@ project_struct* project_new(char* data) //input 24 byte project data, string, nu
     projectY->chip_num = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);//TODO: chip_num_fetch(data) - last 4 bytes of 20 bytes;
     projectY->project_next = NULL;
     projectY->chip_first = NULL; 
-    projectY->chip_list_addr = DIRECTORY_OFFSET + PROJECT_HEADER_OFFSET + (SYS_ project_curr * MAX_PROJECT_SIZE); //was *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23);// NOTE MAKE ACTUAL FLASH ADDRESS OF FIRST CHIP BASED ON MAX PROJECT LENGTH 
+    projectY->chip_list_addr = DIRECTORY_OFFSET + PROJECT_HEADER_SIZE + (SYS_ project_curr * MAX_PROJECT_SIZE); //was *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23);// NOTE MAKE ACTUAL FLASH ADDRESS OF FIRST CHIP BASED ON MAX PROJECT LENGTH 
     projectY->chip_curr = 0;
 
     if(SYS_ project_curr != 0) //push node, add to project_next
@@ -387,7 +379,7 @@ void flash_init(void)
     uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 2, 0}; //address 512 when bit shifted
     uint8_t chip_ptr_sec_test[WORD_SIZE] = {0, 0, 2, 128}; //address 640 when bit shifted
     uint8_t chip_ptr_three_test[WORD_SIZE] = {0, 0, 3, 0}; //address 768 when bit shifted
-    flash_write(project_string_test0, 32, sizeof(char[MAX_STRING_SIZE])); // name sting 16 bytes long 
+    flash_write(project_string_test0, 32, MAX_STRING_SIZE); // name sting 16 bytes long 
     flash_write(chip_num_test, 48, WORD_SIZE); // chip num 4 bytes, address 48 (after string) 
     flash_write(chip_ptr_first_test, 52, WORD_SIZE); // write first chip ptr after chip_num value of first project
     flash_write(chip_ptr_sec_test, 56, WORD_SIZE);
@@ -395,18 +387,50 @@ void flash_init(void)
     //CHIP 0 - 28 bytes (including first file addr) 
     uint8_t chip_string_test0[] = {"chip0"}; //16 bytes
     uint8_t chip_type_ID[WORD_SIZE] = {0, 0, 7, 0}; 
-    uint8_t files_num[WORD_SIZE] = {0, 0, 7, 0}; 
-    uint8_t files_first_addr[WORD_SIZE] = {0, 0, 255, 255}; 
-    flash_write(chip_string_test0, 512, sizeof(char[MAX_STRING_SIZE]));
+    uint8_t files_num[WORD_SIZE] = {0, 0, 0, 3}; 
+    uint8_t files_first_addr[WORD_SIZE] = {0, 0, 3, 128}; // 896
+    uint8_t files_sec_addr[WORD_SIZE] = {0, 0, 3, 156}; // 924
+    uint8_t files_third_addr[WORD_SIZE] = {0, 0, 3, 184}; // 952 
+    flash_write(chip_string_test0, 512, MAX_STRING_SIZE);
     flash_write(chip_type_ID, 528, WORD_SIZE);
     flash_write(files_num, 532, WORD_SIZE);
     flash_write(files_first_addr, 536, WORD_SIZE);
+    flash_write(files_sec_addr, 540, WORD_SIZE);
+    flash_write(files_third_addr, 544, WORD_SIZE);
+    //FILE0
+    uint8_t file_string_test0[] = {"file0"}; //16 bytes
+    uint8_t timestamp0[WORD_SIZE] = {0, 0, 0, 1}; 
+    uint8_t datalength0[WORD_SIZE] = {0, 0, 0, 1}; 
+    uint8_t dataaddress0[WORD_SIZE] = {0, 0, 0, 1}; 
+    flash_write(file_string_test0, 896, MAX_STRING_SIZE);
+    flash_write(timestamp0, 912, WORD_SIZE);
+    flash_write(datalength0, 916, WORD_SIZE);
+    flash_write(dataaddress0, 920, WORD_SIZE);
+    //FILE1
+    uint8_t file_string_test1[] = {"file1"}; //16 bytes
+    uint8_t timestamp1[WORD_SIZE] = {0, 0, 0, 1}; 
+    uint8_t datalength1[WORD_SIZE] = {0, 0, 0, 1}; 
+    uint8_t dataaddress1[WORD_SIZE] = {0, 0, 0, 1}; 
+    flash_write(file_string_test1, 924, MAX_STRING_SIZE);
+    flash_write(timestamp1, 940, WORD_SIZE);
+    flash_write(datalength1, 944, WORD_SIZE);
+    flash_write(dataaddress1, 948, WORD_SIZE);
+    //FILE2
+    uint8_t file_string_test2[] = {"file2"}; //16 bytes
+    uint8_t timestamp2[WORD_SIZE] = {0, 0, 0, 1}; 
+    uint8_t datalength2[WORD_SIZE] = {0, 0, 0, 1}; 
+    uint8_t dataaddress2[WORD_SIZE] = {0, 0, 0, 1}; 
+    flash_write(file_string_test2, 952, MAX_STRING_SIZE);
+    flash_write(timestamp2, 968, WORD_SIZE);
+    flash_write(datalength2, 972, WORD_SIZE);
+    flash_write(dataaddress2, 976, WORD_SIZE);
+
     //CHIP 1
     uint8_t chip_string_test1[] = {"chip1"}; //16 bytes
     uint8_t chip_type_ID1[WORD_SIZE] = {0, 0, 7, 0}; 
     uint8_t files_num1[WORD_SIZE] = {0, 0, 7, 0}; 
     uint8_t files_first_addr1[WORD_SIZE] = {0, 0, 255, 255}; 
-    flash_write(chip_string_test1, 640, sizeof(char[MAX_STRING_SIZE]));
+    flash_write(chip_string_test1, 640, MAX_STRING_SIZE);
     flash_write(chip_type_ID1, 656, WORD_SIZE);
     flash_write(files_num1, 660, WORD_SIZE);
     flash_write(files_first_addr1, 664, WORD_SIZE);
@@ -415,7 +439,7 @@ void flash_init(void)
     uint8_t chip_type_ID2[WORD_SIZE] = {0, 0, 7, 0}; 
     uint8_t files_num2[WORD_SIZE] = {0, 0, 7, 0}; 
     uint8_t files_first_addr2[WORD_SIZE] = {0, 0, 255, 255}; 
-    flash_write(chip_string_test2, 768, sizeof(char[MAX_STRING_SIZE]));
+    flash_write(chip_string_test2, 768, MAX_STRING_SIZE);
     flash_write(chip_type_ID2, 784, WORD_SIZE);
     flash_write(files_num2, 788, WORD_SIZE);
     flash_write(files_first_addr2, 792, WORD_SIZE);
@@ -423,13 +447,13 @@ void flash_init(void)
     //NOTE PROJECT 2
     uint8_t project_string_test1[] = {"project1"};
     uint8_t chip_num_test1[WORD_SIZE] = {0, 0, 0, 0};
-    flash_write(project_string_test1, 160, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
+    flash_write(project_string_test1, 160, MAX_STRING_SIZE); // name string 16 bytes long 
     flash_write(chip_num_test1, 176, WORD_SIZE);
     
     //NOTE PROJECT 3 
     uint8_t project_string_test2[] = {"project2"};
     uint8_t chip_num_test2[WORD_SIZE] = {0, 0, 0, 0};
-    flash_write(project_string_test2, 288, sizeof(char[MAX_STRING_SIZE])); // name string 16 bytes long 
+    flash_write(project_string_test2, 288, MAX_STRING_SIZE); // name string 16 bytes long 
     flash_write(chip_num_test2, 304, WORD_SIZE);
     
 }
@@ -465,6 +489,7 @@ chip_struct* chip_parent_fetch(void)
     return NULL;
 }
 
+
 project_struct* project_parent_fetch(void)
 {
     // TODO: fetch project_parent member from newly created chip
@@ -473,8 +498,7 @@ project_struct* project_parent_fetch(void)
 }
 
 
-//TODO: create file_new, project_new, chip_new functions for adding nodes, add menu item to allow creation, at bottom of menu? 
-
+//TODO: create file_new, project_new, chip_new functions for adding nodes, add menu item to allow creation, at bottom of menu?
 file_struct* file_list_index(file_struct* file, int index) 
 { 
     file_struct* fileN;
@@ -512,13 +536,6 @@ file_struct* file_new(void) //fetches file from Flash and adds to linked list in
 }
 
 
-/*
-    chip_struct* chip_parent; 
-    uint8_t file_index; 
-    file_struct* file_next; 
-    char* file_name; 
-    uint8_t* file_data; // pointer to program data
-*/
 file_struct* file_create(void)
 {
     file_struct* fileX = malloc(sizeof(file_struct)); 
@@ -533,14 +550,6 @@ file_struct* file_create(void)
 }
 
 
-/*
-    project_struct* project_parent;
-    char* chip_name; 
-    uint8_t chip_index; 
-    chip_struct* chip_next; 
-    uint8_t file_num; //total num of files associated with the chip 
-    file_struct* file_first; // pointer to head
-*/
 chip_struct* chip_create(void) //TODO: render only existing files 
 {
     chip_struct* chipX = malloc(sizeof(chip_struct));
@@ -557,14 +566,6 @@ chip_struct* chip_create(void) //TODO: render only existing files
     return chipX;
 }
 
-
-    /*
-    char* project_name; 
-    uint8_t project_index; 
-    project_struct* project_next;
-    uint8_t chip_num; // total number of chips
-    chip_struct* chip_first;
-    */
 
 project_struct* project_create(void) //TODO: render only existing chips
 {
@@ -716,8 +717,8 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, uint8_t screen
             if(selectedItem == 0 && selectedProject == 0) // project 1 chip 1 selected
             {
                 L_ item0 = SYS_ project_first->chip_first->file_first->file_name;
-//                L_ item1 = SYS_ project_first->chip_first->file_first->file_next->file_name;
-//                L_ item2 = NULL;
+                L_ item1 = SYS_ project_first->chip_first->file_first->file_next->file_name;
+                L_ item2 = SYS_ project_first->chip_first->file_first->file_next->file_next->file_name;
 //                L_ item3 = NULL;
 //                L_ item4 = NULL;
             }
