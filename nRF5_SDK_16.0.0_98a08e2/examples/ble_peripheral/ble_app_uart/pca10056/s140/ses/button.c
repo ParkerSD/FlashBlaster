@@ -35,6 +35,8 @@
 APP_TIMER_DEF(long_press_timer_id);
 
 project_struct* project_selected; 
+
+
 volatile bool enterFlag = false;
 volatile bool upFlag = false;
 volatile bool longTimerStarted = false;
@@ -107,6 +109,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 // execute programming 
                 // push_file_to_recents(selectedItem); //add file to recents, push last off stack
                 screenStack = 0;
+                //hibernate(); //for test 
             default: 
                 break; 
         }
