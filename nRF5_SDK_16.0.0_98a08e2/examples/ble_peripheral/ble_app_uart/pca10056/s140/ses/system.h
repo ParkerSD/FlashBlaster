@@ -115,7 +115,7 @@ void projects_sync(void);
 void draw_selection_box(void);
 void draw_header(void);
 void draw_initial_screen(void);
-void rerender_screen(int8_t, int8_t , uint8_t);
+void rerender_screen(int8_t, int8_t, int8_t);
 void clear_list(void);
 void rerender_list(int8_t, uint8_t);
 void clear_screen(void);

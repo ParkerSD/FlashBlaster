@@ -43,7 +43,7 @@ volatile bool longTimerStarted = false;
 
 int8_t itemHighlighted = 0;
 int8_t selectedItem = 0; 
-uint8_t screenStack = 0; 
+int8_t screenStack = 0; 
 
 void button_up_callback(uint8_t pin_no, uint8_t button_action)
 {  
@@ -56,8 +56,13 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         if(itemHighlighted < 0)
         {
             itemHighlighted = 0;
+            screenStack--;
+            if(screenStack < 0)
+            {
+                screenStack = 0; 
+            }
         }
-        rerender_list(itemHighlighted, screenStack);
+        rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
     if(button_action == APP_BUTTON_RELEASE)
     {
@@ -76,7 +81,7 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
         {
             itemHighlighted = 5;
         }
-        rerender_list(itemHighlighted, screenStack);
+        rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
 }
 
@@ -114,7 +119,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 break; 
         }
         
-        clear_screen(); // remove for speed if possible
+        //clear_screen(); // remove for speed if possible
         rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
     if(button_action == APP_BUTTON_RELEASE)

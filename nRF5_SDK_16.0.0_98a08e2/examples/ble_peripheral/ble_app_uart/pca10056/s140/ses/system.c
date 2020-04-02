@@ -628,7 +628,7 @@ void flash_init(void)
 void system_init(void) // create global system struct and read directory info from flash, create project structs 
 {   
     system_singleton = system_new();  
-    flash_init(); 
+    //flash_init(); 
     projects_sync(); 
 }
 
@@ -657,8 +657,8 @@ void clear_list(void) //TODO: This argument for future optimizing, write over ex
       SSD1351_draw_filled_rect(10, 80, 110, 20, COLOR_BLACK);
       SSD1351_draw_filled_rect(10, 105, 110, 20, COLOR_BLACK);
        
-//      SSD1351_draw_filled_rect(10, 0, 110, 20, COLOR_BLACK); // clear header
-//      L_ headerPresent = false;
+      SSD1351_draw_filled_rect(0, 0, 110, 20, COLOR_BLACK); // clear header
+      L_ headerPresent = false;
 }
 
 
@@ -668,6 +668,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     if(itemHighlighted == 0)
     {
         clear_list();
+        draw_header();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, L_ item0);
         SSD1351_set_cursor(10,83);
@@ -679,6 +680,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     else if(itemHighlighted == 1)
     {   
         clear_list();
+        draw_header();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, L_ item1);
         SSD1351_set_cursor(10,83);
@@ -690,6 +692,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     else if(itemHighlighted == 2)
     {
         clear_list();
+        draw_header();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
         SSD1351_set_cursor(10,83);
@@ -701,6 +704,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     else if(itemHighlighted == 3)
     {
         clear_list();
+        draw_header();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, L_ item3);
         SSD1351_set_cursor(10,83);
@@ -710,6 +714,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
     else if(itemHighlighted == 4)
     {
         clear_list();
+        draw_header();
         SSD1351_set_cursor(10,57);
         SSD1351_printf(COLOR_WHITE, curr_font, L_ item4);
         SSD1351_update();
@@ -717,7 +722,7 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
 }
 
 
-void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, uint8_t screenStack) 
+void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenStack) 
 {   
     switch(screenStack)
     {
