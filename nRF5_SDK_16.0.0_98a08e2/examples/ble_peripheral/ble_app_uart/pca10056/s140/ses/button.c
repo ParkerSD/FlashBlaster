@@ -39,6 +39,7 @@ project_struct* project_selected;
 
 volatile bool enterFlag = false;
 volatile bool upFlag = false;
+volatile bool downFlag = false;
 volatile bool longTimerStarted = false;
 
 int8_t itemHighlighted = 0;
@@ -56,11 +57,11 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         if(itemHighlighted < 0)
         {
             itemHighlighted = 0;
-            screenStack--;
-            if(screenStack < 0)
-            {
-                screenStack = 0; 
-            }
+//            screenStack--;      //NOTE: for more granular backwards navigation, needs bug fixes with display logic
+//            if(screenStack < 0)
+//            {
+//                screenStack = 0; 
+//            }
         }
         rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
@@ -75,13 +76,21 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
 void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long press timer 
 {
     if(button_action == APP_BUTTON_PUSH)
-    {     
+    {   
+        downFlag = false; 
+        timer_start();
+
         itemHighlighted++;
         if(itemHighlighted > 5)
         {
             itemHighlighted = 5;
         }
         rerender_screen(itemHighlighted, selectedItem, screenStack);
+    }
+    if(button_action == APP_BUTTON_RELEASE)
+    {
+        downFlag = false;
+        timer_stop();
     }
 }
 
@@ -155,17 +164,23 @@ void long_press_timeout_handler(void* p_context)
 {
     if(upFlag && !enterFlag)// up long press
     {   
-        clear_leds();
-        nrf_gpio_pin_set(LED_BLUE);
+        screenStack = 0; 
+        rerender_screen(itemHighlighted, selectedItem, screenStack);
+
     }
     else if(enterFlag && !upFlag)// enter long press
     {
-        clear_leds();
+        clear_leds(); // for test
         nrf_gpio_pin_set(LED_GREEN);
     }
     else if(enterFlag && upFlag) //if dual press
     {
         hibernate();
+    }
+    else if(downFlag) //down long press
+    {
+        clear_leds(); // for test 
+        nrf_gpio_pin_set(LED_BLUE);
     }
 }
 

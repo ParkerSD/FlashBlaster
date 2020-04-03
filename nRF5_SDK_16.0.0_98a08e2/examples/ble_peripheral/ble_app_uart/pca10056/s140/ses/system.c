@@ -32,33 +32,10 @@
 #include "flash.h"
 
 
-#define ADDR_NUM_PROJECTS 0
-#define ADDR_PROJECT_PTR_FIRST 4
-
-#define WORD_SIZE 4
-#define MAX_STRING_SIZE 16
-
-//flash sizes and offsets 
-#define DIRECTORY_OFFSET 32 //NOTE this will change
-#define PROJECT_SECTOR_OFFSET 480 //NOTE this will change
-#define CHIP_SECTOR_OFFSET 384 //NOTE this will change
-
-#define PROJECT_HEADER_SIZE 20 //chip size without pointers
-#define MAX_PROJECT_SIZE 128 // allows for 27 chips
-#define CHIP_LIST_SIZE 108 //chip list of project
-
-#define CHIP_HEADER_SIZE 24 // ship size without pointers
-#define MAX_CHIP_SIZE 128
-#define FILE_LIST_SIZE 104 //chip list of project
-
-#define FILE_HEADER_SIZE 28 // ship size without pointers
-
-
 #define SYS_ system_singleton->
 #define L_ list_singleton->
 #define REC_ recents_singleton-> 
 
-#define curr_font small_font
 
 recents_struct* recents_singleton;
 list_struct* list_singleton;
@@ -116,7 +93,7 @@ void clear_screen(void)
 void draw_selection_box(void) // top left corner of full width box = point (0, y) 
 {
     //SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
-    SSD1351_draw_rect(2, 45, 124, 30, COLOR_BLUE);
+    SSD1351_draw_rect(2, 48, 124, 25, COLOR_BLUE);
     SSD1351_update();
     L_ boxPresent = true; 
 }
@@ -124,7 +101,7 @@ void draw_selection_box(void) // top left corner of full width box = point (0, y
 
 void draw_header(void)
 {
-    SSD1351_set_cursor(1,1);
+    SSD1351_set_cursor(1,35);
     SSD1351_printf(COLOR_WHITE, small_font, L_ header);
     SSD1351_update();
     L_ headerPresent = true;
@@ -135,9 +112,10 @@ void draw_initial_screen(void)
 {   
    L_ currentList = project;
    L_ header = projectHeader; 
-   L_ item0 = SYS_ project_first->project_name;
-   L_ item1 = SYS_ project_first->project_next->project_name;
-   L_ item2 = SYS_ project_first->project_next->project_next->project_name;
+   project_name_fetch();
+// L_ items[0] = project_list_index(0)->project_name;// SYS_ project_first->project_name;
+// L_ items[1] = project_list_index(1)->project_name;// SYS_ project_first->project_next->project_name;
+// L_ items[2] = project_list_index(2)->project_name;// SYS_ project_first->project_next->project_next->project_name;
 // L_ item3 = SYS_ project_first->project_next->project_next->project_next->project_name;
 // L_ item4 = SYS_ project_first->project_next->project_next->project_next->project_next->project_name;
 
@@ -147,11 +125,11 @@ void draw_initial_screen(void)
     draw_selection_box();
     draw_header();
     SSD1351_set_cursor(10,57);
-    SSD1351_printf(COLOR_WHITE, curr_font, L_ item0);
+    SSD1351_printf(COLOR_WHITE, curr_font, L_ items[0]);
     SSD1351_set_cursor(10,83);
-    SSD1351_printf(COLOR_WHITE, curr_font, L_ item1);
+    SSD1351_printf(COLOR_WHITE, curr_font, L_ items[1]);
     SSD1351_set_cursor(10,105);
-    SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
+    SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
     SSD1351_update();
 }
 
@@ -163,14 +141,10 @@ list_struct* list_new(void)
     listX->currentList = NULL;
     listX->header = NULL;
     listX->recent = NULL;
-    listX->item0 = NULL; // based on button presses the order will change and items will be rerendered
-    listX->item1 = NULL; 
-    listX->item2 = NULL; 
-    listX->item3 = NULL; 
-    listX->item4 = NULL; 
-
     listX->boxPresent = false; 
     listX->headerPresent = false; 
+
+    //listX->items = NULL;
 
     return listX;
 }
@@ -180,6 +154,7 @@ void list_init(void)
 {
     list_singleton = list_new();
 }
+
 
 //TODO: implement set_current_project() function based on selected item, same for chip and file, render name strings only 
 
@@ -208,37 +183,41 @@ uint32_t bytes_to_word(uint8_t* bytes, uint32_t word) // bytes stored MSB
 void files_sync(int8_t selectedItem, project_struct* project_selected)
 {
     chip_struct* chip_selected = chip_list_index(selectedItem, project_selected); 
-    uint16_t total_files = chip_selected->file_num;
-    uint32_t total_file_list_size = total_files * WORD_SIZE; 
 
-    if(total_files != 0)
+    if(chip_selected->file_first == NULL)
     {
-        //get file list 
-        uint32_t file_list_address = chip_selected->file_list_addr;
-        char* file_list_buffer = malloc(sizeof(char[total_file_list_size]));
-        flash_read(file_list_buffer, file_list_address, total_file_list_size);
+        uint16_t total_files = chip_selected->file_num;
+        uint32_t total_file_list_size = total_files * WORD_SIZE; 
 
-        //create first file
-        uint32_t file_addr0 = *file_list_buffer << 24 | *(file_list_buffer + 1) << 16 | *(file_list_buffer + 2) << 8 | *(file_list_buffer + 3);
-        char* file_buffer = malloc(sizeof(char[FILE_HEADER_SIZE]));
-        flash_read(file_buffer, file_addr0, FILE_HEADER_SIZE);
-        chip_selected->file_first = file_new(file_buffer, chip_selected);
+        if(total_files != 0)
+        {
+            //get file list 
+            uint32_t file_list_address = chip_selected->file_list_addr;
+            char* file_list_buffer = malloc(sizeof(char[total_file_list_size]));
+            flash_read(file_list_buffer, file_list_address, total_file_list_size);
 
-        // create remainder of projects, first proejct already made 
-        for(int i = 1; i < total_files; i++) 
-        {   
-            // convert 4 bytes into 32bit number 
-            uint32_t file_addr = *(file_list_buffer + (i*4)) << 24 | *(file_list_buffer + 1 + (i*4)) << 16 | *(file_list_buffer + 2 + (i*4)) << 8 | *(file_list_buffer + 3 + (i*4));
-            flash_read(file_buffer, file_addr, FILE_HEADER_SIZE);// read project data 
-            file_new(file_buffer, chip_selected);
+            //create first file
+            uint32_t file_addr0 = *file_list_buffer << 24 | *(file_list_buffer + 1) << 16 | *(file_list_buffer + 2) << 8 | *(file_list_buffer + 3);
+            char* file_buffer = malloc(sizeof(char[FILE_HEADER_SIZE]));
+            flash_read(file_buffer, file_addr0, FILE_HEADER_SIZE);
+            chip_selected->file_first = file_new(file_buffer, chip_selected);
+
+            // create remainder of projects, first proejct already made 
+            for(int i = 1; i < total_files; i++) 
+            {   
+                // convert 4 bytes into 32bit number 
+                uint32_t file_addr = *(file_list_buffer + (i*4)) << 24 | *(file_list_buffer + 1 + (i*4)) << 16 | *(file_list_buffer + 2 + (i*4)) << 8 | *(file_list_buffer + 3 + (i*4));
+                flash_read(file_buffer, file_addr, FILE_HEADER_SIZE);// read project data 
+                file_new(file_buffer, chip_selected);
+            }
+
+            free(file_list_buffer);
+            free(file_buffer);
         }
-
-        free(file_list_buffer);
-        free(file_buffer);
-    }
-    else
-    {
-        chip_selected->file_first = file_create(); 
+        else
+        {
+            chip_selected->file_first = file_create(); 
+        }
     }
 }
 
@@ -249,7 +228,14 @@ file_struct* file_list_index(int index, chip_struct* chip_curr)
 
     for(int i = 0; i < index; i++) // minus 1 loop since file_first was already factored in
     {
-        fileN = fileN->file_next; 
+        if(fileN->file_next != NULL)
+        {
+            fileN = fileN->file_next; 
+        }
+        else
+        {
+            return NULL; 
+        }
     }
     return fileN; 
 }
@@ -259,7 +245,7 @@ file_struct* file_new(char* data, chip_struct* chip_curr)
     file_struct* fileY = file_create();
 
     fileY->chip_parent = chip_curr;
-    fileY->file_name = name_fetch(data);
+    fileY->file_name = string_fetch(data);
     fileY->file_next = NULL;
     fileY->time_stamp = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);
     fileY->data_length = *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23);
@@ -297,43 +283,47 @@ file_struct* file_create(void)
 
 project_struct* chips_sync(int8_t selectedItem)
 {
-    //index project                                        
+    //index project              
     project_struct* project_selected = project_list_index(selectedItem); // NOTE: passing int8_t argument to int parameter
-    uint16_t total_chips = project_selected->chip_num;
-    uint32_t total_chip_list_size = total_chips * WORD_SIZE;
 
-    if(total_chips != 0)
-    { 
-        // get chip list 
-        uint32_t chip_list_address = project_selected->chip_list_addr;  
-        char* chip_list_buffer = malloc(sizeof(char[total_chip_list_size]));
-        flash_read(chip_list_buffer, chip_list_address, total_chip_list_size);
+    if(project_selected->chip_first == NULL) // don't recreate structs if already created
+    {
+        uint16_t total_chips = project_selected->chip_num;
+        uint32_t total_chip_list_size = total_chips * WORD_SIZE;
+
+        if(total_chips != 0)
+        { 
+            // get chip list 
+            uint32_t chip_list_address = project_selected->chip_list_addr;  
+            char* chip_list_buffer = malloc(sizeof(char[total_chip_list_size]));
+            flash_read(chip_list_buffer, chip_list_address, total_chip_list_size);
         
-        //create first chip
-        uint32_t chip_addr0 = *chip_list_buffer << 24 | *(chip_list_buffer + 1) << 16 | *(chip_list_buffer + 2) << 8 | *(chip_list_buffer + 3);
-        char* chip_buffer = malloc(sizeof(char[CHIP_HEADER_SIZE])); 
-        flash_read(chip_buffer, chip_addr0, CHIP_HEADER_SIZE);
-        project_selected->chip_first = chip_new(chip_buffer, project_selected); // create first project(head of list) 
+            //create first chip
+            uint32_t chip_addr0 = *chip_list_buffer << 24 | *(chip_list_buffer + 1) << 16 | *(chip_list_buffer + 2) << 8 | *(chip_list_buffer + 3);
+            char* chip_buffer = malloc(sizeof(char[CHIP_HEADER_SIZE])); 
+            flash_read(chip_buffer, chip_addr0, CHIP_HEADER_SIZE);
+            project_selected->chip_first = chip_new(chip_buffer, project_selected); // create first project(head of list) 
 
-        // create remainder of projects, first proejct already made 
-        for(int i = 1; i < total_chips; i++) 
-        {   
-            // convert 4 bytes into 32bit number 
-            uint32_t chip_addr = *(chip_list_buffer + (i*4)) << 24 | *(chip_list_buffer + 1 + (i*4)) << 16 | *(chip_list_buffer + 2 + (i*4)) << 8 | *(chip_list_buffer + 3 + (i*4));
-            flash_read(chip_buffer, chip_addr, CHIP_HEADER_SIZE);// read project data 
-            chip_new(chip_buffer, project_selected);
+            // create remainder of projects, first proejct already made 
+            for(int i = 1; i < total_chips; i++) 
+            {   
+                // convert 4 bytes into 32bit number 
+                uint32_t chip_addr = *(chip_list_buffer + (i*4)) << 24 | *(chip_list_buffer + 1 + (i*4)) << 16 | *(chip_list_buffer + 2 + (i*4)) << 8 | *(chip_list_buffer + 3 + (i*4));
+                flash_read(chip_buffer, chip_addr, CHIP_HEADER_SIZE);// read project data 
+                chip_new(chip_buffer, project_selected);
+            }
+
+            free(chip_list_buffer);
+            free(chip_buffer);
+        }
+        else
+        {
+            project_selected->chip_first = chip_create(); 
+            project_selected->chip_first->file_first = file_create();
         }
 
-        free(chip_list_buffer);
-        free(chip_buffer);
+        return project_selected; 
     }
-    else
-    {
-        project_selected->chip_first = chip_create(); 
-        project_selected->chip_first->file_first = file_create();
-    }
-
-    return project_selected; 
 }
 
 
@@ -344,7 +334,14 @@ chip_struct* chip_list_index(int index, project_struct* project_curr)
 
     for(int i = 0; i < index; i++) // minus 1 loop since file_first was already factored in
     {
-        chipN = chipN->chip_next; 
+        if(chipN->chip_next != NULL)
+        {
+            chipN = chipN->chip_next; 
+        }
+        else
+        {
+            return NULL;
+        }
     }
     return chipN; 
 }
@@ -353,7 +350,7 @@ chip_struct* chip_list_index(int index, project_struct* project_curr)
 chip_struct* chip_new(char* data, project_struct* project_curr)
 {  
     chip_struct* chipY = chip_create(); 
-    chipY->chip_name = name_fetch(data);
+    chipY->chip_name = string_fetch(data);
     chipY->chip_type_id = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);
     chipY->file_num = *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23); 
     chipY->project_parent = project_curr; 
@@ -445,7 +442,14 @@ project_struct* project_list_index(int index)
 
     for(int i = 0; i < index; i++) // minus 1 loop since file_first was already factored in
     {
-        projectN = projectN->project_next; 
+        if(projectN->project_next != NULL)
+        {
+            projectN = projectN->project_next; 
+        }
+        else
+        {
+            return NULL; 
+        }
     }
     return projectN; 
 }
@@ -454,7 +458,7 @@ project_struct* project_list_index(int index)
 project_struct* project_new(char* data) //input 24 byte project data, string, num_chips, and chip_first address
 {
     project_struct* projectY = project_create(); //create project
-    projectY->project_name = name_fetch(data);  // send in payload, fetch from flash
+    projectY->project_name = string_fetch(data);  // send in payload, fetch from flash
     projectY->chip_num = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);//TODO: chip_num_fetch(data) - last 4 bytes of 20 bytes;
     projectY->project_next = NULL;
     projectY->chip_first = NULL; 
@@ -640,7 +644,7 @@ char* firmware_version_fetch(void)
 }
 
 
-char* name_fetch(char* data)
+char* string_fetch(char* data)
 {
     char* name_string = malloc(sizeof(char[MAX_STRING_SIZE])); //TODO FREE 
     memcpy(name_string, data, MAX_STRING_SIZE); //16 bytes = max string length 
@@ -657,12 +661,14 @@ void clear_list(void) //TODO: This argument for future optimizing, write over ex
       SSD1351_draw_filled_rect(10, 80, 110, 20, COLOR_BLACK);
       SSD1351_draw_filled_rect(10, 105, 110, 20, COLOR_BLACK);
        
-      SSD1351_draw_filled_rect(0, 0, 110, 20, COLOR_BLACK); // clear header
+      SSD1351_draw_filled_rect(0, 30, 110, 15, COLOR_BLACK); // clear header
       L_ headerPresent = false;
 }
 
 
-void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit render to amount of existing items
+//TODO display all present strings dynamically, if null display nothing
+
+void rerender_list(int8_t itemHighlighted) 
 {   
 
     if(itemHighlighted == 0)
@@ -670,11 +676,11 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
         clear_list();
         draw_header();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item0);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[0]);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item1);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[1]);
         SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
         SSD1351_update();
     }
     else if(itemHighlighted == 1)
@@ -682,11 +688,11 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
         clear_list();
         draw_header();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item1);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[1]);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
         SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item3);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[3]);
         SSD1351_update();
     }
     else if(itemHighlighted == 2)
@@ -694,11 +700,11 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
         clear_list();
         draw_header();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item2);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item3);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[3]);
         SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item4);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[4]);
         SSD1351_update();
     }
     else if(itemHighlighted == 3)
@@ -706,9 +712,9 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
         clear_list();
         draw_header();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item3);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[3]);
         SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item4);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[4]);
         SSD1351_update();
     }
     else if(itemHighlighted == 4)
@@ -716,11 +722,34 @@ void rerender_list(int8_t itemHighlighted, uint8_t screenStack) // TODO: limit r
         clear_list();
         draw_header();
         SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ item4);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[4]);
         SSD1351_update();
     }
 }
 
+void project_name_fetch(void)
+{
+    for(int x = 0; x < MAX_PROJECTS; x++) //MAX_PROJECTS = 27 
+    {
+        L_ items[x] = project_list_index(x)->project_name;
+    }
+}
+
+void chip_name_fetch(int8_t selectedItem)
+{
+    for(int x = 0; x < MAX_CHIPS; x++) //MAX_CHIPS = 27 
+    {
+        L_ items[x] = chip_list_index(x, project_list_index(selectedItem))->chip_name;
+    }
+}
+
+void file_name_fetch(int8_t selectedItem)
+{
+    for(int x = 0; x < MAX_FILES; x++) //MAX_CHIPS = 27 
+    {
+        L_ items[x] = file_list_index(x, chip_list_index(selectedItem, project_list_index(selectedProject)))->file_name;
+    }
+}
 
 void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenStack) 
 {   
@@ -728,147 +757,21 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
     {
         case project_screen: 
             L_ currentList = project;
-            L_ header = projectHeader; //set initial values for display 
-            L_ item0 = SYS_ project_first->project_name; 
-            L_ item1 = SYS_ project_first->project_next->project_name;
-            L_ item2 = SYS_ project_first->project_next->project_next->project_name;
-//            L_ item3 = SYS_ project_first->project_next->project_next->project_next->project_name;
-//            L_ item4 = SYS_ project_first->project_next->project_next->project_next->project_next->project_name;
+            L_ header = projectHeader; // set initial values for display 
+            project_name_fetch();
             break;
 
         case chip_screen: //chip screen
             L_ currentList = chip;
             L_ header = chipHeader;
-            if(selectedItem == 0)
-            {
-                selectedProject = 0; 
-                L_ item0 = SYS_ project_first->chip_first->chip_name;
-                L_ item1 = SYS_ project_first->chip_first->chip_next->chip_name;
-                L_ item2 = SYS_ project_first->chip_first->chip_next->chip_next->chip_name;
-                L_ item3 = NULL;
-                L_ item4 = NULL;
-            }
-//            else if(selectedItem == 1)
-//            {
-//                selectedProject = 1; 
-//                L_ item0 = SYS_ project_first->project_next->chip_first->chip_name;
-//                L_ item1 = SYS_ project_first->project_next->chip_first->chip_next->chip_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 2)
-//            {
-//                selectedProject = 2; 
-//                L_ item0 = SYS_ project_first->project_next->project_next->chip_first->chip_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->chip_first->chip_next->chip_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 3)
-//            {
-//                selectedProject = 3; 
-//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_next->chip_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 4)
-//            {
-//                selectedProject = 4; 
-//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->chip_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
+            chip_name_fetch(selectedItem);
+            selectedProject = selectedItem; // selected project used by file_name_fetch
             break;
 
         case file_screen: //file screen
             L_ currentList = file;
             L_ header = fileHeader;
-            if(selectedItem == 0 && selectedProject == 0) // project 1 chip 1 selected
-            {
-                L_ item0 = SYS_ project_first->chip_first->file_first->file_name;
-                L_ item1 = SYS_ project_first->chip_first->file_first->file_next->file_name;
-                L_ item2 = SYS_ project_first->chip_first->file_first->file_next->file_next->file_name;
-                L_ item3 = NULL;
-                L_ item4 = NULL;
-            }
-            else if(selectedItem == 1 && selectedProject == 0) // project 1 chip 2 selected
-            {
-                L_ item0 = SYS_ project_first->chip_first->chip_next->file_first->file_name;
-                L_ item1 = SYS_ project_first->chip_first->chip_next->file_first->file_next->file_name;
-                L_ item2 = SYS_ project_first->chip_first->chip_next->file_first->file_next->file_next->file_name;
-                L_ item3 = NULL;
-                L_ item4 = NULL;
-            }
-//            else if(selectedItem == 0 && selectedProject == 1) // project 2 chip 1 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->chip_first->file_first->file_name;
-//                L_ item1 = SYS_ project_first->project_next->chip_first->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 1 && selectedProject == 1) // project 2 chip 2 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->chip_first->chip_next->file_first->file_name;
-//                L_ item1 = SYS_ project_first->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 0 && selectedProject == 2) // project 3 chip 1 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->project_next->chip_first->file_first->file_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->chip_first->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 1 && selectedProject == 2) // project 3 chip 2 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->project_next->chip_first->chip_next->file_first->file_name; //runs out of filenames here
-//                L_ item1 = SYS_ project_first->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 0 && selectedProject == 3) // project 4 chip 1 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->chip_first->file_first->file_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 1 && selectedProject == 3) // project 4 chip 2 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 0 && selectedProject == 4) // project 5 chip 1 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
-//            else if(selectedItem == 1 && selectedProject == 4) // project 5 chip 2 selected
-//            {
-//                L_ item0 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_name;
-//                L_ item1 = SYS_ project_first->project_next->project_next->project_next->project_next->chip_first->chip_next->file_first->file_next->file_name;
-//                L_ item2 = NULL;
-//                L_ item3 = NULL;
-//                L_ item4 = NULL;
-//            }
+            file_name_fetch(selectedItem); 
             break; 
 
         case exe_screen:
@@ -878,7 +781,7 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
             break; 
     }
 
-    rerender_list(itemHighlighted,screenStack);
+    rerender_list(itemHighlighted);
 
     if(L_ boxPresent == false)
     {

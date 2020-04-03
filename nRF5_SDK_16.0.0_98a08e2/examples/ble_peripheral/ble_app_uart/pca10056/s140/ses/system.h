@@ -1,4 +1,35 @@
 
+#define ADDR_NUM_PROJECTS 0
+#define ADDR_PROJECT_PTR_FIRST 4
+
+#define WORD_SIZE 4
+#define MAX_STRING_SIZE 16
+
+//flash sizes and offsets 
+#define DIRECTORY_OFFSET 32 //NOTE this will change
+#define PROJECT_SECTOR_OFFSET 480 //NOTE this will change
+#define CHIP_SECTOR_OFFSET 384 //NOTE this will change
+
+#define PROJECT_HEADER_SIZE 20 //chip size without pointers
+#define MAX_PROJECT_SIZE 128 // allows for 27 chips
+#define CHIP_LIST_SIZE 108 //chip list of project
+
+#define CHIP_HEADER_SIZE 24 // ship size without pointers
+#define MAX_CHIP_SIZE 128
+#define FILE_LIST_SIZE 104 //chip list of project
+
+#define FILE_HEADER_SIZE 28 // ship size without pointers
+
+#define MAX_PROJECTS 27 //system max 
+#define MAX_CHIPS 27 //max per project 
+#define MAX_FILES 27 //max per chip 
+
+#define MAX_ITEMS 27 // max display items
+#define curr_font small_font
+
+
+
+
 typedef enum
 {
     project = 0,
@@ -67,14 +98,11 @@ typedef struct list //the data that is actually displayed on oled, MAX 10 items,
 {   
     list_type currentList; 
     char* header;
-    char* item0;
-    char* item1;
-    char* item2;
-    char* item3;
-    char* item4;
     file_struct* recent; 
     bool boxPresent;
     bool headerPresent;
+    char* items[MAX_ITEMS];
+
 } list_struct;
 
 
@@ -94,7 +122,11 @@ system_struct* system_new(void);
 void system_init(void);
 void list_init(void);
 char* firmware_version_fetch(void);
-char* name_fetch(char* data);
+char* string_fetch(char* data);
+
+void project_name_fetch(void);
+void chip_name_fetch(int8_t selectedItem);
+void file_name_fetch(int8_t selectedItem);
 
 file_struct* file_create(void);
 chip_struct* chip_create(void);
@@ -117,7 +149,7 @@ void draw_header(void);
 void draw_initial_screen(void);
 void rerender_screen(int8_t, int8_t, int8_t);
 void clear_list(void);
-void rerender_list(int8_t, uint8_t);
+void rerender_list(int8_t);
 void clear_screen(void);
 
 uint32_t bytes_to_word(uint8_t* bytes, uint32_t word); //  converts four byte array to word
