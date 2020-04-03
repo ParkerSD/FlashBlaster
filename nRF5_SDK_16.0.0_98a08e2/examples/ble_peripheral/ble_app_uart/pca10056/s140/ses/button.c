@@ -77,13 +77,13 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
 {
     if(button_action == APP_BUTTON_PUSH)
     {   
-        downFlag = false; 
+        downFlag = true; 
         timer_start();
 
         itemHighlighted++;
-        if(itemHighlighted > 5)
+        if(itemHighlighted > MAX_ITEMS) 
         {
-            itemHighlighted = 5;
+            itemHighlighted = MAX_ITEMS;
         }
         rerender_screen(itemHighlighted, selectedItem, screenStack);
     }

@@ -143,9 +143,11 @@ list_struct* list_new(void)
     listX->recent = NULL;
     listX->boxPresent = false; 
     listX->headerPresent = false; 
-
-    //listX->items = NULL;
-
+    
+    for(int x = 0; x < MAX_ITEMS; x++)
+    {
+        listX->items[x] = NULL;
+    }
     return listX;
 }
 
@@ -497,6 +499,143 @@ project_struct* project_create(void) //TODO: render only existing chips
 
 //**************************************************************************************************************************************************//
 
+
+
+
+void system_init(void) // create global system struct and read directory info from flash, create project structs 
+{   
+    system_singleton = system_new();  
+    //flash_init(); 
+    projects_sync(); 
+}
+
+
+char* firmware_version_fetch(void)
+{
+    //fetch FW version from flash 
+    return systemFirmware;
+}
+
+
+char* string_fetch(char* data)
+{
+    char* name_string = malloc(sizeof(char[MAX_STRING_SIZE])); //TODO FREE 
+    memcpy(name_string, data, MAX_STRING_SIZE); //16 bytes = max string length 
+    return name_string;
+}
+
+
+//**************************************************************  DISPLAY FUNCTIONS  **************************************************************//
+
+void clear_list(void)
+{
+      //SSD1351_draw_filled_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+      SSD1351_draw_filled_rect(10, 53, 110, 20, COLOR_BLACK);
+      SSD1351_draw_filled_rect(10, 80, 110, 20, COLOR_BLACK);
+      SSD1351_draw_filled_rect(10, 105, 110, 20, COLOR_BLACK);
+       
+      SSD1351_draw_filled_rect(0, 30, 110, 15, COLOR_BLACK); // clear header
+      L_ headerPresent = false;
+}
+
+
+void rerender_list(int8_t itemHighlighted) // use screenStack 
+{   
+  
+    clear_list();
+    draw_header();
+   
+    if(strlen(L_ items[itemHighlighted]) > 3) // name must be longer than 3 char, less than MAX_STRING_SIZE
+    {
+        SSD1351_set_cursor(10,57);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted]);
+    }
+    if(strlen(L_ items[itemHighlighted+1]) > 3)
+    {
+        SSD1351_set_cursor(10,83);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+1]);
+    }
+    if(strlen(L_ items[itemHighlighted+2]) > 3)
+    {
+        SSD1351_set_cursor(10,105);
+        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+2]);
+    }
+
+    SSD1351_update();
+}
+
+
+void project_name_fetch(void)
+{
+    for(int x = 0; x < MAX_PROJECTS; x++) //MAX_PROJECTS = 27 
+    {
+        L_ items[x] = project_list_index(x)->project_name;
+    }
+}
+
+
+void chip_name_fetch(int8_t selectedItem)
+{
+    for(int x = 0; x < MAX_CHIPS; x++) //MAX_CHIPS = 27 
+    {
+        L_ items[x] = chip_list_index(x, project_list_index(selectedItem))->chip_name;
+    }
+}
+
+
+void file_name_fetch(int8_t selectedItem)
+{
+    for(int x = 0; x < MAX_FILES; x++) //MAX_CHIPS = 27 
+    {
+        L_ items[x] = file_list_index(x, chip_list_index(selectedItem, project_list_index(selectedProject)))->file_name;
+    }
+}
+
+
+void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenStack) 
+{   
+    switch(screenStack)
+    {
+        case project_screen: 
+            L_ currentList = project;
+            L_ header = projectHeader; // set initial values for display 
+            project_name_fetch();
+            break;
+
+        case chip_screen: //chip screen
+            L_ currentList = chip;
+            L_ header = chipHeader;
+            chip_name_fetch(selectedItem);
+            selectedProject = selectedItem; // selected project used by file_name_fetch
+            break;
+
+        case file_screen: //file screen
+            L_ currentList = file;
+            L_ header = fileHeader;
+            file_name_fetch(selectedItem); 
+            break; 
+
+        case exe_screen:
+            break; 
+
+        default:
+            break; 
+    }
+
+    rerender_list(itemHighlighted);
+
+    if(L_ boxPresent == false)
+    {
+        draw_selection_box();
+    }
+
+    if(L_ headerPresent == false)
+    {
+        draw_header();
+    }
+}
+
+
 void flash_init(void)
 {   
     // ADDR_NUM_PROJECTS 0
@@ -626,170 +765,4 @@ void flash_init(void)
     flash_write(project_string_test2, 288, MAX_STRING_SIZE); // name string 16 bytes long 
     flash_write(chip_num_test2, 304, WORD_SIZE);
     
-}
-
-
-void system_init(void) // create global system struct and read directory info from flash, create project structs 
-{   
-    system_singleton = system_new();  
-    //flash_init(); 
-    projects_sync(); 
-}
-
-
-char* firmware_version_fetch(void)
-{
-    //fetch FW version from flash 
-    return systemFirmware;
-}
-
-
-char* string_fetch(char* data)
-{
-    char* name_string = malloc(sizeof(char[MAX_STRING_SIZE])); //TODO FREE 
-    memcpy(name_string, data, MAX_STRING_SIZE); //16 bytes = max string length 
-    return name_string;
-}
-
-
-//**************************************************************  DISPLAY FUNCTIONS  **************************************************************//
-
-void clear_list(void) //TODO: This argument for future optimizing, write over exact text with black
-{
-      //SSD1351_draw_filled_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
-      SSD1351_draw_filled_rect(10, 53, 110, 20, COLOR_BLACK);
-      SSD1351_draw_filled_rect(10, 80, 110, 20, COLOR_BLACK);
-      SSD1351_draw_filled_rect(10, 105, 110, 20, COLOR_BLACK);
-       
-      SSD1351_draw_filled_rect(0, 30, 110, 15, COLOR_BLACK); // clear header
-      L_ headerPresent = false;
-}
-
-
-//TODO display all present strings dynamically, if null display nothing
-
-void rerender_list(int8_t itemHighlighted) 
-{   
-
-    if(itemHighlighted == 0)
-    {
-        clear_list();
-        draw_header();
-        SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[0]);
-        SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[1]);
-        SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
-        SSD1351_update();
-    }
-    else if(itemHighlighted == 1)
-    {   
-        clear_list();
-        draw_header();
-        SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[1]);
-        SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
-        SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[3]);
-        SSD1351_update();
-    }
-    else if(itemHighlighted == 2)
-    {
-        clear_list();
-        draw_header();
-        SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
-        SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[3]);
-        SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[4]);
-        SSD1351_update();
-    }
-    else if(itemHighlighted == 3)
-    {
-        clear_list();
-        draw_header();
-        SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[3]);
-        SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[4]);
-        SSD1351_update();
-    }
-    else if(itemHighlighted == 4)
-    {
-        clear_list();
-        draw_header();
-        SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[4]);
-        SSD1351_update();
-    }
-}
-
-void project_name_fetch(void)
-{
-    for(int x = 0; x < MAX_PROJECTS; x++) //MAX_PROJECTS = 27 
-    {
-        L_ items[x] = project_list_index(x)->project_name;
-    }
-}
-
-void chip_name_fetch(int8_t selectedItem)
-{
-    for(int x = 0; x < MAX_CHIPS; x++) //MAX_CHIPS = 27 
-    {
-        L_ items[x] = chip_list_index(x, project_list_index(selectedItem))->chip_name;
-    }
-}
-
-void file_name_fetch(int8_t selectedItem)
-{
-    for(int x = 0; x < MAX_FILES; x++) //MAX_CHIPS = 27 
-    {
-        L_ items[x] = file_list_index(x, chip_list_index(selectedItem, project_list_index(selectedProject)))->file_name;
-    }
-}
-
-void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenStack) 
-{   
-    switch(screenStack)
-    {
-        case project_screen: 
-            L_ currentList = project;
-            L_ header = projectHeader; // set initial values for display 
-            project_name_fetch();
-            break;
-
-        case chip_screen: //chip screen
-            L_ currentList = chip;
-            L_ header = chipHeader;
-            chip_name_fetch(selectedItem);
-            selectedProject = selectedItem; // selected project used by file_name_fetch
-            break;
-
-        case file_screen: //file screen
-            L_ currentList = file;
-            L_ header = fileHeader;
-            file_name_fetch(selectedItem); 
-            break; 
-
-        case exe_screen:
-            break; 
-
-        default:
-            break; 
-    }
-
-    rerender_list(itemHighlighted);
-
-    if(L_ boxPresent == false)
-    {
-        draw_selection_box();
-    }
-
-    if(L_ headerPresent == false)
-    {
-        draw_header();
-    }
 }
