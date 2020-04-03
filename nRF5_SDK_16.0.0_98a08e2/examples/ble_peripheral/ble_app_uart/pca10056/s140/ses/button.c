@@ -35,12 +35,14 @@
 APP_TIMER_DEF(long_press_timer_id);
 
 project_struct* project_selected; 
+chip_struct* chip_selected; 
 
 
 volatile bool enterFlag = false;
 volatile bool upFlag = false;
 volatile bool downFlag = false;
 volatile bool longTimerStarted = false;
+volatile bool rerenderFlag = false;
 
 int8_t itemHighlighted = 0;
 int8_t selectedItem = 0; 
@@ -63,7 +65,8 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
 //                screenStack = 0; 
 //            }
         }
-        rerender_screen(itemHighlighted, selectedItem, screenStack);
+        rerender_list(itemHighlighted);
+//      rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
     if(button_action == APP_BUTTON_RELEASE)
     {
@@ -85,7 +88,8 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
         {
             itemHighlighted = MAX_ITEMS;
         }
-        rerender_screen(itemHighlighted, selectedItem, screenStack);
+        rerender_list(itemHighlighted);
+ //     rerender_screen(itemHighlighted, selectedItem, screenStack);
     }
     if(button_action == APP_BUTTON_RELEASE)
     {
@@ -103,8 +107,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
         timer_start();
 
         selectedItem = itemHighlighted; 
-        itemHighlighted = 0;
-        
+       
         screenStack++;
         switch(screenStack)
         {
@@ -112,24 +115,48 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 //NOTE: never reached? destroy all - system_init and resync projects?
                 break;
             case chip_screen:
-                // load chips of selected project 
-                project_selected = chips_sync(selectedItem); 
+                if(project_list_index(selectedItem) != NULL) // if project exists
+                {
+                    project_selected = chips_sync(selectedItem);  // load chips of selected project 
+                    rerenderFlag = true; 
+                }
+                else
+                {
+                    screenStack--; 
+                }
                 break;
             case file_screen: 
-                // load files of selected chip
-                files_sync(selectedItem, project_selected); // NOTE: return chip_struct? 
+                if(chip_list_index(selectedItem, project_selected) != NULL) // if chip exists 
+                {
+                    chip_selected = files_sync(selectedItem, project_selected); // NOTE: return chip_struct?
+                    rerenderFlag = true;
+                }
+                else
+                {
+                    screenStack--; 
+                }
                 break;
             case exe_screen:
-                // execute programming 
-                // push_file_to_recents(selectedItem); //add file to recents, push last off stack
-                screenStack = 0;
-                //hibernate(); //for test 
+                if(file_list_index(selectedItem, chip_selected) != NULL)
+                {
+                    // execute programming 
+                    // push_file_to_recents(selectedItem); //add file to recents, push last off stack
+                    screenStack = 0;
+                    rerenderFlag = true;
+                }
+                else
+                {
+                    screenStack--; 
+                }
             default: 
                 break; 
         }
-        
-        //clear_screen(); // remove for speed if possible
-        rerender_screen(itemHighlighted, selectedItem, screenStack);
+        if(rerenderFlag == true)
+        { 
+            itemHighlighted = 0; // reset to first item in list
+            rerender_screen(itemHighlighted, selectedItem, screenStack);
+            rerenderFlag = false; 
+        }
     }
     if(button_action == APP_BUTTON_RELEASE)
     {

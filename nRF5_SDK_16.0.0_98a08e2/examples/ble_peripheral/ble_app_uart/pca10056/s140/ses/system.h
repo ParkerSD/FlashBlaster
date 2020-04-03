@@ -140,7 +140,7 @@ file_struct* file_list_index(int index, chip_struct* chip_curr);
 project_struct* project_list_index(int); 
 chip_struct* chip_list_index(int index, project_struct* project_curr);
 
-void files_sync(int8_t, project_struct*);
+chip_struct* files_sync(int8_t, project_struct*);
 project_struct* chips_sync(int8_t);
 void projects_sync(void);
 

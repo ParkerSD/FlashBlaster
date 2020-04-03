@@ -110,14 +110,9 @@ void draw_header(void)
 
 void draw_initial_screen(void)
 {   
-   L_ currentList = project;
-   L_ header = projectHeader; 
-   project_name_fetch();
-// L_ items[0] = project_list_index(0)->project_name;// SYS_ project_first->project_name;
-// L_ items[1] = project_list_index(1)->project_name;// SYS_ project_first->project_next->project_name;
-// L_ items[2] = project_list_index(2)->project_name;// SYS_ project_first->project_next->project_next->project_name;
-// L_ item3 = SYS_ project_first->project_next->project_next->project_next->project_name;
-// L_ item4 = SYS_ project_first->project_next->project_next->project_next->project_next->project_name;
+    L_ currentList = project;
+    L_ header = projectHeader; 
+    project_name_fetch();
 
     recents_singleton = recents_init();
     
@@ -182,7 +177,7 @@ uint32_t bytes_to_word(uint8_t* bytes, uint32_t word) // bytes stored MSB
 
 //**************************************************************  FILE FUNCTIONS  **************************************************************//
 
-void files_sync(int8_t selectedItem, project_struct* project_selected)
+chip_struct* files_sync(int8_t selectedItem, project_struct* project_selected)
 {
     chip_struct* chip_selected = chip_list_index(selectedItem, project_selected); 
 
@@ -221,6 +216,7 @@ void files_sync(int8_t selectedItem, project_struct* project_selected)
             chip_selected->file_first = file_create(); 
         }
     }
+    return chip_selected;
 }
 
 file_struct* file_list_index(int index, chip_struct* chip_curr)  
@@ -324,8 +320,8 @@ project_struct* chips_sync(int8_t selectedItem)
             project_selected->chip_first->file_first = file_create();
         }
 
-        return project_selected; 
     }
+    return project_selected; 
 }
 
 
