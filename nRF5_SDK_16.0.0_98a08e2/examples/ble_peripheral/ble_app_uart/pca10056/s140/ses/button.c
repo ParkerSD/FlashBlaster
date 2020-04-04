@@ -48,6 +48,14 @@ int8_t itemHighlighted = 0;
 int8_t selectedItem = 0; 
 int8_t screenStack = 0; 
 
+
+
+void reduce_itemHighlighted(void)
+{
+    itemHighlighted--; 
+}
+
+
 void button_up_callback(uint8_t pin_no, uint8_t button_action)
 {  
     if(button_action == APP_BUTTON_PUSH)
@@ -56,17 +64,21 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         timer_start();
     
         itemHighlighted--;
+        rerenderFlag = true;
         if(itemHighlighted < 0)
         {
             itemHighlighted = 0;
+            rerenderFlag = false; 
 //            screenStack--;      //NOTE: for more granular backwards navigation, needs bug fixes with display logic
 //            if(screenStack < 0)
 //            {
 //                screenStack = 0; 
 //            }
         }
-        rerender_list(itemHighlighted);
-//      rerender_screen(itemHighlighted, selectedItem, screenStack);
+        if(rerenderFlag)
+        {
+            rerender_list(itemHighlighted);
+        }
     }
     if(button_action == APP_BUTTON_RELEASE)
     {
@@ -84,12 +96,16 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
         timer_start();
 
         itemHighlighted++;
+        rerenderFlag = true; 
         if(itemHighlighted > MAX_ITEMS) 
         {
             itemHighlighted = MAX_ITEMS;
+            rerenderFlag = false;
         }
-        rerender_list(itemHighlighted);
- //     rerender_screen(itemHighlighted, selectedItem, screenStack);
+        if(rerenderFlag) // rerender if flag set 
+        {
+            rerender_list(itemHighlighted);
+        }
     }
     if(button_action == APP_BUTTON_RELEASE)
     {
@@ -151,7 +167,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
             default: 
                 break; 
         }
-        if(rerenderFlag == true)
+        if(rerenderFlag)
         { 
             itemHighlighted = 0; // reset to first item in list
             rerender_screen(itemHighlighted, selectedItem, screenStack);

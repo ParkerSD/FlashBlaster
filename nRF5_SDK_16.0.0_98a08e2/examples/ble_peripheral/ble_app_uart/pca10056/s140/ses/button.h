@@ -36,4 +36,6 @@ void timer_init(void);
 
 void hibernate(void);
 
+void reduce_itemHighlighted(void);
+
 #endif /* BUTTON_H_ */ 

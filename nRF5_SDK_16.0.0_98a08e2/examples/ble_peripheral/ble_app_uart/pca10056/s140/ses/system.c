@@ -537,27 +537,32 @@ void clear_list(void)
 
 void rerender_list(int8_t itemHighlighted) // use screenStack 
 {   
-  
-    clear_list();
-    draw_header();
+    if(strlen(L_ items[itemHighlighted]) > 3)
+    {
+        clear_list();
+        draw_header();
    
-    if(strlen(L_ items[itemHighlighted]) > 3) // name must be longer than 3 char, less than MAX_STRING_SIZE
-    {
-        SSD1351_set_cursor(10,57);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted]);
+        if(strlen(L_ items[itemHighlighted]) > 3) // name must be longer than 3 char, less than MAX_STRING_SIZE
+        {
+            SSD1351_set_cursor(10,57);
+            SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted]);
+        }
+        if(strlen(L_ items[itemHighlighted+1]) > 3)
+        {
+            SSD1351_set_cursor(10,83);
+            SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+1]);
+        }
+        if(strlen(L_ items[itemHighlighted+2]) > 3)
+        {
+            SSD1351_set_cursor(10,105);
+            SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+2]);
+        }
+        SSD1351_update();
     }
-    if(strlen(L_ items[itemHighlighted+1]) > 3)
+    else
     {
-        SSD1351_set_cursor(10,83);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+1]);
+        reduce_itemHighlighted();
     }
-    if(strlen(L_ items[itemHighlighted+2]) > 3)
-    {
-        SSD1351_set_cursor(10,105);
-        SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+2]);
-    }
-
-    SSD1351_update();
 }
 
 
