@@ -82,6 +82,7 @@
 #include "nrf_power.h"
 #include "system.h"
 #include "flash.h"
+#include "battery.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -784,6 +785,8 @@ void flashblaster_init(void)
     list_init();
 
     draw_initial_screen();
+
+    battery_init();
 
 }
 

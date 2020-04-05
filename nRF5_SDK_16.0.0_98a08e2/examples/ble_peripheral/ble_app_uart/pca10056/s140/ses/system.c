@@ -256,7 +256,7 @@ file_struct* file_new(char* data, chip_struct* chip_curr)
         fileZ->file_next = fileY;  
     }
 
-    fileY->file_index = chip_curr->file_curr; // NOTE: POSSIBLE BUG HERE, should index from zero
+    fileY->file_index = chip_curr->file_curr; 
     chip_curr->file_curr++; 
 
     return fileY;
@@ -282,7 +282,7 @@ file_struct* file_create(void)
 project_struct* chips_sync(int8_t selectedItem)
 {
     //index project              
-    project_struct* project_selected = project_list_index(selectedItem); // NOTE: passing int8_t argument to int parameter
+    project_struct* project_selected = project_list_index(selectedItem); 
 
     if(project_selected->chip_first == NULL) // don't recreate structs if already created
     {
@@ -365,14 +365,14 @@ chip_struct* chip_new(char* data, project_struct* project_curr)
         chipZ->chip_next = chipY;  
     }
 
-    chipY->chip_index = project_curr->chip_curr; // NOTE: POSSIBLE BUG HERE, should index from zero
+    chipY->chip_index = project_curr->chip_curr; 
     project_curr->chip_curr++;  
 
     return chipY; 
 }
 
 
-chip_struct* chip_create(void) //TODO: render only existing files 
+chip_struct* chip_create(void) 
 {
     chip_struct* chipX = malloc(sizeof(chip_struct));
     
@@ -457,7 +457,7 @@ project_struct* project_new(char* data) //input 24 byte project data, string, nu
 {
     project_struct* projectY = project_create(); //create project
     projectY->project_name = string_fetch(data);  // send in payload, fetch from flash
-    projectY->chip_num = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);//TODO: chip_num_fetch(data) - last 4 bytes of 20 bytes;
+    projectY->chip_num = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);
     projectY->project_next = NULL;
     projectY->chip_first = NULL; 
     projectY->chip_list_addr = DIRECTORY_OFFSET + PROJECT_HEADER_SIZE + (SYS_ project_curr * MAX_PROJECT_SIZE); //was *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23);// NOTE MAKE ACTUAL FLASH ADDRESS OF FIRST CHIP BASED ON MAX PROJECT LENGTH 
@@ -470,14 +470,14 @@ project_struct* project_new(char* data) //input 24 byte project data, string, nu
         projectZ->project_next = projectY;  
     }
   
-    projectY->project_index = SYS_ project_curr; // NOTE: POSSIBLE BUG HERE, should index from zero
+    projectY->project_index = SYS_ project_curr; 
     SYS_ project_curr++; 
 
     return projectY; //should return newly created to global
 }
 
 
-project_struct* project_create(void) //TODO: render only existing chips
+project_struct* project_create(void) 
 {
     project_struct* projectX = malloc(sizeof(project_struct));
     

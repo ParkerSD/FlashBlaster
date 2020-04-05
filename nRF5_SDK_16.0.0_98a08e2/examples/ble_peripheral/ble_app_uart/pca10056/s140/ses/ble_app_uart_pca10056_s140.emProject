@@ -122,6 +122,16 @@
       <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_qspi.h" />
       <file file_name="../../../../../../modules/nrfx/drivers/include/nrfx_qspi.h" />
       <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_qspi.c" />
+      <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_saadc.c" />
+      <file file_name="../../../../../../modules/nrfx/drivers/include/nrfx_saadc.h" />
+      <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_ppi.c" />
+      <file file_name="../../../../../../modules/nrfx/drivers/include/nrfx_ppi.h" />
+      <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_ppi.c" />
+      <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_ppi.h" />
+      <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_saadc.h" />
+      <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_timer.h" />
+      <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_timer.c" />
+      <file file_name="../../../../../../modules/nrfx/drivers/include/nrfx_timer.h" />
     </folder>
     <folder Name="Board Support">
       <file file_name="../../../../../../components/libraries/bsp/bsp.c" />
@@ -144,6 +154,8 @@
       <file file_name="system.h" />
       <file file_name="flash.c" />
       <file file_name="flash.h" />
+      <file file_name="battery.c" />
+      <file file_name="battery.h" />
     </folder>
     <folder Name="nRF_Segger_RTT">
       <file file_name="../../../../../../external/segger_rtt/SEGGER_RTT.c" />
