@@ -19,13 +19,13 @@ void saadc_sampling_event_init(void);
 void saadc_sampling_event_enable(void);
 void saadc_init(void);
 void adc_init(void);
-
+void avg_buffer_samples(void);
 
 
 void battery_init(void);
 
-void battery_draw_percent(uint8_t percent);
+void battery_draw_percent(uint16_t);
 
 void battery_draw_charging(void);
 
-void battery_draw_outline(void);
+void battery_draw_outline(uint16_t);
