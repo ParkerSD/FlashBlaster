@@ -10,6 +10,7 @@
 #include "nrfx_usbd.h"
 #include "nrf_gpio.h"
 #include "oled.h"
+#include "battery.h"
 
 
 void power_clock_init(void)
@@ -42,7 +43,7 @@ void power_usb_event_handler(nrf_drv_power_usb_evt_t event)
         
         nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLDOWN);
         nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLUP);
-    
+        battery_set_charging_state(true);
 //        if (!nrf_drv_usbd_is_enabled())
 //        {
 //            nrf_drv_usbd_enable();
@@ -53,7 +54,7 @@ void power_usb_event_handler(nrf_drv_power_usb_evt_t event)
         //TODO: add ADC battery voltage condition 
         nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLUP);
         nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLDOWN);
-   
+        battery_set_charging_state(false);
 //        if (nrf_drv_usbd_is_started())
 //        {
 //            nrf_drv_usbd_stop();

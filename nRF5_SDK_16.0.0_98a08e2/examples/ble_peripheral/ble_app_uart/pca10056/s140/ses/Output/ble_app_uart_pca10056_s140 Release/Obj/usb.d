@@ -86,4 +86,5 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/usb.o: \
  ../../../../../../components/libraries/util/app_error.h \
  ../../../../../../components/libraries/sortlist/nrf_sortlist.h \
  ../../../../../../modules/nrfx/hal/nrf_gpio.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\oled.h
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\oled.h \
+ C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\battery.h

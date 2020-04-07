@@ -71,7 +71,7 @@ void saadc_sampling_event_init(void)
     APP_ERROR_CHECK(err_code);
 
     /* setup m_timer for compare event every 2000ms */
-    uint32_t ticks = nrf_drv_timer_ms_to_ticks(&m_timer, 1000);
+    uint32_t ticks = nrf_drv_timer_ms_to_ticks(&m_timer, 500);
     nrf_drv_timer_extended_compare(&m_timer,
                                    NRF_TIMER_CC_CHANNEL0,
                                    ticks,
@@ -141,65 +141,66 @@ void saadc_init(void)
 }
 
 
-void battery_draw_icon(void) //bar is 5x10, percent is 1-10 / 10%-100% 
+void battery_draw_icon(void) //bar is 5x9
 {   
     uint16_t battery_val = avg; 
 
     uint8_t bars; 
+    
+    if(!battery->charging_state)
+    {
+        battery_draw_charging(COLOR_BLACK);
+    }
 
     if(battery_val >= HALF_CHARGE)
     {   
         if(battery_val <= 0x0210)
         {
+            bars = 5; 
+        }
+        else if(battery_val <= 0x0218)
+        {
             bars = 6; 
         }
-        else if(battery_val <= 0x0220)
+        else if(battery_val <= 0x0226)
         {
             bars = 7; 
         }
-        else if(battery_val <= 0x0230)
+        else if(battery_val <= 0x0234)
         {
             bars = 8; 
         }
-        else if(battery_val <= 0x0240)
-        {
-            bars = 9; 
-        }
         else if(battery_val <= FULL_CHARGE)
         {
-            bars = 10; 
+            bars = 9; 
         }
         battery_draw_outline(COLOR_GREEN);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_GREEN);
         SSD1351_update();
     }
-    else if(battery_val < HALF_CHARGE && bars >= LOW_CHARGE)
+    else if(battery_val < HALF_CHARGE && battery_val >= LOW_CHARGE)
     {   
-        if(battery_val <= 0x01C0)
+        if(battery_val <= 0x01D0)
         {
             bars = 3; 
         }
-        else if(battery_val <= 0x01E0)
+        else if(battery_val < HALF_CHARGE)
         {
             bars = 4; 
-        }
-        else if(battery_val <= HALF_CHARGE)
-        {
-            bars = 5; 
         }
         battery_draw_outline(COLOR_YELLOW);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_YELLOW);
         SSD1351_update();
     }
-    else if(battery_val < LOW_CHARGE && bars >= NO_CHARGE)
+    else if(battery_val < LOW_CHARGE && battery_val >= NO_CHARGE)
     {   
         if(battery_val <= 0x185)
         {
             bars = 1; 
         }
-        else if(battery_val <= LOW_CHARGE)
+        else if(battery_val < LOW_CHARGE)
         {
             bars = 2; 
         }
@@ -211,13 +212,38 @@ void battery_draw_icon(void) //bar is 5x10, percent is 1-10 / 10%-100%
     else if(battery_val < NO_CHARGE)
     {   
         //NOTE Commented out for testing 
-       // hibernate(); //shutdown amp if low voltage condition, plug in USB to reboot
+        // hibernate(); //shutdown amp if low voltage condition, plug in USB to reboot
+
+        battery_draw_outline(COLOR_AQUA);
+        SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
+        SSD1351_draw_filled_rect(112, 12, 9, 4, COLOR_AQUA);
+        SSD1351_update();
+    }
+
+    if(battery->charging_state)
+    {
+        battery_draw_charging(COLOR_YELLOW);
     }
 }
 
-void battery_draw_charging(void) //yellow lightning bolt
-{
 
+void battery_set_charging_state(bool state)
+{
+    battery->charging_state = state; 
+}
+
+
+void battery_draw_charging(uint16_t color) //vertical yellow lightning bolt
+{
+    //SSD1351_draw_line(x0, y0, x1, y1, uint16_t color)
+    SSD1351_draw_line( 105, 11,  107, 13, color);
+    SSD1351_draw_line( 107, 13,  105, 15, color);
+    SSD1351_draw_line( 105, 15,  107, 18, color);
+
+    SSD1351_draw_line( 104, 10,  106, 13, color);
+    SSD1351_draw_line( 106, 13,  104, 15, color);
+    SSD1351_draw_line( 104, 15,  106, 17, color);
+    SSD1351_update();
 }
 
 void battery_draw_outline(uint16_t color)
@@ -237,12 +263,11 @@ void adc_init(void)
 
 void battery_init(void)
 {
-    // create battery struct
-    // draw battery icon
-    // poll ADC
-    // compare voltage to table RSOC table
-    // draw battery percent 
+
     battery = malloc(sizeof(battery_struct)); 
+    
+    //TODO add condition, if usb is not connected
+    battery->charging_state = false; 
 
     adc_init();
 
