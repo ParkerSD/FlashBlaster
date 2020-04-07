@@ -47,7 +47,7 @@ void timer_handler(nrf_timer_event_t event_type, void * p_context)
 }
 
 
-void avg_buffer_samples(void)
+void adc_average(void)
 {   
     sum = 0; //clear sum 
     for(int i = 0; i < SAMPLES_IN_BUFFER; i++)
@@ -116,9 +116,8 @@ void saadc_callback(nrf_drv_saadc_evt_t const * p_event)
         }
         m_adc_evt_counter++;
 
-        avg_buffer_samples();
-        battery_draw_percent(avg);
-
+        adc_average();
+        battery_draw_icon();
     }
 }
 
@@ -142,38 +141,77 @@ void saadc_init(void)
 }
 
 
-void battery_draw_percent(uint16_t avg) //bar is 5x10, percent is 1-10 / 10%-100% 
+void battery_draw_icon(void) //bar is 5x10, percent is 1-10 / 10%-100% 
 {   
-    uint8_t percent = avg / 100; //NOTE not linear use Raw ADC value, denominator scale value
-    if(percent > 10)
-    {
-        percent = 10; 
-    }   
-    //SSD1351_draw_filled_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
-    if(percent >= 5)
+    uint16_t battery_val = avg; 
+
+    uint8_t bars; 
+
+    if(battery_val >= HALF_CHARGE)
     {   
+        if(battery_val <= 0x0210)
+        {
+            bars = 6; 
+        }
+        else if(battery_val <= 0x0220)
+        {
+            bars = 7; 
+        }
+        else if(battery_val <= 0x0230)
+        {
+            bars = 8; 
+        }
+        else if(battery_val <= 0x0240)
+        {
+            bars = 9; 
+        }
+        else if(battery_val <= FULL_CHARGE)
+        {
+            bars = 10; 
+        }
         battery_draw_outline(COLOR_GREEN);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
-        SSD1351_draw_filled_rect(112, 12, percent, 4, COLOR_GREEN);
+        SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_GREEN);
         SSD1351_update();
     }
-    else if(percent <= 5 && percent >= 2)
+    else if(battery_val < HALF_CHARGE && bars >= LOW_CHARGE)
     {   
+        if(battery_val <= 0x01C0)
+        {
+            bars = 3; 
+        }
+        else if(battery_val <= 0x01E0)
+        {
+            bars = 4; 
+        }
+        else if(battery_val <= HALF_CHARGE)
+        {
+            bars = 5; 
+        }
         battery_draw_outline(COLOR_YELLOW);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
-        SSD1351_draw_filled_rect(112, 12, percent, 4, COLOR_YELLOW);
+        SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_YELLOW);
         SSD1351_update();
     }
-    else if(percent < 2 && percent >= 1)
+    else if(battery_val < LOW_CHARGE && bars >= NO_CHARGE)
     {   
+        if(battery_val <= 0x185)
+        {
+            bars = 1; 
+        }
+        else if(battery_val <= LOW_CHARGE)
+        {
+            bars = 2; 
+        }
         battery_draw_outline(COLOR_RED);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
-        SSD1351_draw_filled_rect(112, 12, percent, 4, COLOR_RED);
+        SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_RED);
         SSD1351_update();
     }
-    else if(percent < 1)
-    {
-        hibernate(); //shutdown amp if low voltage condition 
+    else if(battery_val < NO_CHARGE)
+    {   
+        //NOTE Commented out for testing 
+       // hibernate(); //shutdown amp if low voltage condition, plug in USB to reboot
     }
 }
 
