@@ -236,13 +236,14 @@ void battery_set_charging_state(bool state)
 void battery_draw_charging(uint16_t color) //vertical yellow lightning bolt
 {
     //SSD1351_draw_line(x0, y0, x1, y1, uint16_t color)
-    SSD1351_draw_line( 105, 11,  107, 13, color);
-    SSD1351_draw_line( 107, 13,  105, 15, color);
-    SSD1351_draw_line( 105, 15,  107, 18, color);
+    //TODO should middle section be horizontal?
+    SSD1351_draw_line( 105, 11, 108, 14, color);
+    SSD1351_draw_line( 108, 14, 105, 14, color);
+    SSD1351_draw_line( 105, 14, 107, 17, color);
 
-    SSD1351_draw_line( 104, 10,  106, 13, color);
-    SSD1351_draw_line( 106, 13,  104, 15, color);
-    SSD1351_draw_line( 104, 15,  106, 17, color);
+    SSD1351_draw_line( 105, 11, 107, 14, color);
+    SSD1351_draw_line( 107, 14, 105, 14, color);
+    SSD1351_draw_line( 104, 14, 107, 17, color);
     SSD1351_update();
 }
 
