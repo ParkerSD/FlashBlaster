@@ -407,6 +407,28 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
  * @param[in]   p_ble_evt   Bluetooth stack event.
  * @param[in]   p_context   Unused.
  */
+void ble_draw_icon(uint16_t color)
+{
+    //SSD1351_draw_line(x0, y0, x1, y1, uint16_t color)
+
+//NOTE: small ble logo
+//    SSD1351_draw_line( 5, 10, 9, 14, color); // draw x
+//    SSD1351_draw_line( 5, 14, 9, 10, color);
+//    SSD1351_draw_line( 7, 8, 7, 16, color); // draw vertical line
+//    SSD1351_draw_line( 7, 8, 9, 10, color); // close two triangles
+//    SSD1351_draw_line( 7, 16, 9, 14, color);
+
+//NOTE: large ble logo 
+    SSD1351_draw_line( 5, 10, 11, 16, color); 
+    SSD1351_draw_line( 5, 16, 11, 10, color);
+    SSD1351_draw_line( 8, 7, 8, 19, color); 
+    SSD1351_draw_line( 8, 7, 11, 10, color); 
+    SSD1351_draw_line( 8, 19, 11, 16, color);
+
+    SSD1351_update();
+}
+
+
 static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 {
     uint32_t err_code;
@@ -414,20 +436,18 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
-//          NRF_LOG_INFO("Connected");
-//          err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
-//          APP_ERROR_CHECK(err_code);
 
             nrf_gpio_pin_set(LED_BLUE);
+            ble_draw_icon(COLOR_BLUE);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
             err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
             APP_ERROR_CHECK(err_code);
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
- //         NRF_LOG_INFO("Disconnected");
 
             nrf_gpio_pin_clear(LED_BLUE);
+            ble_draw_icon(COLOR_BLACK);
             // LED indication will be changed when advertising starts.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             break;

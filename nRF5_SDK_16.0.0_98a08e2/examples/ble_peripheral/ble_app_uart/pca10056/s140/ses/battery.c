@@ -146,12 +146,12 @@ void battery_draw_icon(void) //bar is 5x9
     uint16_t battery_val = avg; 
 
     uint8_t bars; 
-    
+
     if(!battery->charging_state)
     {
         battery_draw_charging(COLOR_BLACK);
     }
-
+    
     if(battery_val >= HALF_CHARGE)
     {   
         if(battery_val <= 0x0210)
@@ -177,7 +177,6 @@ void battery_draw_icon(void) //bar is 5x9
         battery_draw_outline(COLOR_GREEN);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_GREEN);
-        SSD1351_update();
     }
     else if(battery_val < HALF_CHARGE && battery_val >= LOW_CHARGE)
     {   
@@ -192,7 +191,6 @@ void battery_draw_icon(void) //bar is 5x9
         battery_draw_outline(COLOR_YELLOW);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_YELLOW);
-        SSD1351_update();
     }
     else if(battery_val < LOW_CHARGE && battery_val >= NO_CHARGE)
     {   
@@ -207,7 +205,6 @@ void battery_draw_icon(void) //bar is 5x9
         battery_draw_outline(COLOR_RED);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_RED);
-        SSD1351_update();
     }
     else if(battery_val < NO_CHARGE)
     {   
@@ -217,13 +214,15 @@ void battery_draw_icon(void) //bar is 5x9
         battery_draw_outline(COLOR_AQUA);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, 9, 4, COLOR_AQUA);
-        SSD1351_update();
     }
+
 
     if(battery->charging_state)
     {
         battery_draw_charging(COLOR_YELLOW);
     }
+    
+    SSD1351_update();
 }
 
 
@@ -236,15 +235,28 @@ void battery_set_charging_state(bool state)
 void battery_draw_charging(uint16_t color) //vertical yellow lightning bolt
 {
     //SSD1351_draw_line(x0, y0, x1, y1, uint16_t color)
-    //TODO should middle section be horizontal?
-    SSD1351_draw_line( 105, 11, 108, 14, color);
-    SSD1351_draw_line( 108, 14, 105, 14, color);
-    SSD1351_draw_line( 105, 14, 107, 17, color);
+//NOTE adjacent 
+//    SSD1351_draw_line( 105, 11, 108, 14, color);
+//    SSD1351_draw_line( 108, 14, 105, 14, color);
+//    SSD1351_draw_line( 105, 14, 107, 17, color);
+//    SSD1351_draw_line( 105, 11, 107, 14, color);
+//    SSD1351_draw_line( 107, 14, 105, 14, color);
+//    SSD1351_draw_line( 104, 14, 107, 17, color);
 
-    SSD1351_draw_line( 105, 11, 107, 14, color);
-    SSD1351_draw_line( 107, 14, 105, 14, color);
-    SSD1351_draw_line( 104, 14, 107, 17, color);
-    SSD1351_update();
+//NOTE super imposed 
+    SSD1351_draw_line( 115, 11, 118, 14, color);
+    SSD1351_draw_line( 118, 14, 115, 14, color);
+    SSD1351_draw_line( 115, 14, 117, 17, color);
+    SSD1351_draw_line( 115, 11, 117, 14, color);
+    SSD1351_draw_line( 117, 14, 115, 14, color);
+    SSD1351_draw_line( 114, 14, 117, 17, color);
+
+    SSD1351_draw_line( 113, 14, 117, 18, COLOR_BLACK);
+    SSD1351_draw_line( 115, 12, 115, 13, COLOR_BLACK);
+    //SSD1351_draw_line( 119, 14, 115, 10, COLOR_BLACK); //note used: top right black line
+    SSD1351_draw_line( 117, 15, 117, 16, COLOR_BLACK);
+
+ 
 }
 
 void battery_draw_outline(uint16_t color)
@@ -252,7 +264,6 @@ void battery_draw_outline(uint16_t color)
     //SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
     SSD1351_draw_rect(110, 10, 12, 7, color);
     SSD1351_draw_rect(123, 12, 0, 3, color); //battery end
-    SSD1351_update();
 }
 
 void adc_init(void)

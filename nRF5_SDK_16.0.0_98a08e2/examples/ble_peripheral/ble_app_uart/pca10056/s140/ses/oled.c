@@ -54,6 +54,8 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(FET_PIN); 
     nrf_gpio_cfg_output(iRST); 
 
+    //nrf_gpio_cfg_output(SWCLK); //NOTE FOR TEST
+
     nrf_gpio_cfg_output(19); // QSPI
     nrf_gpio_cfg_output(17); 
     nrf_gpio_cfg_output(32); 
