@@ -50,7 +50,7 @@ uint8_t selectedProject;
 
 // Hardcoded Values
 char systemFirmware[] = {"FlashBlaster V0"}; 
-
+char splashHeader[] = {"Select:"}; 
 char projectHeader[] = {"Select Project:"}; 
 char* projectNames[10] = {"Quake", "Jeep", "Nikola", "Tesla", "SpaceX", "Rockford Internal", "Subaru", "Nissan", "Ducati", "Toyota"}; // TODO: chop and hardcode as appropriate structs 
 
@@ -61,25 +61,37 @@ char fileHeader[] = {"Select File:"}; // or Chip Name
 char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "that.bin", "banshee.bin", "pastry.elf", "killme.hex", "reget.bin", "mistakes.hex"}; 
 
 
-recents_struct* recents_init(void)
+recents_struct* recents_init(void) //TODO save recents to flash on hibernate, load on boot
 {
     recents_struct* recentsX = malloc(sizeof(recents_struct));
     recentsX->file0 = NULL;
     recentsX->file1 = NULL;
     recentsX->file2 = NULL;
-    recentsX->file3 = NULL;
     return recentsX;
 }
 
 
-void push_file_to_recents(int8_t selectedItem) //shift recent files, pushing oldest off stack
-{
-    REC_ file0 = L_ recent; // member recent never assigned value
-    REC_ file1 = REC_ file0;
-    REC_ file2 = REC_ file1;
-    REC_ file3 = REC_ file2;
+void push_file_to_recents(file_struct* file_selected) //shift recent files, pushing oldest off stack
+{   
+    if(file_selected != NULL && file_selected->file_name != "Empty")
+    {
+        REC_ file2 = REC_ file1;
+        REC_ file1 = REC_ file0;
+        REC_ file0 = file_selected;
+    }
 }
 
+bool recents_check(void)
+{
+    if(REC_ file0 != NULL)
+    {
+        return true; 
+    }
+    else
+    {
+        return false;
+    }
+}
 
 void clear_screen(void)
 {
@@ -110,11 +122,16 @@ void draw_header(void)
 
 void draw_initial_screen(void)
 {   
-    L_ currentList = project;
-    L_ header = projectHeader; 
-    project_name_fetch();
+    //L_ currentList = project;
+    //L_ header = projectHeader; 
+    //project_name_fetch();
 
-    recents_singleton = recents_init();
+    L_ currentList = splash;
+    L_ header = splashHeader; 
+    
+    L_ items[0] = "Recent Files";
+    L_ items[1] = "Projects";
+    recents_singleton = recents_init(); //TODO: load recents from flash 
     
     clear_screen();
     draw_selection_box();
@@ -123,11 +140,18 @@ void draw_initial_screen(void)
     SSD1351_printf(COLOR_WHITE, curr_font, L_ items[0]);
     SSD1351_set_cursor(10,83);
     SSD1351_printf(COLOR_WHITE, curr_font, L_ items[1]);
-    SSD1351_set_cursor(10,105);
-    SSD1351_printf(COLOR_WHITE, curr_font, L_ items[2]);
     SSD1351_update();
 }
 
+void list_clear(void)
+{
+    list_singleton->currentList = NULL;
+    list_singleton->header = NULL;
+    for(int x = 0; x < MAX_ITEMS; x++)
+    {
+        list_singleton->items[x] = NULL;
+    }
+}
 
 list_struct* list_new(void)
 {
@@ -135,7 +159,6 @@ list_struct* list_new(void)
     
     listX->currentList = NULL;
     listX->header = NULL;
-    listX->recent = NULL;
     listX->boxPresent = false; 
     listX->headerPresent = false; 
     
@@ -592,35 +615,54 @@ void file_name_fetch(int8_t selectedItem)
     }
 }
 
+void recents_name_fetch(void)
+{
+    L_ items[0] = REC_ file0->file_name; 
+    L_ items[1] = REC_ file1->file_name; 
+    L_ items[2] = REC_ file2->file_name; 
+}
 
-void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenStack) 
+void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenStack, bool recentsFlag) 
 {   
-    switch(screenStack)
+    if(recentsFlag)
     {
-        case project_screen: 
-            L_ currentList = project;
-            L_ header = projectHeader; // set initial values for display 
-            project_name_fetch();
-            break;
+        recents_name_fetch();
+    } 
+    else
+    {   switch(screenStack)
+        {   
+            case splash_screen:
+                L_ currentList = splash;
+                L_ header = splashHeader;
+                L_ items[0] = "Recent Files"; 
+                L_ items[1] = "Projects";
+                break;
+            case project_screen: 
+                L_ currentList = project;
+                L_ header = projectHeader; // set initial values for display 
+                project_name_fetch();
+                break;
 
-        case chip_screen: //chip screen
-            L_ currentList = chip;
-            L_ header = chipHeader;
-            chip_name_fetch(selectedItem);
-            selectedProject = selectedItem; // selected project used by file_name_fetch
-            break;
+            case chip_screen: //chip screen
+                L_ currentList = chip;
+                L_ header = chipHeader;
+                chip_name_fetch(selectedItem);
+                selectedProject = selectedItem; // selected project used by file_name_fetch
+                break;
 
-        case file_screen: //file screen
-            L_ currentList = file;
-            L_ header = fileHeader;
-            file_name_fetch(selectedItem); 
-            break; 
+            case file_screen: //file screen
+                L_ currentList = file;
+                L_ header = fileHeader;
+                file_name_fetch(selectedItem); 
+                break; 
 
-        case exe_screen:
-            break; 
+            case exe_screen:
+                //display programming animation
+                break; 
 
-        default:
-            break; 
+            default:
+                break; 
+        }
     }
 
     rerender_list(itemHighlighted);
@@ -637,7 +679,7 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
 }
 
 
-void flash_init(void)
+void flash_init(void) 
 {   
     // ADDR_NUM_PROJECTS 0
     // ADDR_PROJECT_PTR_FIRST 4

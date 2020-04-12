@@ -19,7 +19,8 @@
 #define LONG_PRESS_THRESHOLD 1000
 
 enum
-{
+{   
+    splash_screen,
     project_screen,
     chip_screen,
     file_screen,

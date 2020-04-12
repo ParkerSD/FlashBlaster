@@ -31,8 +31,9 @@
 
 
 typedef enum
-{
-    project = 0,
+{   
+    splash = 0,
+    project,
     chip,
     file
 } list_type;
@@ -98,11 +99,9 @@ typedef struct list //the data that is actually displayed on oled, MAX 10 items,
 {   
     list_type currentList; 
     char* header;
-    file_struct* recent; 
+    char* items[MAX_ITEMS];
     bool boxPresent;
     bool headerPresent;
-    char* items[MAX_ITEMS];
-
 } list_struct;
 
 
@@ -111,22 +110,23 @@ typedef struct recents
     file_struct *file0; 
     file_struct *file1;
     file_struct *file2;
-    file_struct *file3;
 }recents_struct;
 
-
-void push_file_to_recents(int8_t selectedItem);
+bool recents_check(void);
+void push_file_to_recents(file_struct*);
 void flash_init(void); 
 recents_struct* recents_init(void);
 system_struct* system_new(void);
 void system_init(void);
 void list_init(void);
+void list_clear(void);
 char* firmware_version_fetch(void);
 char* string_fetch(char* data);
 
 void project_name_fetch(void);
 void chip_name_fetch(int8_t selectedItem);
 void file_name_fetch(int8_t selectedItem);
+void recents_name_fetch(void);
 
 file_struct* file_create(void);
 chip_struct* chip_create(void);
@@ -147,7 +147,7 @@ void projects_sync(void);
 void draw_selection_box(void);
 void draw_header(void);
 void draw_initial_screen(void);
-void rerender_screen(int8_t, int8_t, int8_t);
+void rerender_screen(int8_t, int8_t, int8_t, bool);
 void clear_list(void);
 void rerender_list(int8_t);
 void clear_screen(void);

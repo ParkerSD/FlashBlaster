@@ -38,11 +38,12 @@ project_struct* project_selected;
 chip_struct* chip_selected; 
 
 
-volatile bool enterFlag = false;
+volatile bool enterFlag = false; 
 volatile bool upFlag = false;
 volatile bool downFlag = false;
 volatile bool longTimerStarted = false;
-volatile bool rerenderFlag = false;
+volatile bool rerender = false; //TODO: replace rerender flag with alt logic
+volatile bool recentsFlag = false;
 
 int8_t itemHighlighted = 0;
 int8_t selectedItem = 0; 
@@ -64,18 +65,18 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         timer_start();
     
         itemHighlighted--;
-        rerenderFlag = true;
+        rerender = true;
         if(itemHighlighted < 0)
         {
             itemHighlighted = 0;
-            rerenderFlag = false; 
+            rerender = false; 
 //            screenStack--;      //NOTE: for more granular backwards navigation, needs bug fixes with display logic
 //            if(screenStack < 0)
 //            {
 //                screenStack = 0; 
 //            }
         }
-        if(rerenderFlag)
+        if(rerender)
         {
             rerender_list(itemHighlighted);
         }
@@ -96,13 +97,13 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
         timer_start();
 
         itemHighlighted++;
-        rerenderFlag = true; 
+        rerender = true; 
         if(itemHighlighted > MAX_ITEMS) 
         {
             itemHighlighted = MAX_ITEMS;
-            rerenderFlag = false;
+            rerender = false;
         }
-        if(rerenderFlag) // rerender if flag set 
+        if(rerender) // rerender if flag set 
         {
             rerender_list(itemHighlighted);
         }
@@ -118,7 +119,7 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
 void enter_callback(uint8_t pin_no, uint8_t button_action)
 {   
     if(button_action == APP_BUTTON_PUSH)
-    { 
+    {   
         enterFlag = true;
         timer_start();
 
@@ -126,26 +127,55 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
        
         screenStack++;
         switch(screenStack)
-        {
+        {   
+            case splash_screen: //never reached
+                break; 
             case project_screen:
-                //NOTE: never reached? destroy all - system_init and resync projects?
-                break;
-            case chip_screen:
-                if(project_list_index(selectedItem) != NULL) // if project exists
+                if(!selectedItem && recents_check()) // render recents
                 {
-                    project_selected = chips_sync(selectedItem);  // load chips of selected project 
-                    rerenderFlag = true; 
+                    recentsFlag = true; 
+                    rerender = true;
+                }
+                else if(selectedItem) // render projects
+                {   
+                    recentsFlag = false;
+                    rerender = true;
                 }
                 else
                 {
                     screenStack--; 
                 }
                 break;
+            case chip_screen:
+                if(recentsFlag)//NOTE file selection screen of recents branch
+                {
+                    //TODO: execute programming for selected file from recents, use global recents_struct
+                    //TODO: index recents_struct based on selectedItem and save file to flash
+                    screenStack = 0;
+                    rerender = true;
+                    recentsFlag = false;
+                    list_clear();
+                }
+                else 
+                {
+                    if(project_list_index(selectedItem) != NULL) // if project exists
+                    {
+                        project_selected = chips_sync(selectedItem);  // load chips of selected project 
+                        rerender = true; 
+                        list_clear();
+                    }
+                    else
+                    {
+                        screenStack--; 
+                    }
+                }
+                break;
             case file_screen: 
                 if(chip_list_index(selectedItem, project_selected) != NULL) // if chip exists 
                 {
                     chip_selected = files_sync(selectedItem, project_selected); // NOTE: return chip_struct?
-                    rerenderFlag = true;
+                    rerender = true;
+                    list_clear();
                 }
                 else
                 {
@@ -156,29 +186,30 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 if(file_list_index(selectedItem, chip_selected) != NULL)
                 {
                     // execute programming 
-                    // push_file_to_recents(selectedItem); //add file to recents, push last off stack
+                    push_file_to_recents(file_list_index(selectedItem, chip_selected)); //add file to recents, push last off stack
                     screenStack = 0;
-                    rerenderFlag = true;
+                    rerender = true;
+                    list_clear();
                 }
                 else
                 {
                     screenStack--; 
                 }
+                break;
             default: 
                 break; 
         }
-        if(rerenderFlag)
+        if(rerender)
         { 
             itemHighlighted = 0; // reset to first item in list
-            rerender_screen(itemHighlighted, selectedItem, screenStack);
-            rerenderFlag = false; 
+            rerender_screen(itemHighlighted, selectedItem, screenStack, recentsFlag);
+            rerender = false; 
         }
     }
     if(button_action == APP_BUTTON_RELEASE)
     {
         enterFlag = false;
         timer_stop();
-        
     }
 }
 
@@ -208,7 +239,7 @@ void long_press_timeout_handler(void* p_context)
     if(upFlag && !enterFlag)// up long press
     {   
         screenStack = 0; 
-        rerender_screen(itemHighlighted, selectedItem, screenStack);
+        rerender_screen(itemHighlighted, selectedItem, screenStack, recentsFlag);
 
     }
     else if(enterFlag && !upFlag)// enter long press
