@@ -73,11 +73,14 @@ recents_struct* recents_init(void) //TODO save recents to flash on hibernate, lo
 
 void push_file_to_recents(file_struct* file_selected) //shift recent files, pushing oldest off stack
 {   
-    if(file_selected != NULL && file_selected->file_name != "Empty")
-    {
-        REC_ file2 = REC_ file1;
-        REC_ file1 = REC_ file0;
-        REC_ file0 = file_selected;
+    if(file_selected != NULL && file_selected->file_name != "Empty") // file should not be null or empty 
+    {   
+        if((file_selected->file_name != REC_ file0->file_name) && (file_selected->file_name != REC_ file1->file_name) && (file_selected->file_name != REC_ file2->file_name)) // avoids repeats
+        {   
+            REC_ file2 = REC_ file1;
+            REC_ file1 = REC_ file0;
+            REC_ file0 = file_selected;
+        }
     }
 }
 
@@ -625,11 +628,14 @@ void recents_name_fetch(void)
 void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenStack, bool recentsFlag) 
 {   
     if(recentsFlag)
-    {
+    {   
+        L_ currentList = recents; 
+        L_ header = fileHeader;
         recents_name_fetch();
     } 
     else
-    {   switch(screenStack)
+    {   
+        switch(screenStack)
         {   
             case splash_screen:
                 L_ currentList = splash;

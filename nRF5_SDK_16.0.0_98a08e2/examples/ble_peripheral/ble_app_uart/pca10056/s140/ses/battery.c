@@ -26,7 +26,7 @@
 #include "battery.h" 
 
 
-#define SAMPLES_IN_BUFFER 5
+#define SAMPLES_IN_BUFFER 10
 volatile uint8_t state = 1;
 
 static const nrf_drv_timer_t m_timer = NRF_DRV_TIMER_INSTANCE(1); //timer0 used for softdevice
@@ -34,7 +34,7 @@ static nrf_saadc_value_t     m_buffer_pool[2][SAMPLES_IN_BUFFER];
 static nrf_ppi_channel_t     m_ppi_channel;
 static uint32_t              m_adc_evt_counter;
 
-static nrf_saadc_value_t adc_buffer[5];
+static nrf_saadc_value_t adc_buffer[SAMPLES_IN_BUFFER];
 static uint16_t sum;
 static uint16_t avg;
 

@@ -807,7 +807,6 @@ void flashblaster_init(void)
     draw_initial_screen();
 
     battery_init();
-
 }
 
 

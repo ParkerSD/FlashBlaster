@@ -33,6 +33,7 @@
 typedef enum
 {   
     splash = 0,
+    recents,
     project,
     chip,
     file

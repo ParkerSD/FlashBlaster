@@ -238,6 +238,8 @@ void long_press_timeout_handler(void* p_context)
 {
     if(upFlag && !enterFlag)// up long press
     {   
+        recentsFlag = false;
+        list_clear();
         screenStack = 0; 
         rerender_screen(itemHighlighted, selectedItem, screenStack, recentsFlag);
 
