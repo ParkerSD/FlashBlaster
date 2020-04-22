@@ -106,8 +106,8 @@
 
 #define APP_ADV_DURATION                0 //no timeout                            /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
-#define MIN_CONN_INTERVAL               MSEC_TO_UNITS(20, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
-#define MAX_CONN_INTERVAL               MSEC_TO_UNITS(75, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
+#define MIN_CONN_INTERVAL               MSEC_TO_UNITS(7.5, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
+#define MAX_CONN_INTERVAL               MSEC_TO_UNITS(7.5, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
 #define SLAVE_LATENCY                   0                                           /**< Slave latency. */
 #define CONN_SUP_TIMEOUT                MSEC_TO_UNITS(4000, UNIT_10_MS)             /**< Connection supervisory timeout (4 seconds), Supervision Timeout uses 10 ms units. */
 #define FIRST_CONN_PARAMS_UPDATE_DELAY  APP_TIMER_TICKS(5000)                       /**< Time from initiating event (connect or start of notification) to first time sd_ble_gap_conn_param_update is called (5 seconds). */
@@ -131,6 +131,8 @@ NRF_BLE_GATT_DEF(m_gatt);                                                       
 NRF_BLE_QWR_DEF(m_qwr);                                                             /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                                 /**< Advertising module instance. */
 
+//*********************GLOBALS*******************//
+
 static uint16_t   m_conn_handle          = BLE_CONN_HANDLE_INVALID;                 /**< Handle of the current connection. */
 static uint16_t   m_ble_nus_max_data_len = BLE_GATT_ATT_MTU_DEFAULT - 3;            /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
 static ble_uuid_t m_adv_uuids[]          =                                          /**< Universally unique service identifier. */
@@ -138,7 +140,9 @@ static ble_uuid_t m_adv_uuids[]          =                                      
     {BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}
 };
 
+uint8_t nus_data_global[244]; //max MTU matches chucksize of react.js app 
 
+//***********************************************//
 
 /**@brief Function for starting advertising.
  */
@@ -229,49 +233,36 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
         uint32_t err_code;
-      
-//        NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
-//        NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
+
+//      NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
+//      NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
+    
+    //NOTE: decode cmds from APP and branch
+        
+        nrf_gpio_pin_clear(LED_GREEN); 
 
         for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
         {
-            do
-            {
-                //handle ble data here -- p_evt->rx_data;
-                if(*p_evt->params.rx_data.p_data == '1')
-                {
-                    nrf_gpio_pin_clear(LED_BLUE);
-                    nrf_gpio_pin_clear(LED_RED);
-                    nrf_gpio_pin_set(LED_GREEN);
-                }
-                if(*p_evt->params.rx_data.p_data == '2')
-                {   
-                    nrf_gpio_pin_set(LED_BLUE);
-                    nrf_gpio_pin_clear(LED_GREEN);
-                    nrf_gpio_pin_set(LED_RED);
-                }
-                if(*p_evt->params.rx_data.p_data == '3')
-                {
-                    nrf_gpio_pin_set(LED_GREEN);
-                    nrf_gpio_pin_clear(LED_RED);
-                    nrf_gpio_pin_set(LED_BLUE);
-                }
- 
-                //err_code = app_uart_put(p_evt->params.rx_data.p_data[i]);
-                if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
-                {
-                    NRF_LOG_ERROR("Failed receiving NUS message. Error 0x%x. ", err_code);
-                    APP_ERROR_CHECK(err_code);
-                }
-            } while (err_code == NRF_ERROR_BUSY);
-        }
 
-        //nrf_gpio_pin_clear(LED_GREEN); 
+            nus_data_global[i] = p_evt->params.rx_data.p_data[i];
+            
+
+//            if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
+//            {
+//                nrf_gpio_pin_clear(LED_BLUE);
+//                nrf_gpio_pin_clear(LED_GREEN);
+//                nrf_gpio_pin_set(LED_RED);
+//            }
+        }
+        
+        nrf_gpio_pin_set(LED_GREEN); 
+        
 
         if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
         {
            // while (app_uart_put('\n') == NRF_ERROR_BUSY);
         }
+    
     }
 
 }
@@ -411,14 +402,14 @@ void ble_draw_icon(uint16_t color)
 {
     //SSD1351_draw_line(x0, y0, x1, y1, uint16_t color)
 
-//NOTE: small ble logo
+//    small ble logo
 //    SSD1351_draw_line( 5, 10, 9, 14, color); // draw x
 //    SSD1351_draw_line( 5, 14, 9, 10, color);
 //    SSD1351_draw_line( 7, 8, 7, 16, color); // draw vertical line
 //    SSD1351_draw_line( 7, 8, 9, 10, color); // close two triangles
 //    SSD1351_draw_line( 7, 16, 9, 14, color);
 
-//NOTE: large ble logo 
+//  large ble logo 
     SSD1351_draw_line( 5, 10, 11, 16, color); 
     SSD1351_draw_line( 5, 16, 11, 10, color);
     SSD1351_draw_line( 8, 7, 8, 19, color); 
@@ -693,6 +684,10 @@ static void advertising_init(void)
     init.advdata.include_appearance = false;
     init.advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
 
+//    init.config.ble_adv_primary_phy      = BLE_GAP_PHY_2MBPS;
+//    init.config.ble_adv_secondary_phy    = BLE_GAP_PHY_2MBPS;
+//    init.config.ble_adv_extended_enabled = true;
+
     init.srdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
     init.srdata.uuids_complete.p_uuids  = m_adv_uuids;
 
@@ -826,7 +821,7 @@ int main(void)
 {   
     gpio_init();
     nrf_power_dcdcen_set(true);
-    if(!nrf_gpio_pin_read(BTN_ENTER) && !nrf_gpio_pin_read(BTN_UP))
+    if(!nrf_gpio_pin_read(BTN_ENTER) && !nrf_gpio_pin_read(BTN_UP)) 
     {
         flashblaster_init();
     }
