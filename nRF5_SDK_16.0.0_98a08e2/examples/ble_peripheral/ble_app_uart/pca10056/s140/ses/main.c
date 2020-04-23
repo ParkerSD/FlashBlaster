@@ -219,6 +219,176 @@ static void nrf_qwr_error_handler(uint32_t nrf_error)
 }
 
 
+char* fetch_name(uint16_t length, uint8_t offset)
+{
+    char* name = malloc(sizeof(char[16])); //max size of name string
+
+    switch(length)
+    {
+        case '1': 
+            *(name) = nus_data_global[offset]; 
+        break; 
+        case '2': 
+            for(int i = 0; i < 2; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case '3': 
+            for(int i = 0; i < 3; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case '4': 
+            for(int i = 0; i < 4; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case '5': 
+            for(int i = 0; i < 5; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case '6': 
+            for(int i = 0; i < 6; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case '7': 
+            for(int i = 0; i < 7; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case '8': 
+            for(int i = 0; i < 8; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case '9': 
+            for(int i = 0; i < 9; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case 0x3130: //10 in binary coded decimal
+            for(int i = 0; i < 10; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case 0x3131: //11
+             for(int i = 0; i < 11; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case 0x3132: //12
+            for(int i = 0; i < 12; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case 0x3133: //13
+             for(int i = 0; i < 13; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case 0x3134: //14
+             for(int i = 0; i < 14; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case 0x3135: //15
+            for(int i = 0; i < 15; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+        case 0x3136: //16
+            for(int i = 0; i < 16; i++) 
+            {
+                *(name + i) = nus_data_global[offset + i];
+            }
+        break; 
+
+
+//        default:
+//        break; 
+
+    }
+
+    return name; 
+
+}
+void cmd_parser(void)
+{
+    if(nus_data_global[0] == 'C' && nus_data_global[1] == 'C') //start byte == "CC" 
+    {
+        char cmd[2]; 
+        char string_len[2];
+        char *name; 
+
+        cmd[0] = nus_data_global[2];
+        cmd[1] = nus_data_global[3];
+
+        if(cmd[0] == '1' && cmd[1] =='0') //add project 
+        {
+            char num_chars = nus_data_global[4]; 
+            if(num_chars == '1')
+            {
+                string_len[0] = nus_data_global[5];
+                uint16_t name_len = string_len[0];
+                name = fetch_name(name_len, 6); //offset is 6 
+            }
+
+            else if(num_chars == '2') //max char in length is two, max value is 16 
+            {
+                string_len[0] = nus_data_global[5];
+                string_len[1] = nus_data_global[6];
+                uint16_t name_len = string_len[0] << 8 | string_len[1]; 
+                name = fetch_name(name_len, 7); //offset is 7 
+            }
+
+            //TODO add project to flash logic 
+        }
+
+        else if(cmd[0] == '2' && cmd[1] =='0') //add chip 
+        {
+            // add chip to parent project in flash
+        }
+
+        else if(cmd[0] == '3' && cmd[1] =='0') //add file 
+        {
+            //add file to parent chip and project in flash
+        }
+
+        else if(cmd[0] == '4' && cmd[1] =='0') //delete project 
+        {
+
+        }
+
+        else if(cmd[0] == '5' && cmd[1] =='0') //delete chip 
+        {
+
+        }
+
+        else if(cmd[0] == '6' && cmd[1] =='0') //delete file
+        {
+
+        }
+                  
+
+    }
+    
+}
 /**@brief Function for handling the data from the Nordic UART Service.
  *
  * @details This function will process the data received from the Nordic UART BLE Service and send
@@ -232,14 +402,10 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
-        uint32_t err_code;
-
+//      uint32_t err_code;
 //      NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
 //      NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
-    
-    //NOTE: decode cmds from APP and branch
         
-        nrf_gpio_pin_clear(LED_GREEN); 
 
         for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
         {
@@ -254,14 +420,13 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 //                nrf_gpio_pin_set(LED_RED);
 //            }
         }
-        
-        nrf_gpio_pin_set(LED_GREEN); 
-        
 
-        if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
-        {
-           // while (app_uart_put('\n') == NRF_ERROR_BUSY);
-        }
+        cmd_parser(); 
+      
+//        if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
+//        {
+//           while (app_uart_put('\n') == NRF_ERROR_BUSY);
+//        }
     
     }
 
