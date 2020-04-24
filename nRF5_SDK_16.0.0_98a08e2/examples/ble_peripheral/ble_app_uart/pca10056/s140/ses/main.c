@@ -141,6 +141,10 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 };
 
 uint8_t nus_data_global[244]; //max MTU matches chucksize of react.js app 
+uint8_t parser_trace = 0; 
+uint8_t string_length; 
+uint32_t data_length; 
+
 
 //***********************************************//
 
@@ -227,147 +231,303 @@ char* fetch_name(uint16_t length, uint8_t offset)
     {
         case '1': 
             *(name) = nus_data_global[offset]; 
-        break; 
+            string_length = 1; 
+            parser_trace += 1; 
+            break; 
         case '2': 
             for(int i = 0; i < 2; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 2; 
+            parser_trace += 2;
+            break; 
         case '3': 
             for(int i = 0; i < 3; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 3; 
+            parser_trace += 3;
+            break; 
         case '4': 
             for(int i = 0; i < 4; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 4;
+            parser_trace += 4;
+            break; 
         case '5': 
             for(int i = 0; i < 5; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 5;
+            parser_trace += 5;
+            break; 
         case '6': 
             for(int i = 0; i < 6; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 6;
+            parser_trace += 6;
+            break; 
         case '7': 
             for(int i = 0; i < 7; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 7;
+            parser_trace += 7;
+            break; 
         case '8': 
             for(int i = 0; i < 8; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 8;
+            parser_trace += 8;
+            break; 
         case '9': 
             for(int i = 0; i < 9; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 9;
+            parser_trace += 9;
+            break; 
         case 0x3130: //10 in binary coded decimal
             for(int i = 0; i < 10; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 10;
+            parser_trace += 10;
+            break; 
         case 0x3131: //11
              for(int i = 0; i < 11; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 11;
+            parser_trace += 11;
+            break; 
         case 0x3132: //12
             for(int i = 0; i < 12; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 12;
+            parser_trace += 12;
+            break; 
         case 0x3133: //13
              for(int i = 0; i < 13; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 13;
+            parser_trace += 13;
+            break; 
         case 0x3134: //14
              for(int i = 0; i < 14; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 14;
+            parser_trace += 14;
+            break; 
         case 0x3135: //15
             for(int i = 0; i < 15; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 15;
+            parser_trace += 15;
+            break; 
         case 0x3136: //16
             for(int i = 0; i < 16; i++) 
             {
                 *(name + i) = nus_data_global[offset + i];
             }
-        break; 
+            string_length = 16;
+            parser_trace += 16;
+            break; 
 
-
-//        default:
-//        break; 
+        default:
+              //TODO throw error, max length is 16 
+            break; 
 
     }
 
     return name; 
 
 }
-void cmd_parser(void)
+
+char* ble_parse_name(uint8_t offset) //pass in all offsets
+{
+    char string_len[2];
+    char *name;
+
+    char num_chars = nus_data_global[offset]; 
+    parser_trace += 1;
+    if(num_chars == '1')//length is described by one char 
+    {
+        string_len[0] = nus_data_global[offset + 1];
+        uint16_t name_len = string_len[0];
+        parser_trace += 1;
+        name = fetch_name(name_len, offset + 2); //offset is 6 
+    }
+    else if(num_chars == '2') //length is described by two chars 
+    {
+        string_len[0] = nus_data_global[offset + 1];
+        string_len[1] = nus_data_global[offset + 2];
+        uint16_t name_len = string_len[0] << 8 | string_len[1]; 
+        parser_trace += 2; 
+        name = fetch_name(name_len, offset + 3); //offset is 7 
+    }
+    return name;
+} 
+
+void char_string_to_int(uint8_t digits)
+{   
+    char num_string[9];
+    uint8_t hex_bcd[9]; 
+    uint32_t accumulator = 0; 
+
+    for(int i = 0; i < digits; i++)
+    {
+        num_string[i] = nus_data_global[parser_trace + i];
+        hex_bcd[i] = num_string[i] - 0x30; 
+        accumulator += (hex_bcd[i] * pow(10, digits-i-1)); 
+    }
+    data_length = accumulator; 
+}
+
+void ble_parse_data_length(uint8_t offset)
+{
+    char num_chars = nus_data_global[offset]; 
+    parser_trace += 1;
+    switch(num_chars)
+    {
+        case '1':
+            char_string_to_int(1);
+            parser_trace += 1; 
+            break;
+
+        case '2': 
+            char_string_to_int(2);
+            parser_trace += 2;
+            break;
+
+        case '3':
+            char_string_to_int(3);
+            parser_trace += 3;
+            break;
+
+        case '4':
+            char_string_to_int(4);
+            parser_trace += 4;
+            break;
+
+        case '5':
+            char_string_to_int(5);
+            parser_trace += 5;
+            break;
+
+        case '6':
+            char_string_to_int(6);
+            parser_trace += 6;
+            break;
+
+        case '7':
+            char_string_to_int(7);
+            parser_trace += 7;
+            break;
+
+        case '8':
+            char_string_to_int(8);
+            parser_trace += 8;
+            break;
+        
+        case '9':
+            char_string_to_int(9);
+            parser_trace += 9;
+            break;
+
+        default:
+        //TODO throw error 
+            break; 
+    }
+}
+
+
+
+void add_project(void)
+{   
+    char *project_name;
+    uint8_t project_name_length;
+    project_name = ble_parse_name(parser_trace); 
+    //TODO add project to flash
+}
+
+
+void add_chip(void)
+{
+
+
+}
+
+
+void add_file(void)
+{
+    char *file_name;
+    uint8_t file_name_length; 
+    char *chip_name;
+    uint8_t chip_name_length;
+    char *project_name;
+    uint8_t project_name_length;
+
+    file_name = ble_parse_name(parser_trace);
+    file_name_length = string_length; 
+    chip_name = ble_parse_name(parser_trace);
+    chip_name_length = string_length;
+    project_name = ble_parse_name(parser_trace);
+    project_name_length = string_length;
+
+    ble_parse_data_length(parser_trace);
+
+    //TODO seek to parent chip in flash and append name strings
+    //TODO parse data length and save data to flash
+ 
+} 
+
+void ble_cmd_parser(void)
 {
     if(nus_data_global[0] == 'C' && nus_data_global[1] == 'C') //start byte == "CC" 
     {
         char cmd[2]; 
-        char string_len[2];
-        char *name; 
 
         cmd[0] = nus_data_global[2];
         cmd[1] = nus_data_global[3];
+        parser_trace = 4; 
 
         if(cmd[0] == '1' && cmd[1] =='0') //add project 
         {
-            char num_chars = nus_data_global[4]; 
-            if(num_chars == '1')
-            {
-                string_len[0] = nus_data_global[5];
-                uint16_t name_len = string_len[0];
-                name = fetch_name(name_len, 6); //offset is 6 
-            }
-
-            else if(num_chars == '2') //max char in length is two, max value is 16 
-            {
-                string_len[0] = nus_data_global[5];
-                string_len[1] = nus_data_global[6];
-                uint16_t name_len = string_len[0] << 8 | string_len[1]; 
-                name = fetch_name(name_len, 7); //offset is 7 
-            }
-
-            //TODO add project to flash logic 
+            add_project();
         }
 
         else if(cmd[0] == '2' && cmd[1] =='0') //add chip 
         {
             // add chip to parent project in flash
+            add_chip(); 
         }
 
         else if(cmd[0] == '3' && cmd[1] =='0') //add file 
         {
-            //add file to parent chip and project in flash
+            // add file to parent chip and project in flash
+            add_file(); 
         }
 
         else if(cmd[0] == '4' && cmd[1] =='0') //delete project 
@@ -384,11 +544,11 @@ void cmd_parser(void)
         {
 
         }
-                  
-
+        //TODO free names after writing to flash
     }
-    
 }
+
+
 /**@brief Function for handling the data from the Nordic UART Service.
  *
  * @details This function will process the data received from the Nordic UART BLE Service and send
@@ -397,41 +557,19 @@ void cmd_parser(void)
  * @param[in] p_evt       Nordic UART Service event.
  */
 /**@snippet [Handling the data received over BLE] */
+
 static void nus_data_handler(ble_nus_evt_t * p_evt)
 {
-
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
-    {
-//      uint32_t err_code;
-//      NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
-//      NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
-        
-
+    {        
         for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
         {
-
             nus_data_global[i] = p_evt->params.rx_data.p_data[i];
-            
-
-//            if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
-//            {
-//                nrf_gpio_pin_clear(LED_BLUE);
-//                nrf_gpio_pin_clear(LED_GREEN);
-//                nrf_gpio_pin_set(LED_RED);
-//            }
         }
 
-        cmd_parser(); 
-      
-//        if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
-//        {
-//           while (app_uart_put('\n') == NRF_ERROR_BUSY);
-//        }
-    
+        ble_cmd_parser();     
     }
-
 }
-/**@snippet [Handling the data received over BLE] */
 
 
 /**@brief Function for initializing services that will be used by the application.
