@@ -90,12 +90,14 @@ uint8_t nus_data_global[244]; //max MTU matches chucksize of react.js app
 uint8_t parser_trace = 0; 
 uint8_t string_length; 
 uint32_t data_length; 
+uint32_t file_data_length;
+bool prog_flag = false; 
 
 
 //NOTE for test, define in add_file function
-    char *file_name; 
-    char *chip_name;
-    char *project_name;
+char *file_name; 
+char *chip_name;
+char *project_name;
 
 
 //***********************************************//
@@ -203,11 +205,7 @@ char* ble_parse_name(void) //pass in all offsets
     //char string_len[2];
     char *name;
 
-    char num_chars = nus_data_global[parser_trace]; 
-    parser_trace += 1;
-    uint8_t i = num_chars - 0x30; //get int from ascii 
-    char_string_to_int(i);
-    parser_trace += i; 
+    ble_parse_data_length(); 
     name = fetch_name(data_length); //offset is 6 
 
     return name;
@@ -228,17 +226,29 @@ void ble_parse_data_length(void)
 
 void add_project(void)
 {   
-    char *project_name;
+    //char *project_name;
     uint8_t project_name_length;
     project_name = ble_parse_name(); 
+    project_name_length = string_length;
     //TODO add project to flash
 }
 
 
 void add_chip(void)
 {
+    //char *chip_name;
+    uint8_t chip_name_length;
+    //char *project_name;
+    uint8_t project_name_length;
 
+    chip_name = ble_parse_name();
+    chip_name_length = string_length;
+    
+    //TODO Seek to parent based on name
+    project_name = ble_parse_name();
+    project_name_length = string_length;
 
+    //TODO add chip to flash
 }
 
 
@@ -250,6 +260,7 @@ void add_file(void)
     uint8_t chip_name_length;
     //char *project_name;
     uint8_t project_name_length;
+     
 
     file_name = ble_parse_name();
     file_name_length = string_length; 
@@ -259,11 +270,22 @@ void add_file(void)
     project_name_length = string_length;
 
     ble_parse_data_length();
+    file_data_length = data_length; 
+    
+    //TODO append data after cmds in first packet to file flash
+    prog_flag = true; //flags nus handler to start appending incoming data 
 
-    //TODO seek to parent chip in flash and append name strings
+    
+    //seek_to_project(project_name, project_name_length); //in flash 
+    //seek_to_chip(chip_name, chip_name_length); // in flash 
+
     //TODO parse data length and save data to flash
+    //TODO seek to parent chip in flash and append name strings
+    
  
 } 
+
+
 void ble_cmd_parser(void)
 {
     if(nus_data_global[0] == 'C' && nus_data_global[1] == 'C') //start byte == "CC" 
@@ -327,8 +349,15 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
         {
             nus_data_global[i] = p_evt->params.rx_data.p_data[i];
         }
-
-        ble_cmd_parser();     
+        if(!prog_flag)
+        {
+            ble_cmd_parser(); 
+        }
+        else
+        {
+            //append entire nus_data_global array to file data in flash
+        }
+        
     }
 }
 

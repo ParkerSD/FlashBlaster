@@ -104,8 +104,6 @@
 #endif 
 
 
-
-
 /*
 void uart_event_handle(app_uart_evt_t * p_event)
 {
@@ -185,7 +183,6 @@ static void uart_init(void)
     APP_ERROR_CHECK(err_code);
 }
 */
-
 
 
 /**@brief Function for initializing the timer module.

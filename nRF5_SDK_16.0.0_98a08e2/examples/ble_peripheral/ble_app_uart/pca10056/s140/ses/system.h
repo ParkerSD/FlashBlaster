@@ -6,23 +6,23 @@
 #define MAX_STRING_SIZE 16
 
 //flash sizes and offsets 
-#define DIRECTORY_OFFSET 32 //NOTE this will change
-#define PROJECT_SECTOR_OFFSET 480 //NOTE this will change
-#define CHIP_SECTOR_OFFSET 384 //NOTE this will change
+#define DIRECTORY_OFFSET 4000 //NOTE this will change
+#define PROJECT_SECTOR_OFFSET 4000 //NOTE this will change
+#define CHIP_SECTOR_OFFSET 12000 //NOTE this will change
 
 #define PROJECT_HEADER_SIZE 20 //chip size without pointers
-#define MAX_PROJECT_SIZE 128 // allows for 27 chips
-#define CHIP_LIST_SIZE 108 //chip list of project
+#define MAX_PROJECT_SIZE 52 // allows for 27 chips
+#define CHIP_LIST_SIZE 32 //chip list of project
 
 #define CHIP_HEADER_SIZE 24 // ship size without pointers
-#define MAX_CHIP_SIZE 128
-#define FILE_LIST_SIZE 104 //chip list of project
+#define MAX_CHIP_SIZE 56
+#define FILE_LIST_SIZE 32 //chip list of project
 
 #define FILE_HEADER_SIZE 28 // ship size without pointers
 
-#define MAX_PROJECTS 27 //system max 
-#define MAX_CHIPS 27 //max per project 
-#define MAX_FILES 27 //max per chip 
+#define MAX_PROJECTS 26 //system max 
+#define MAX_CHIPS 8 //max per project 
+#define MAX_FILES 8 //max per chip 
 
 #define MAX_ITEMS 27 // max display items
 #define curr_font small_font
@@ -112,6 +112,7 @@ typedef struct recents
     file_struct *file1;
     file_struct *file2;
 }recents_struct;
+
 
 bool recents_check(void);
 void push_file_to_recents(file_struct*);
