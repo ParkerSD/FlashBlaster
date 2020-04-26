@@ -23,3 +23,9 @@ void gap_params_init(void);
 void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name);
 void advertising_start(void);
 void idle_state_handle(void);
+
+uint32_t seek_to_project(char* project_name, uint8_t length);
+
+uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t length);
+
+void append_file_addr(uint32_t chip_addr);

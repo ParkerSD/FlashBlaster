@@ -95,9 +95,9 @@ bool prog_flag = false;
 
 
 //NOTE for test, define in add_file function
-char *file_name; 
-char *chip_name;
-char *project_name;
+//char *file_name; 
+//char *chip_name;
+//char *project_name;
 
 
 //***********************************************//
@@ -170,12 +170,14 @@ void nrf_qwr_error_handler(uint32_t nrf_error)
 
 char* fetch_name(uint16_t length)
 {
-    char* name = malloc(sizeof(char[length])); //max size of name string
+    char* name = malloc(sizeof(char[MAX_STRING_SIZE])); //max size of name string
 
     for(int i = 0; i < length; i++)
     {
         *(name + i) = nus_data_global[parser_trace + i];  
     }
+
+    memset((name + length), NULL, (MAX_STRING_SIZE - length)); 
     string_length = length; 
     parser_trace += length;
 
@@ -226,7 +228,7 @@ void ble_parse_data_length(void)
 
 void add_project(void)
 {   
-    //char *project_name;
+    char *project_name;
     uint8_t project_name_length;
     project_name = ble_parse_name(); 
     project_name_length = string_length;
@@ -236,9 +238,9 @@ void add_project(void)
 
 void add_chip(void)
 {
-    //char *chip_name;
+    char *chip_name;
     uint8_t chip_name_length;
-    //char *project_name;
+    char *project_name;
     uint8_t project_name_length;
 
     chip_name = ble_parse_name();
@@ -252,16 +254,18 @@ void add_chip(void)
 }
 
 
+
 void add_file(void)
 {
-    //char *file_name;
+    char* file_name;
     uint8_t file_name_length; 
-    //char *chip_name;
+    char* chip_name;
     uint8_t chip_name_length;
-    //char *project_name;
+    char* project_name;
     uint8_t project_name_length;
-     
-
+    
+    uint8_t ble_buffer[244];
+    
     file_name = ble_parse_name();
     file_name_length = string_length; 
     chip_name = ble_parse_name();
@@ -272,18 +276,29 @@ void add_file(void)
     ble_parse_data_length();
     file_data_length = data_length; 
     
-    //TODO append data after cmds in first packet to file flash
+    uint8_t packet_data_size = 244 - parser_trace; 
+    memcpy(ble_buffer, &nus_data_global[parser_trace], packet_data_size); //capture data following cmd in first packet
+
     prog_flag = true; //flags nus handler to start appending incoming data 
-
     
-    //seek_to_project(project_name, project_name_length); //in flash 
-    //seek_to_chip(chip_name, chip_name_length); // in flash 
-
-    //TODO parse data length and save data to flash
-    //TODO seek to parent chip in flash and append name strings
+    // flash functions
+    uint32_t project_addr = seek_to_project(project_name, project_name_length); //projects start at 4000, 52 bytes per project 
+    if(project_addr == NULL)
+    {   
+        //ERROR: no project found
+        nrf_gpio_pin_set(LED_RED);
+    }
     
- 
+    uint32_t chip_addr = seek_to_chip(project_addr, chip_name, chip_name_length); //chips start at addr 8000, 56 bytes per chip 
+    if(chip_addr == NULL)
+    {   
+        //ERROR: no chip found
+        nrf_gpio_pin_set(LED_RED);
+    }
+
+    file_header_write(chip_addr, file_name, NULL, file_data_length); //write file header and append file addr to chip 
 } 
+
 
 
 void ble_cmd_parser(void)
@@ -353,9 +368,17 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
         {
             ble_cmd_parser(); 
         }
-        else
+        else // prog flag true 
         {
-            //append entire nus_data_global array to file data in flash
+           if(file_data_length != 0)
+            {
+               //append entire nus_data_global array to file data in flash
+               //exception for last file (not full 244 bytes) 
+            }
+            else // file_data_length == 0
+            {
+                prog_flag = false;
+            }
         }
         
     }

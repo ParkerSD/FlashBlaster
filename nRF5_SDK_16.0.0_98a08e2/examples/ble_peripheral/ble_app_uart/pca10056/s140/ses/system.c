@@ -245,6 +245,7 @@ chip_struct* files_sync(int8_t selectedItem, project_struct* project_selected)
     return chip_selected;
 }
 
+
 file_struct* file_list_index(int index, chip_struct* chip_curr)  
 { 
     file_struct* fileN;
@@ -263,6 +264,7 @@ file_struct* file_list_index(int index, chip_struct* chip_curr)
     }
     return fileN; 
 }
+
 
 file_struct* file_new(char* data, chip_struct* chip_curr)
 {
@@ -288,6 +290,7 @@ file_struct* file_new(char* data, chip_struct* chip_curr)
     return fileY;
 }
 
+
 file_struct* file_create(void)
 {
     file_struct* fileX = malloc(sizeof(file_struct)); 
@@ -302,6 +305,7 @@ file_struct* file_create(void)
  
     return fileX;
 }
+
 
 //**************************************************************  CHIP FUNCTIONS  **************************************************************//
 
@@ -691,27 +695,28 @@ void flash_init(void)
     // ADDR_PROJECT_PTR_FIRST 4
 
    // init flash for test below 
-//    flash_erase(0, NRF_QSPI_ERASE_LEN_4KB); // erase all 
-//    flash_erase(4000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(8000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(12000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(16000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(20000, NRF_QSPI_ERASE_LEN_4KB);
+    flash_erase(0, NRF_QSPI_ERASE_LEN_4KB); // erase all 
+    flash_erase(4000, NRF_QSPI_ERASE_LEN_4KB);
+    flash_erase(8000, NRF_QSPI_ERASE_LEN_4KB);
+    flash_erase(12000, NRF_QSPI_ERASE_LEN_4KB);
+    flash_erase(16000, NRF_QSPI_ERASE_LEN_4KB);
+    flash_erase(20000, NRF_QSPI_ERASE_LEN_4KB);
 
+                                              //NOTE are these addresses needed? project is fixed size (52 bytes)
                                             //proj1        //proj2       //proj3
     //DIRECTORY           //project num   // 4000  //    // 4052  //   // 4104  //
     uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 15, 160, 0, 0, 15, 212, 0, 0, 16, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
     flash_write(directory, 0, 32); // write test directory
     
     //TODO chip directory
-    //chip_count_global[WORD_SIZE] = {0, 0, 0, 0};
-    //flash_write(chip_count_global, 2000, WORD_SIZE);
+    uint8_t chip_count_global[WORD_SIZE] = {0, 0, 0, 3};
+    flash_write(chip_count_global, 2000, WORD_SIZE);
 
     //TODO file directory 
-    //file_count_global[WORD_SIZE] = {0, 0, 0, 0};
-    //file_bytes_programmed[WORDSIZE] = {0, 0, 0, 0}; 
-    //flash_write(file_count_global, 2004, WORD_SIZE); //addr first half: 0-1999 / second half: 2000-3999 
-    //flash_write(file_bytes_programmed, 2008, WORD_SIZE);
+    uint8_t file_count_global[WORD_SIZE] = {0, 0, 0, 0};
+    uint8_t file_bytes_programmed[WORD_SIZE] = {0, 0, 0, 0}; 
+    flash_write(file_count_global, 2004, WORD_SIZE); //addr first half: 0-1999 / second half: 2000-3999 
+    flash_write(file_bytes_programmed, 2008, WORD_SIZE);
     
 
 
@@ -730,94 +735,94 @@ void flash_init(void)
         //CHIP 0 - 28 bytes (including first file addr) 
         uint8_t chip_string_test0[] = {"chip0"}; //16 bytes
         uint8_t chip_type_ID[WORD_SIZE] = {0, 0, 7, 0}; 
-        uint8_t files_num[WORD_SIZE] = {0, 0, 0, 3}; 
-        uint8_t files_first_addr[WORD_SIZE] = {0, 0, 78, 32}; // 20000 - address of file0
-        uint8_t files_sec_addr[WORD_SIZE] = {0, 0, 78, 60}; // 20028 - address of file1
-        uint8_t files_third_addr[WORD_SIZE] = {0, 0, 78, 88}; // 20056 - address of file2
+        uint8_t files_num[WORD_SIZE] = {0, 0, 0, 0}; 
+//        uint8_t files_first_addr[WORD_SIZE] = {0, 0, 78, 32}; // 20000 - address of file0
+//        uint8_t files_sec_addr[WORD_SIZE] = {0, 0, 78, 60}; // 20028 - address of file1
+//        uint8_t files_third_addr[WORD_SIZE] = {0, 0, 78, 88}; // 20056 - address of file2
         flash_write(chip_string_test0, 8000, MAX_STRING_SIZE);
         flash_write(chip_type_ID, 8016, WORD_SIZE);
         flash_write(files_num, 8020, WORD_SIZE);
-        flash_write(files_first_addr, 8024, WORD_SIZE);
-        flash_write(files_sec_addr, 8028, WORD_SIZE);
-        flash_write(files_third_addr, 8032, WORD_SIZE);   
-            //FILE0
-            uint8_t file_string_test0[] = {"file0"}; //16 bytes
-            uint8_t timestamp0[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t datalength0[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t dataaddress0[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
-            flash_write(file_string_test0, 20000, MAX_STRING_SIZE);
-            flash_write(timestamp0, 20016, WORD_SIZE);
-            flash_write(datalength0, 20020, WORD_SIZE);
-            flash_write(dataaddress0, 20024, WORD_SIZE); 
-            //FILE1
-            uint8_t file_string_test1[] = {"file1"}; //16 bytes
-            uint8_t timestamp1[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t datalength1[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t dataaddress1[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
-            flash_write(file_string_test1, 20028, MAX_STRING_SIZE);
-            flash_write(timestamp1, 20044, WORD_SIZE);
-            flash_write(datalength1, 20048, WORD_SIZE);
-            flash_write(dataaddress1, 20052, WORD_SIZE);
-            //FILE2
-            uint8_t file_string_test2[] = {"file2"}; //16 bytes
-            uint8_t timestamp2[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t datalength2[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t dataaddress2[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
-            flash_write(file_string_test2, 20056, MAX_STRING_SIZE);
-            flash_write(timestamp2, 20072, WORD_SIZE);
-            flash_write(datalength2, 20076, WORD_SIZE);
-            flash_write(dataaddress2, 20080, WORD_SIZE);
+//        flash_write(files_first_addr, 8024, WORD_SIZE);
+//        flash_write(files_sec_addr, 8028, WORD_SIZE);
+//        flash_write(files_third_addr, 8032, WORD_SIZE);   
+//            //FILE0
+//            uint8_t file_string_test0[] = {"file0"}; //16 bytes
+//            uint8_t timestamp0[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t datalength0[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t dataaddress0[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
+//            flash_write(file_string_test0, 20000, MAX_STRING_SIZE);
+//            flash_write(timestamp0, 20016, WORD_SIZE);
+//            flash_write(datalength0, 20020, WORD_SIZE);
+//            flash_write(dataaddress0, 20024, WORD_SIZE); 
+//            //FILE1
+//            uint8_t file_string_test1[] = {"file1"}; //16 bytes
+//            uint8_t timestamp1[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t datalength1[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t dataaddress1[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
+//            flash_write(file_string_test1, 20028, MAX_STRING_SIZE);
+//            flash_write(timestamp1, 20044, WORD_SIZE);
+//            flash_write(datalength1, 20048, WORD_SIZE);
+//            flash_write(dataaddress1, 20052, WORD_SIZE);
+//            //FILE2
+//            uint8_t file_string_test2[] = {"file2"}; //16 bytes
+//            uint8_t timestamp2[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t datalength2[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t dataaddress2[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
+//            flash_write(file_string_test2, 20056, MAX_STRING_SIZE);
+//            flash_write(timestamp2, 20072, WORD_SIZE);
+//            flash_write(datalength2, 20076, WORD_SIZE);
+//            flash_write(dataaddress2, 20080, WORD_SIZE);
 
         //CHIP 1
         uint8_t chip_string_test1[] = {"chip1"}; //16 bytes
         uint8_t chip_type_ID1[WORD_SIZE] = {0, 0, 7, 0}; 
-        uint8_t files_num1[WORD_SIZE] = {0, 0, 0, 3}; 
-        uint8_t files_first_addr1[WORD_SIZE] = {0, 0, 78, 116}; // 20084 - file3
-        uint8_t files_sec_addr1[WORD_SIZE] = {0, 0, 78, 144}; // 20112 - file4
-        uint8_t files_third_addr1[WORD_SIZE] = {0, 0, 78, 172}; // 20140 - file5
+        uint8_t files_num1[WORD_SIZE] = {0, 0, 0, 0}; 
+//        uint8_t files_first_addr1[WORD_SIZE] = {0, 0, 78, 116}; // 20084 - file3
+//        uint8_t files_sec_addr1[WORD_SIZE] = {0, 0, 78, 144}; // 20112 - file4
+//        uint8_t files_third_addr1[WORD_SIZE] = {0, 0, 78, 172}; // 20140 - file5
         flash_write(chip_string_test1, 8056, MAX_STRING_SIZE);
         flash_write(chip_type_ID1, 8072, WORD_SIZE);
         flash_write(files_num1, 8076, WORD_SIZE);
-        flash_write(files_first_addr1, 8080, WORD_SIZE);
-        flash_write(files_sec_addr1, 8084, WORD_SIZE);
-        flash_write(files_third_addr1, 8088, WORD_SIZE);
-            //FILE 3
-            uint8_t file_string_test3[] = {"file3"}; //16 bytes
-            uint8_t timestamp3[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t datalength3[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t dataaddress3[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
-            flash_write(file_string_test3, 20084, MAX_STRING_SIZE);
-            flash_write(timestamp3, 20100, WORD_SIZE);
-            flash_write(datalength3, 20104, WORD_SIZE);
-            flash_write(dataaddress3, 20108, WORD_SIZE);
-            //FILE 4
-            uint8_t file_string_test4[] = {"file4"}; //16 bytes
-            uint8_t timestamp4[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t datalength4[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t dataaddress4[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
-            flash_write(file_string_test4, 20112, MAX_STRING_SIZE);
-            flash_write(timestamp4, 20128, WORD_SIZE);
-            flash_write(datalength4, 20132, WORD_SIZE);
-            flash_write(dataaddress4, 20136, WORD_SIZE);
-            //FILE 5
-            uint8_t file_string_test5[] = {"file5"}; //16 bytes
-            uint8_t timestamp5[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t datalength5[WORD_SIZE] = {0, 0, 0, 1}; 
-            uint8_t dataaddress5[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
-            flash_write(file_string_test5, 20140, MAX_STRING_SIZE);
-            flash_write(timestamp5, 20156, WORD_SIZE);
-            flash_write(datalength5, 20160, WORD_SIZE);
-            flash_write(dataaddress5, 20164, WORD_SIZE);
+//        flash_write(files_first_addr1, 8080, WORD_SIZE);
+//        flash_write(files_sec_addr1, 8084, WORD_SIZE);
+//        flash_write(files_third_addr1, 8088, WORD_SIZE);
+//            //FILE 3
+//            uint8_t file_string_test3[] = {"file3"}; //16 bytes
+//            uint8_t timestamp3[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t datalength3[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t dataaddress3[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
+//            flash_write(file_string_test3, 20084, MAX_STRING_SIZE);
+//            flash_write(timestamp3, 20100, WORD_SIZE);
+//            flash_write(datalength3, 20104, WORD_SIZE);
+//            flash_write(dataaddress3, 20108, WORD_SIZE);
+//            //FILE 4
+//            uint8_t file_string_test4[] = {"file4"}; //16 bytes
+//            uint8_t timestamp4[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t datalength4[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t dataaddress4[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
+//            flash_write(file_string_test4, 20112, MAX_STRING_SIZE);
+//            flash_write(timestamp4, 20128, WORD_SIZE);
+//            flash_write(datalength4, 20132, WORD_SIZE);
+//            flash_write(dataaddress4, 20136, WORD_SIZE);
+//            //FILE 5
+//            uint8_t file_string_test5[] = {"file5"}; //16 bytes
+//            uint8_t timestamp5[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t datalength5[WORD_SIZE] = {0, 0, 0, 1}; 
+//            uint8_t dataaddress5[WORD_SIZE] = {0, 0, 0, 1}; //NOTE should stored 76000-EOF
+//            flash_write(file_string_test5, 20140, MAX_STRING_SIZE);
+//            flash_write(timestamp5, 20156, WORD_SIZE);
+//            flash_write(datalength5, 20160, WORD_SIZE);
+//            flash_write(dataaddress5, 20164, WORD_SIZE);
 
         //CHIP 2
         uint8_t chip_string_test2[] = {"chip2"}; //16 bytes
         uint8_t chip_type_ID2[WORD_SIZE] = {0, 0, 7, 0}; 
         uint8_t files_num2[WORD_SIZE] = {0, 0, 0, 0}; 
-        uint8_t files_first_addr2[WORD_SIZE] = {0, 0, 255, 255}; 
+//        uint8_t files_first_addr2[WORD_SIZE] = {0, 0, 255, 255}; 
         flash_write(chip_string_test2, 8112, MAX_STRING_SIZE);
         flash_write(chip_type_ID2, 8128, WORD_SIZE);
         flash_write(files_num2, 8132, WORD_SIZE);
-        flash_write(files_first_addr2, 8136, WORD_SIZE);
+//        flash_write(files_first_addr2, 8136, WORD_SIZE);
     
     //NOTE PROJECT 2
     uint8_t project_string_test1[] = {"project1"};

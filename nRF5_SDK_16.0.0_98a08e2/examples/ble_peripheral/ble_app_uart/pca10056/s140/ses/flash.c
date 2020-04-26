@@ -10,6 +10,7 @@
 #include "sdk_config.h" 
 #include "oled.h"
 #include "nrf_gpio.h"
+#include "system.h"
 
 #define QSPI_TEST 0 //set true to enable qspi test 
 
@@ -116,6 +117,7 @@ void qspi_init(void)
 #endif
 }
 
+
 void flash_erase(uint32_t start_addr, nrf_qspi_erase_len_t length) // NRF_QSPI_ERASE_LEN_4KB, NRF_QSPI_ERASE_LEN_64KB, NRF_QSPI_ERASE_LEN_ALL
 {
     m_finished = false;
@@ -125,6 +127,7 @@ void flash_erase(uint32_t start_addr, nrf_qspi_erase_len_t length) // NRF_QSPI_E
     WAIT_FOR_PERIPH();
 }
 
+
 void flash_write(uint8_t* buffer_tx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
 {
     m_finished = false;
@@ -133,6 +136,7 @@ void flash_write(uint8_t* buffer_tx, uint32_t start_addr, size_t DATA_SIZE_BYTES
     APP_ERROR_CHECK(err_code);
     WAIT_FOR_PERIPH();
 }
+
 
 void flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
 { 
@@ -144,4 +148,79 @@ void flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
 }
 
 
-//directory_load();
+uint32_t seek_to_project(char* project_name, uint8_t length) // NULL return = no project found
+{   
+    int n = 1; 
+    char name_str[MAX_STRING_SIZE]; 
+    uint32_t project_addr;
+    
+    uint8_t proj_num[WORD_SIZE]; 
+    uint32_t projects_total_num; 
+    uint32_t current_addr = 4000; //projects start at flash addr 4000
+ 
+    flash_read(proj_num, 0, WORD_SIZE); // read global project total from directory
+    projects_total_num = proj_num[0] << 24 | proj_num[1] << 16 | proj_num[2] << 8 | proj_num[3];
+
+    for(int i = 0; i < projects_total_num; i++) //for total number of projects
+    {
+        flash_read(name_str, current_addr + (52*i), MAX_STRING_SIZE);  //check string every 52 bytes
+        n = memcmp(name_str, project_name, length); //read and compare 
+        project_addr = current_addr + (52*i); 
+        
+        if(!n)//strings match
+        {
+            return project_addr;//return address of found project
+        }
+    }
+    return NULL; 
+}
+
+
+
+uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t length)
+{   
+    int n = 1; 
+    char name_str[MAX_STRING_SIZE]; 
+    uint32_t chip_addr; 
+    uint8_t chip_addr_buff[WORD_SIZE];
+
+    uint8_t chip_num[WORD_SIZE]; 
+    uint32_t chip_total_num; 
+
+    flash_read(chip_num, project_addr + MAX_STRING_SIZE, WORD_SIZE); // read chip_num from project 
+    chip_total_num = chip_num[0] << 24 | chip_num[1] << 16 | chip_num[2] << 8 | chip_num[3];
+
+    for(int i = 0; i < chip_total_num; i++)
+    {
+        flash_read(chip_addr_buff, project_addr + PROJECT_HEADER_SIZE + (i*WORD_SIZE), WORD_SIZE); //get address from project 
+        chip_addr = chip_addr_buff[0] << 24 | chip_addr_buff[1] << 16 | chip_addr_buff[2] << 8 | chip_addr_buff[3];
+
+        flash_read(name_str, chip_addr, MAX_STRING_SIZE);//NOTE MUST READ IN WORDS, read address 
+        n = memcmp(name_str, chip_name, length); //read and compare 
+
+        if(!n)//strings match
+        {
+            return chip_addr;//return address of found chip
+        }
+    }
+    return NULL;
+}
+
+
+
+void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, uint32_t file_data_length)
+{
+    // read global file count 
+    // determine address of file header and append to chip (read total files in chip to determine where in chip's file array)
+    // write file header data (name, timestamp, datalength, data_addr) 
+    
+
+}
+
+void file_data_write(uint32_t data_start_addr)
+{
+    //read file bytes programmed
+    //update file in flash with data_address?
+    //append data as its received 
+
+}
