@@ -17,9 +17,9 @@
 #define QSPI_STD_CMD_WRSR   0x01
 #define QSPI_STD_CMD_RSTEN  0x66
 #define QSPI_STD_CMD_RST    0x99
-#define QSPI_STD_CMD_REMS 0x90 // REMS - 2 bytes
-#define QSPI_STD_CMD_RES 0xAB // RES Read Electronic Signature - 1 byte
-#define QSPI_STD_CMD_RDID 0x9F // RDID
+#define QSPI_STD_CMD_REMS   0x90 // REMS - 2 bytes
+#define QSPI_STD_CMD_RES    0xAB // RES Read Electronic Signature - 1 byte
+#define QSPI_STD_CMD_RDID   0x9F // RDID
 
 #define QSPI_TEST_DATA_SIZE 32
 
@@ -148,7 +148,7 @@ void flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
 }
 
 
-uint32_t seek_to_project(char* project_name, uint8_t length) // NULL return = no project found
+uint32_t seek_to_project(char* project_name, uint8_t name_length) // NULL return = no project found
 {   
     int n = 1; 
     char name_str[MAX_STRING_SIZE]; 
@@ -164,7 +164,7 @@ uint32_t seek_to_project(char* project_name, uint8_t length) // NULL return = no
     for(int i = 0; i < projects_total_num; i++) //for total number of projects
     {
         flash_read(name_str, current_addr + (52*i), MAX_STRING_SIZE);  //check string every 52 bytes
-        n = memcmp(name_str, project_name, length); //read and compare 
+        n = memcmp(name_str, project_name, name_length); //read and compare 
         project_addr = current_addr + (52*i); 
         
         if(!n)//strings match
@@ -177,7 +177,7 @@ uint32_t seek_to_project(char* project_name, uint8_t length) // NULL return = no
 
 
 
-uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t length)
+uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t name_length)
 {   
     int n = 1; 
     char name_str[MAX_STRING_SIZE]; 
@@ -196,7 +196,7 @@ uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t length)
         chip_addr = chip_addr_buff[0] << 24 | chip_addr_buff[1] << 16 | chip_addr_buff[2] << 8 | chip_addr_buff[3];
 
         flash_read(name_str, chip_addr, MAX_STRING_SIZE);//NOTE MUST READ IN WORDS, read address 
-        n = memcmp(name_str, chip_name, length); //read and compare 
+        n = memcmp(name_str, chip_name, name_length); //read and compare 
 
         if(!n)//strings match
         {
@@ -208,19 +208,47 @@ uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t length)
 
 
 
+//flash_write(uint8_t* buffer_tx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
+
 void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, uint32_t file_data_length)
-{
-    // read global file count 
-    // determine address of file header and append to chip (read total files in chip to determine where in chip's file array)
-    // write file header data (name, timestamp, datalength, data_addr) 
+{   
+    uint32_t file_count; 
+    uint8_t file_count_buff[WORD_SIZE]; 
     
+    flash_read(file_count_buff, FILE_COUNT_GLOBAL_ADDR, WORD_SIZE);// read global file count 
+    file_count = file_count_buff[0] << 24 | file_count_buff[1] << 16 | file_count_buff[2] << 8 | file_count_buff[3];
+
+    uint32_t curr_file_addr = DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_SECTOR_OFFSET + (FILE_HEADER_SIZE * file_count); // determine address in file section
+    flash_write(file_name, curr_file_addr, MAX_STRING_SIZE);    //write file name string in file flash section
+    //flash_write(timestamp, curr_file_addr + MAX_STRING_SIZE, WORD_SIZE); //TODO fetch and write timestamp
+
+    uint8_t file_data_length_buff[WORD_SIZE];
+    file_data_length_buff[0] = (file_data_length >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    file_data_length_buff[1] = (file_data_length >> 16) & 0xFF;
+    file_data_length_buff[2] = (file_data_length >> 8) & 0xFF;
+    file_data_length_buff[3] = file_data_length & 0xFF;
+    flash_write(file_data_length_buff, curr_file_addr + MAX_STRING_SIZE + WORD_SIZE, WORD_SIZE); //write data length
+
+    uint32_t file_num_chip;
+    uint8_t file_num_chip_buff[WORD_SIZE]; 
+    flash_read(file_num_chip_buff, chip_addr + FILE_NUM_OFFSET, WORD_SIZE); //read number of files in chip
+    file_num_chip = file_num_chip_buff[0] << 24 | file_num_chip_buff[1] << 16 | file_num_chip_buff[2] << 8 | file_num_chip_buff[3];
+    
+    uint32_t file_addr_chip = chip_addr + CHIP_HEADER_SIZE + (file_num_chip * WORD_SIZE);
+    uint8_t curr_file_addr_buff[WORD_SIZE];
+    curr_file_addr_buff[0] = (curr_file_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    curr_file_addr_buff[1] = (curr_file_addr >> 16) & 0xFF;
+    curr_file_addr_buff[2] = (curr_file_addr >> 8) & 0xFF;
+    curr_file_addr_buff[3] = curr_file_addr & 0xFF;
+    flash_write(curr_file_addr_buff, file_addr_chip, WORD_SIZE); //write file address in chip
+ 
+    // write file header data (name, timestamp, datalength, data_addr) 
+    //TODO write data address of file into file item
+    //(AFTER PROGRAMMING COMPLETE)
+    // increment file_num in chip parent
+    // increment file_count_global
+    // increment file_bytes_programmed
 
 }
 
-void file_data_write(uint32_t data_start_addr)
-{
-    //read file bytes programmed
-    //update file in flash with data_address?
-    //append data as its received 
 
-}

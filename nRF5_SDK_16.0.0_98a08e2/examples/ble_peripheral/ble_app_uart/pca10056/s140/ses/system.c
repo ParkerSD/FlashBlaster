@@ -96,6 +96,7 @@ bool recents_check(void)
     }
 }
 
+
 void clear_screen(void)
 {
     SSD1351_fill(COLOR_BLACK);
@@ -146,6 +147,7 @@ void draw_initial_screen(void)
     SSD1351_update();
 }
 
+
 void list_clear(void)
 {
     list_singleton->currentList = NULL;
@@ -155,6 +157,7 @@ void list_clear(void)
         list_singleton->items[x] = NULL;
     }
 }
+
 
 list_struct* list_new(void)
 {
@@ -210,6 +213,7 @@ chip_struct* files_sync(int8_t selectedItem, project_struct* project_selected)
     if(chip_selected->file_first == NULL)
     {
         uint16_t total_files = chip_selected->file_num;
+        //total_files = 1; //NOTE FOR TEST 
         uint32_t total_file_list_size = total_files * WORD_SIZE; 
 
         if(total_files != 0)
@@ -332,7 +336,7 @@ project_struct* chips_sync(int8_t selectedItem)
             flash_read(chip_buffer, chip_addr0, CHIP_HEADER_SIZE);
             project_selected->chip_first = chip_new(chip_buffer, project_selected); // create first project(head of list) 
 
-            // create remainder of projects, first proejct already made 
+            // create remainder of projects, first project already made 
             for(int i = 1; i < total_chips; i++) 
             {   
                 // convert 4 bytes into 32bit number 
@@ -531,7 +535,7 @@ project_struct* project_create(void)
 void system_init(void) // create global system struct and read directory info from flash, create project structs 
 {   
     system_singleton = system_new();  
-    //flash_init(); //erase and rewrite test flash
+    flash_init(); //erase and rewrite test flash
     projects_sync(); 
 }
 
@@ -720,7 +724,7 @@ void flash_init(void)
     
 
 
-    //NOTE PROJECT 1 - 24 bytes (including first chip addr) 
+    //NOTE PROJECT 0 - 24 bytes (including first chip addr) 
     uint8_t project_string_test0[] = {"project0"}; //long form, single write {'p', 'r', 'o', 'j', 'e', 'c', 't', '0', 0, 0, 0, 1, 0, 0, 2, 0}; 
     uint8_t chip_num_test[WORD_SIZE] = {0, 0, 0, 3};
     uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 31, 64}; //address 8000 when bit shifted
@@ -735,7 +739,7 @@ void flash_init(void)
         //CHIP 0 - 28 bytes (including first file addr) 
         uint8_t chip_string_test0[] = {"chip0"}; //16 bytes
         uint8_t chip_type_ID[WORD_SIZE] = {0, 0, 7, 0}; 
-        uint8_t files_num[WORD_SIZE] = {0, 0, 0, 0}; 
+        uint8_t files_num[WORD_SIZE] = {0, 0, 0, 0}; //NOTE FOR TEST: SHOULD BE INCREMENTED AFTER DATA TRANSFER
 //        uint8_t files_first_addr[WORD_SIZE] = {0, 0, 78, 32}; // 20000 - address of file0
 //        uint8_t files_sec_addr[WORD_SIZE] = {0, 0, 78, 60}; // 20028 - address of file1
 //        uint8_t files_third_addr[WORD_SIZE] = {0, 0, 78, 88}; // 20056 - address of file2
@@ -824,13 +828,13 @@ void flash_init(void)
         flash_write(files_num2, 8132, WORD_SIZE);
 //        flash_write(files_first_addr2, 8136, WORD_SIZE);
     
-    //NOTE PROJECT 2
+    //NOTE PROJECT 1
     uint8_t project_string_test1[] = {"project1"};
     uint8_t chip_num_test1[WORD_SIZE] = {0, 0, 0, 0};
     flash_write(project_string_test1, 4052, MAX_STRING_SIZE); // name string 16 bytes long 
     flash_write(chip_num_test1, 4068, WORD_SIZE);
     
-    //NOTE PROJECT 3 
+    //NOTE PROJECT 2 
     uint8_t project_string_test2[] = {"project2"};
     uint8_t chip_num_test2[WORD_SIZE] = {0, 0, 0, 0};
     flash_write(project_string_test2, 4104, MAX_STRING_SIZE); // name string 16 bytes long 

@@ -6,9 +6,15 @@
 #define MAX_STRING_SIZE 16
 
 //flash sizes and offsets 
-#define DIRECTORY_OFFSET 4000 //NOTE this will change
-#define PROJECT_SECTOR_OFFSET 4000 //NOTE this will change
-#define CHIP_SECTOR_OFFSET 12000 //NOTE this will change
+#define CHIP_COUNT_GLOBAL_ADDR 2000
+#define FILE_COUNT_GLOBAL_ADDR 2004 
+#define FILE_BYTES_PROG_ADDR 2008
+
+#define DIRECTORY_OFFSET 4000 
+#define PROJECT_SECTOR_OFFSET 4000 
+#define CHIP_SECTOR_OFFSET 12000 
+#define FILE_SECTOR_OFFSET 56000 
+#define DATA_SECTOR_START 76000
 
 #define PROJECT_HEADER_SIZE 20 //chip size without pointers
 #define MAX_PROJECT_SIZE 52 // allows for 27 chips
@@ -17,6 +23,7 @@
 #define CHIP_HEADER_SIZE 24 // ship size without pointers
 #define MAX_CHIP_SIZE 56
 #define FILE_LIST_SIZE 32 //chip list of project
+#define FILE_NUM_OFFSET 20 
 
 #define FILE_HEADER_SIZE 28 // ship size without pointers
 

@@ -87,10 +87,12 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 };
 
 uint8_t nus_data_global[244]; //max MTU matches chucksize of react.js app 
-uint8_t parser_trace = 0; 
-uint8_t string_length; 
-uint32_t data_length; 
-uint32_t file_data_length;
+static uint8_t parser_trace = 0; 
+static uint16_t packet_index = 0;
+static uint8_t string_length; 
+static uint32_t data_length; 
+static int file_data_length; 
+static uint32_t file_data_addr_global;
 bool prog_flag = false; 
 
 
@@ -263,9 +265,7 @@ void add_file(void)
     uint8_t chip_name_length;
     char* project_name;
     uint8_t project_name_length;
-    
-    uint8_t ble_buffer[244];
-    
+     
     file_name = ble_parse_name();
     file_name_length = string_length; 
     chip_name = ble_parse_name();
@@ -276,8 +276,9 @@ void add_file(void)
     ble_parse_data_length();
     file_data_length = data_length; 
     
-    uint8_t packet_data_size = 244 - parser_trace; 
-    memcpy(ble_buffer, &nus_data_global[parser_trace], packet_data_size); //capture data following cmd in first packet
+    //uint8_t ble_buffer[244];
+    //uint8_t packet_data_size = 244 - parser_trace; 
+    //memcpy(ble_buffer, &nus_data_global[parser_trace], packet_data_size); //capture data following cmd in first packet
 
     prog_flag = true; //flags nus handler to start appending incoming data 
     
@@ -297,8 +298,30 @@ void add_file(void)
     }
 
     file_header_write(chip_addr, file_name, NULL, file_data_length); //write file header and append file addr to chip 
+    
 } 
 
+
+void packet_write_first(void)
+{
+    //read file bytes programmed
+    //update file in flash with data_address?
+    //append data as its received 
+    //increment global file counter  
+     
+    uint32_t bytes_prog; 
+    uint8_t bytes_prog_buff[WORD_SIZE]; 
+    flash_read(bytes_prog_buff, FILE_BYTES_PROG_ADDR, WORD_SIZE);// calc beginning of file data address
+    bytes_prog = bytes_prog_buff[0] << 24 | bytes_prog_buff[1] << 16 | bytes_prog_buff[2] << 8 | bytes_prog_buff[3];
+    file_data_addr_global = bytes_prog + DATA_SECTOR_START; 
+    flash_write(nus_data_global, file_data_addr_global, 244); //NOTE WORD WRITES ONLY, write remaining file data from first ble packet after header
+
+}
+
+void packet_write(uint32_t data_start_addr)
+{
+    flash_write(nus_data_global, data_start_addr, 244);
+}
 
 
 void ble_cmd_parser(void)
@@ -370,17 +393,37 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
         }
         else // prog flag true 
         {
-           if(file_data_length != 0)
-            {
-               //append entire nus_data_global array to file data in flash
-               //exception for last file (not full 244 bytes) 
+           if(file_data_length > 0)
+            {   
+                if(packet_index == 0)
+                {
+                    packet_write_first(); //calculate start address and write first packet
+                    packet_index++;
+                    file_data_length -= 244; // subtract bytes programmed 
+                }
+                else
+                {
+                    uint32_t current_addr = (packet_index * 244) + file_data_addr_global; //global assigned in packet_write_first(); 
+                    packet_write(current_addr); 
+
+                   //append entire nus_data_global array to file data in flash
+                   //exception for last file (not full 244 bytes) 
+
+                    packet_index++;
+                    file_data_length -= 244; 
+                }
             }
-            else // file_data_length == 0
+            if(file_data_length <= 0)
             {
+                //(AFTER PROGRAMMING COMPLETE)
                 prog_flag = false;
+
+                //TODO write data address of file into file item
+                // increment file_num in chip parent
+                // increment file_count_global
+                // increment file_bytes_programmed
             }
         }
-        
     }
 }
 
