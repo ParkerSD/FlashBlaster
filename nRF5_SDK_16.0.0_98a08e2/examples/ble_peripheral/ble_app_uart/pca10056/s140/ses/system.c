@@ -42,9 +42,11 @@ list_struct* list_singleton;
 system_struct* system_singleton; 
 
 
+//NOTE NOT USED 
 uint8_t projectIterator = 0; 
 uint8_t chipIterator = 0; 
 uint8_t fileIterator = 0;
+
 uint8_t selectedProject; 
  
 
@@ -535,7 +537,7 @@ project_struct* project_create(void)
 void system_init(void) // create global system struct and read directory info from flash, create project structs 
 {   
     system_singleton = system_new();  
-    flash_init(); //erase and rewrite test flash
+    //flash_init(); //erase and rewrite test flash
     projects_sync(); 
 }
 
@@ -651,6 +653,7 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
                 L_ items[0] = "Recent Files"; 
                 L_ items[1] = "Projects";
                 break;
+
             case project_screen: 
                 L_ currentList = project;
                 L_ header = projectHeader; // set initial values for display 
@@ -699,16 +702,17 @@ void flash_init(void)
     // ADDR_PROJECT_PTR_FIRST 4
 
    // init flash for test below 
-    flash_erase(0, NRF_QSPI_ERASE_LEN_4KB); // erase all 
-    flash_erase(4000, NRF_QSPI_ERASE_LEN_4KB);
-    flash_erase(8000, NRF_QSPI_ERASE_LEN_4KB);
-    flash_erase(12000, NRF_QSPI_ERASE_LEN_4KB);
-    flash_erase(16000, NRF_QSPI_ERASE_LEN_4KB);
-    flash_erase(20000, NRF_QSPI_ERASE_LEN_4KB);
+    flash_erase(0, NRF_QSPI_ERASE_LEN_64KB); // erase all 
+    flash_erase(64000, NRF_QSPI_ERASE_LEN_64KB);
+//    flash_erase(4000, NRF_QSPI_ERASE_LEN_4KB);
+//    flash_erase(8000, NRF_QSPI_ERASE_LEN_4KB);
+//    flash_erase(12000, NRF_QSPI_ERASE_LEN_4KB);
+//    flash_erase(16000, NRF_QSPI_ERASE_LEN_4KB);
+//    flash_erase(20000, NRF_QSPI_ERASE_LEN_4KB);
 
                                               //NOTE are these addresses needed? project is fixed size (52 bytes)
                                             //proj1        //proj2       //proj3
-    //DIRECTORY           //project num   // 4000  //    // 4052  //   // 4104  //
+    //DIRECTORY           //project cnt   // 4000  //    // 4052  //   // 4104  //
     uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 15, 160, 0, 0, 15, 212, 0, 0, 16, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
     flash_write(directory, 0, 32); // write test directory
     

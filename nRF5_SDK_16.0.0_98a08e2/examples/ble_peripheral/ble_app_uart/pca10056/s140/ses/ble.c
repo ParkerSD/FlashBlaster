@@ -90,9 +90,11 @@ uint8_t nus_data_global[244]; //max MTU matches chucksize of react.js app
 static uint8_t parser_trace = 0; 
 static uint16_t packet_index = 0;
 static uint8_t string_length; 
-static uint32_t data_length; 
+//static uint32_t data_length; //changed to local 
 static int file_data_length; 
+static int current_byte_pos;
 static uint32_t file_data_addr_global;
+static uint32_t chip_addr_global; 
 bool prog_flag = false; 
 
 
@@ -187,7 +189,7 @@ char* fetch_name(uint16_t length)
 }
 
 
-void char_string_to_int(uint8_t digits)
+uint32_t char_string_to_int(uint8_t digits)
 {   
     char num_string[digits];
     uint8_t hex_bcd[digits]; 
@@ -199,7 +201,7 @@ void char_string_to_int(uint8_t digits)
         hex_bcd[i] = num_string[i] - 0x30; 
         accumulator += (hex_bcd[i] * pow(10, digits-i-1)); 
     }
-    data_length = accumulator; 
+    return accumulator; 
 }
 
 
@@ -209,7 +211,7 @@ char* ble_parse_name(void) //pass in all offsets
     //char string_len[2];
     char *name;
 
-    ble_parse_data_length(); 
+    uint32_t data_length = ble_parse_data_length(); 
     name = fetch_name(data_length); //offset is 6 
 
     return name;
@@ -217,13 +219,15 @@ char* ble_parse_name(void) //pass in all offsets
 
 
 
-void ble_parse_data_length(void)
+uint32_t ble_parse_data_length(void)
 {
     char num_chars = nus_data_global[parser_trace]; //ascii for number of characters in length 
     parser_trace += 1;
     uint8_t i = num_chars - 0x30; //get int from ascii 
-    char_string_to_int(i);
+    uint32_t data_length = char_string_to_int(i);
     parser_trace += i; 
+
+    return data_length;
 }
 
 
@@ -257,7 +261,7 @@ void add_chip(void)
 
 
 
-void add_file(void)
+uint32_t add_file(void)
 {
     char* file_name;
     uint8_t file_name_length; 
@@ -273,23 +277,17 @@ void add_file(void)
     project_name = ble_parse_name();
     project_name_length = string_length;
 
-    ble_parse_data_length();
-    file_data_length = data_length; 
+    file_data_length = ble_parse_data_length(); 
     
-    //uint8_t ble_buffer[244];
-    //uint8_t packet_data_size = 244 - parser_trace; 
-    //memcpy(ble_buffer, &nus_data_global[parser_trace], packet_data_size); //capture data following cmd in first packet
-
     prog_flag = true; //flags nus handler to start appending incoming data 
     
-    // flash functions
+    // flash seek functions
     uint32_t project_addr = seek_to_project(project_name, project_name_length); //projects start at 4000, 52 bytes per project 
     if(project_addr == NULL)
     {   
         //ERROR: no project found
         nrf_gpio_pin_set(LED_RED);
     }
-    
     uint32_t chip_addr = seek_to_chip(project_addr, chip_name, chip_name_length); //chips start at addr 8000, 56 bytes per chip 
     if(chip_addr == NULL)
     {   
@@ -299,6 +297,7 @@ void add_file(void)
 
     file_header_write(chip_addr, file_name, NULL, file_data_length); //write file header and append file addr to chip 
     
+    return chip_addr; 
 } 
 
 
@@ -309,13 +308,9 @@ void packet_write_first(void)
     //append data as its received 
     //increment global file counter  
      
-    uint32_t bytes_prog; 
-    uint8_t bytes_prog_buff[WORD_SIZE]; 
-    flash_read(bytes_prog_buff, FILE_BYTES_PROG_ADDR, WORD_SIZE);// calc beginning of file data address
-    bytes_prog = bytes_prog_buff[0] << 24 | bytes_prog_buff[1] << 16 | bytes_prog_buff[2] << 8 | bytes_prog_buff[3];
+    uint32_t bytes_prog = fetch_bytes_prog(); 
     file_data_addr_global = bytes_prog + DATA_SECTOR_START; 
     flash_write(nus_data_global, file_data_addr_global, 244); //NOTE WORD WRITES ONLY, write remaining file data from first ble packet after header
-
 }
 
 void packet_write(uint32_t data_start_addr)
@@ -348,7 +343,7 @@ void ble_cmd_parser(void)
         else if(cmd[0] == '3' && cmd[1] =='0') //add file 
         {
             // add file to parent chip and project in flash
-            add_file(); 
+           chip_addr_global = add_file(); 
         }
 
         else if(cmd[0] == '4' && cmd[1] =='0') //delete project 
@@ -390,38 +385,45 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
         if(!prog_flag)
         {
             ble_cmd_parser(); 
+            current_byte_pos = file_data_length;
         }
         else // prog flag true 
         {
-           if(file_data_length > 0)
+           if(current_byte_pos > 0)
             {   
                 if(packet_index == 0)
                 {
                     packet_write_first(); //calculate start address and write first packet
                     packet_index++;
-                    file_data_length -= 244; // subtract bytes programmed 
+                    current_byte_pos -= 244; // subtract bytes programmed 
                 }
                 else
                 {
                     uint32_t current_addr = (packet_index * 244) + file_data_addr_global; //global assigned in packet_write_first(); 
                     packet_write(current_addr); 
 
-                   //append entire nus_data_global array to file data in flash
-                   //exception for last file (not full 244 bytes) 
+                    //append entire nus_data_global array to file data in flash
+                    //exception for last file (not full 244 bytes) 
 
                     packet_index++;
-                    file_data_length -= 244; 
+                    current_byte_pos -= 244; 
                 }
             }
-            if(file_data_length <= 0)
+            if(current_byte_pos <= 0)
             {
                 //(AFTER PROGRAMMING COMPLETE)
                 prog_flag = false;
-
-                //TODO write data address of file into file item
-                // increment file_num in chip parent
-                // increment file_count_global
-                // increment file_bytes_programmed
+                
+                //NOTE BELOW causing project 2 data overwritten in flash
+                //flash_file_num_inc(chip_addr_global);  //increment file_num in chip parent in flash
+                
+                //NOTE BELOW CAUSING CHIP SYNC ERROR - potenital overwrite in flash
+                //flash_file_dir_update(file_data_length); //increment file_count_global and file_bytes_programmed in flash
+                
+                //NOTE FOR TEST 
+//                uint8_t data_buff[FLASH_SECTOR_SIZE];
+//                flash_read(data_buff, 0, FLASH_SECTOR_SIZE);
+//                prog_flag = true;
             }
         }
     }

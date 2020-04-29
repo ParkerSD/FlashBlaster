@@ -1,9 +1,12 @@
 
+#define DIRECTORY_START_ADDR 0 
 #define ADDR_NUM_PROJECTS 0
 #define ADDR_PROJECT_PTR_FIRST 4
 
 #define WORD_SIZE 4
 #define MAX_STRING_SIZE 16
+
+#define BLE_PACKET_SIZE 244 
 
 //flash sizes and offsets 
 #define CHIP_COUNT_GLOBAL_ADDR 2000
@@ -15,6 +18,7 @@
 #define CHIP_SECTOR_OFFSET 12000 
 #define FILE_SECTOR_OFFSET 56000 
 #define DATA_SECTOR_START 76000
+#define FLASH_SECTOR_SIZE 4000
 
 #define PROJECT_HEADER_SIZE 20 //chip size without pointers
 #define MAX_PROJECT_SIZE 52 // allows for 27 chips
@@ -26,6 +30,7 @@
 #define FILE_NUM_OFFSET 20 
 
 #define FILE_HEADER_SIZE 28 // ship size without pointers
+#define FILE_DATA_ADDR_OFFSET 24
 
 #define MAX_PROJECTS 26 //system max 
 #define MAX_CHIPS 8 //max per project 

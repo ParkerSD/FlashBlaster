@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "nrf_drv_qspi.h"
 #include "nrf_delay.h"
 #include "app_util_platform.h"
@@ -207,7 +208,15 @@ uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t name_lengt
 }
 
 
-
+uint32_t fetch_bytes_prog(void)
+{
+    uint32_t bytes_prog; 
+    uint8_t bytes_prog_buff[WORD_SIZE]; 
+    flash_read(bytes_prog_buff, FILE_BYTES_PROG_ADDR, WORD_SIZE);// calc beginning of file data address
+    bytes_prog = bytes_prog_buff[0] << 24 | bytes_prog_buff[1] << 16 | bytes_prog_buff[2] << 8 | bytes_prog_buff[3];
+  
+    return bytes_prog; 
+}
 //flash_write(uint8_t* buffer_tx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
 
 void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, uint32_t file_data_length)
@@ -228,6 +237,15 @@ void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, 
     file_data_length_buff[2] = (file_data_length >> 8) & 0xFF;
     file_data_length_buff[3] = file_data_length & 0xFF;
     flash_write(file_data_length_buff, curr_file_addr + MAX_STRING_SIZE + WORD_SIZE, WORD_SIZE); //write data length
+    
+    uint32_t bytes_prog = fetch_bytes_prog(); 
+    uint32_t file_data_addr = bytes_prog + DATA_SECTOR_START; 
+    uint8_t file_data_addr_buff[WORD_SIZE];
+    file_data_addr_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    file_data_addr_buff[1] = (file_data_addr >> 16) & 0xFF;
+    file_data_addr_buff[2] = (file_data_addr >> 8) & 0xFF;
+    file_data_addr_buff[3] = file_data_addr & 0xFF;
+    flash_write(file_data_addr_buff, curr_file_addr + FILE_DATA_ADDR_OFFSET, WORD_SIZE); //write data address into flash item  
 
     uint32_t file_num_chip;
     uint8_t file_num_chip_buff[WORD_SIZE]; 
@@ -242,13 +260,58 @@ void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, 
     curr_file_addr_buff[3] = curr_file_addr & 0xFF;
     flash_write(curr_file_addr_buff, file_addr_chip, WORD_SIZE); //write file address in chip
  
-    // write file header data (name, timestamp, datalength, data_addr) 
-    //TODO write data address of file into file item
-    //(AFTER PROGRAMMING COMPLETE)
-    // increment file_num in chip parent
-    // increment file_count_global
-    // increment file_bytes_programmed
+    // write file header data (name, timestamp, datalength, data_addr)
+}
 
+
+void flash_file_num_inc(uint32_t chip_addr)
+{   
+    
+    uint8_t data_buff[FLASH_SECTOR_SIZE];
+    flash_read(data_buff, chip_addr, FLASH_SECTOR_SIZE); 
+    flash_erase(chip_addr, NRF_QSPI_ERASE_LEN_4KB);
+     
+    uint32_t file_num_chip; 
+    file_num_chip = data_buff[FILE_NUM_OFFSET] << 24 | data_buff[FILE_NUM_OFFSET+1] << 16 | data_buff[FILE_NUM_OFFSET+2] << 8 | data_buff[FILE_NUM_OFFSET+3];
+    file_num_chip++;
+    data_buff[FILE_NUM_OFFSET] = (file_num_chip >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    data_buff[FILE_NUM_OFFSET+1] = (file_num_chip >> 16) & 0xFF;
+    data_buff[FILE_NUM_OFFSET+2] = (file_num_chip >> 8) & 0xFF;
+    data_buff[FILE_NUM_OFFSET+3] = file_num_chip & 0xFF;
+
+    flash_write(data_buff, chip_addr, FLASH_SECTOR_SIZE);
+}
+
+
+
+void flash_file_dir_update(int file_data_length) // increment file count global and update file bytes programmed in directory
+{   
+    float a = file_data_length;
+    float b = BLE_PACKET_SIZE;
+    double div_result = a/b; 
+    int file_bytes_prog = ceil(div_result) * BLE_PACKET_SIZE; //file data programmed in 244 chunks, may not be exact data length of file
+    
+    uint8_t data_buff[FLASH_SECTOR_SIZE]; 
+    flash_read(data_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
+    flash_erase(DIRECTORY_START_ADDR, NRF_QSPI_ERASE_LEN_4KB); 
+
+    uint32_t file_count;
+    file_count = data_buff[FILE_COUNT_GLOBAL_ADDR] << 24 | data_buff[FILE_COUNT_GLOBAL_ADDR+1] << 16 | data_buff[FILE_COUNT_GLOBAL_ADDR+2] << 8 | data_buff[FILE_COUNT_GLOBAL_ADDR+3]; 
+    file_count++; 
+    data_buff[FILE_COUNT_GLOBAL_ADDR] = (file_count >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    data_buff[FILE_COUNT_GLOBAL_ADDR+1] = (file_count >> 16) & 0xFF;
+    data_buff[FILE_COUNT_GLOBAL_ADDR+2] = (file_count >> 8) & 0xFF;
+    data_buff[FILE_COUNT_GLOBAL_ADDR+3] = file_count & 0xFF;
+
+    uint32_t total_bytes_prog; 
+    total_bytes_prog = data_buff[FILE_BYTES_PROG_ADDR] << 24 | data_buff[FILE_BYTES_PROG_ADDR+1] << 16 | data_buff[FILE_BYTES_PROG_ADDR+2] << 8 | data_buff[FILE_BYTES_PROG_ADDR+3]; 
+    total_bytes_prog += file_bytes_prog;
+    data_buff[FILE_BYTES_PROG_ADDR] = (total_bytes_prog >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    data_buff[FILE_BYTES_PROG_ADDR+1] = (total_bytes_prog >> 16) & 0xFF;
+    data_buff[FILE_BYTES_PROG_ADDR+2] = (total_bytes_prog >> 8) & 0xFF;
+    data_buff[FILE_BYTES_PROG_ADDR+3] = total_bytes_prog & 0xFF;
+
+    flash_write(data_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
 }
 
 
