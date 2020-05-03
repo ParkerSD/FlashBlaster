@@ -157,9 +157,9 @@ uint32_t seek_to_project(char* project_name, uint8_t name_length) // NULL return
     
     uint8_t proj_num[WORD_SIZE]; 
     uint32_t projects_total_num; 
-    uint32_t current_addr = 4000; //projects start at flash addr 4000
+    uint32_t current_addr = PROJECTS_START_ADDR;
  
-    flash_read(proj_num, 0, WORD_SIZE); // read global project total from directory
+    flash_read(proj_num, DIRECTORY_START_ADDR, WORD_SIZE); // read global project total from directory
     projects_total_num = proj_num[0] << 24 | proj_num[1] << 16 | proj_num[2] << 8 | proj_num[3];
 
     for(int i = 0; i < projects_total_num; i++) //for total number of projects
@@ -266,20 +266,42 @@ void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, 
 
 void flash_file_num_inc(uint32_t chip_addr)
 {   
-    
+    //NOTE cannot use chip_addr, must seek to beginning of containing sector
+    // Chip section starts at address 8192 and is 12288 bytes long,  
+    // 3 x 4KB sectors --- 1st addr: 8192 (0x2000), 2nd addr: 12288 (0x3000), 3rd addr: 16384 (0x4000)
+    uint32_t sector_addr; 
+    uint32_t chip_addr_offset;
+    uint32_t total_offset;
     uint8_t data_buff[FLASH_SECTOR_SIZE];
-    flash_read(data_buff, chip_addr, FLASH_SECTOR_SIZE); 
-    flash_erase(chip_addr, NRF_QSPI_ERASE_LEN_4KB);
-     
-    uint32_t file_num_chip; 
-    file_num_chip = data_buff[FILE_NUM_OFFSET] << 24 | data_buff[FILE_NUM_OFFSET+1] << 16 | data_buff[FILE_NUM_OFFSET+2] << 8 | data_buff[FILE_NUM_OFFSET+3];
-    file_num_chip++;
-    data_buff[FILE_NUM_OFFSET] = (file_num_chip >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
-    data_buff[FILE_NUM_OFFSET+1] = (file_num_chip >> 16) & 0xFF;
-    data_buff[FILE_NUM_OFFSET+2] = (file_num_chip >> 8) & 0xFF;
-    data_buff[FILE_NUM_OFFSET+3] = file_num_chip & 0xFF;
 
-    flash_write(data_buff, chip_addr, FLASH_SECTOR_SIZE);
+    if(chip_addr >= CHIP_3RD_SECTOR)
+    {
+        sector_addr = CHIP_3RD_SECTOR;
+    }
+    else if(chip_addr < CHIP_3RD_SECTOR && chip_addr >= CHIP_2ND_SECTOR)
+    {
+        sector_addr = CHIP_2ND_SECTOR;
+    }
+    else if(chip_addr < CHIP_2ND_SECTOR)
+    {
+        sector_addr = CHIP_1ST_SECTOR;
+    }
+
+    chip_addr_offset = chip_addr - sector_addr;
+    total_offset = chip_addr_offset + FILE_NUM_OFFSET;
+    
+    flash_read(data_buff, sector_addr, FLASH_SECTOR_SIZE); 
+    flash_erase(sector_addr, NRF_QSPI_ERASE_LEN_4KB);
+    
+    uint32_t file_num_chip; 
+    file_num_chip = data_buff[total_offset] << 24 | data_buff[total_offset+1] << 16 | data_buff[total_offset+2] << 8 | data_buff[total_offset+3];
+    file_num_chip++;
+    data_buff[total_offset] = (file_num_chip >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    data_buff[total_offset+1] = (file_num_chip >> 16) & 0xFF;
+    data_buff[total_offset+2] = (file_num_chip >> 8) & 0xFF;
+    data_buff[total_offset+3] = file_num_chip & 0xFF;
+
+    flash_write(data_buff, sector_addr, FLASH_SECTOR_SIZE);
 }
 
 

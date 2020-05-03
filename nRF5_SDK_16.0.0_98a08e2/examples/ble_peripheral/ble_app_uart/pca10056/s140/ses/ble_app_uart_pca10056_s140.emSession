@@ -25,6 +25,7 @@
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140"/>
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;Application"/>
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;None"/>
+  <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;nRF_BLE"/>
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;nRF_Drivers"/>
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;nRF_Libraries"/>
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;Segger Startup Files"/>
@@ -65,9 +66,9 @@
  <Files>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="288" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="0" top="273" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="271" useTextEdit="1" useBinaryEdit="0" left="0" path="flash.c" selected="0" top="192" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="539" useTextEdit="1" useBinaryEdit="0" left="0" path="system.c" selected="0" top="518" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="419" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.c" selected="0" top="388" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="15" useTextEdit="1" useBinaryEdit="0" left="0" path="system.h" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="434" useTextEdit="1" useBinaryEdit="0" left="0" path="system.c" selected="0" top="416" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="419" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.c" selected="1" top="469" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="58" y="22" useTextEdit="1" useBinaryEdit="0" left="0" path="system.h" selected="0" top="17" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="21" useTextEdit="1" useBinaryEdit="0" left="0" path="flash.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="16" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="110" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error_weak.c" selected="0" top="80" codecName="Default"/>

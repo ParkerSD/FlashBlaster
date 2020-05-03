@@ -231,7 +231,6 @@ uint32_t ble_parse_data_length(void)
 }
 
 
-
 void add_project(void)
 {   
     char *project_name;
@@ -333,32 +332,36 @@ void ble_cmd_parser(void)
         {
             add_project();
         }
-
         else if(cmd[0] == '2' && cmd[1] =='0') //add chip 
         {
             // add chip to parent project in flash
             add_chip(); 
         }
-
         else if(cmd[0] == '3' && cmd[1] =='0') //add file 
         {
             // add file to parent chip and project in flash
            chip_addr_global = add_file(); 
         }
-
+        else if(cmd[0] == '0' && cmd[0] =='0') //add all
+        {
+            // add_all(); 
+        }
         else if(cmd[0] == '4' && cmd[1] =='0') //delete project 
         {
-
+            //delete_project();
         }
-
         else if(cmd[0] == '5' && cmd[1] =='0') //delete chip 
         {
-
+            //delete_chip(); 
         }
-
         else if(cmd[0] == '6' && cmd[1] =='0') //delete file
         {
-
+            //delete_file(); //NOTE: how to reuse empty data storage after deletion?
+        }
+        else if(cmd[0] == 'F' && cmd[1] =='F') //erase device
+        {
+            flash_init(); //reset flash
+            hibernate(); // reset device
         }
         //TODO free names after writing to flash
     }
@@ -387,7 +390,7 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
             ble_cmd_parser(); 
             current_byte_pos = file_data_length;
         }
-        else // prog flag true 
+        else // prog flag true, start file write
         {
            if(current_byte_pos > 0)
             {   
@@ -415,10 +418,10 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
                 prog_flag = false;
                 
                 //NOTE BELOW causing project 2 data overwritten in flash
-                //flash_file_num_inc(chip_addr_global);  //increment file_num in chip parent in flash
+                flash_file_num_inc(chip_addr_global);  //increment file_num in chip parent in flash
                 
                 //NOTE BELOW CAUSING CHIP SYNC ERROR - potenital overwrite in flash
-                //flash_file_dir_update(file_data_length); //increment file_count_global and file_bytes_programmed in flash
+                flash_file_dir_update(file_data_length); //increment file_count_global and file_bytes_programmed in flash
                 
                 //NOTE FOR TEST 
 //                uint8_t data_buff[FLASH_SECTOR_SIZE];

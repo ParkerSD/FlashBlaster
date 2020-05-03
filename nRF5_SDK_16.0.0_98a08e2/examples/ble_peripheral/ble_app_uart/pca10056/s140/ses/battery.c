@@ -141,7 +141,7 @@ void saadc_init(void)
 }
 
 
-void battery_draw_icon(void) //bar is 5x9
+void battery_draw_icon(void) //charge bar is 5x9
 {   
     uint16_t battery_val = avg; 
 
@@ -210,7 +210,8 @@ void battery_draw_icon(void) //bar is 5x9
     {   
         //NOTE Commented out for testing 
         // hibernate(); //shutdown amp if low voltage condition, plug in USB to reboot
-
+        
+        //for test 
         battery_draw_outline(COLOR_AQUA);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, 9, 4, COLOR_AQUA);
@@ -255,8 +256,6 @@ void battery_draw_charging(uint16_t color) //vertical yellow lightning bolt
     SSD1351_draw_line( 115, 12, 115, 13, COLOR_BLACK);
     //SSD1351_draw_line( 119, 14, 115, 10, COLOR_BLACK); //note used: top right black line
     SSD1351_draw_line( 117, 15, 117, 16, COLOR_BLACK);
-
- 
 }
 
 void battery_draw_outline(uint16_t color)
@@ -275,12 +274,10 @@ void adc_init(void)
 
 void battery_init(void)
 {
-
     battery = malloc(sizeof(battery_struct)); 
     
     //TODO add condition, if usb is not connected
     battery->charging_state = false; 
 
     adc_init();
-
 }

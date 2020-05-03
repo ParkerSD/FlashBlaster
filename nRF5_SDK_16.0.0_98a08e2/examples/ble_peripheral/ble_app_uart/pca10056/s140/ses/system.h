@@ -2,6 +2,11 @@
 #define DIRECTORY_START_ADDR 0 
 #define ADDR_NUM_PROJECTS 0
 #define ADDR_PROJECT_PTR_FIRST 4
+#define PROJECTS_START_ADDR 4096
+#define CHIPS_START_ADDR 8192
+#define FILES_START_ADDR 20480
+#define DATA_SECTOR_START 77824 //data sector starting at first 64KB sector with V1 flash chip
+
 
 #define WORD_SIZE 4
 #define MAX_STRING_SIZE 16
@@ -9,16 +14,17 @@
 #define BLE_PACKET_SIZE 244 
 
 //flash sizes and offsets 
-#define CHIP_COUNT_GLOBAL_ADDR 2000
-#define FILE_COUNT_GLOBAL_ADDR 2004 
-#define FILE_BYTES_PROG_ADDR 2008
+#define CHIP_COUNT_GLOBAL_ADDR 2048 //0x800
+#define FILE_COUNT_GLOBAL_ADDR 2052
+#define FILE_BYTES_PROG_ADDR 2056
 
-#define DIRECTORY_OFFSET 4000 
-#define PROJECT_SECTOR_OFFSET 4000 
-#define CHIP_SECTOR_OFFSET 12000 
-#define FILE_SECTOR_OFFSET 56000 
-#define DATA_SECTOR_START 76000
-#define FLASH_SECTOR_SIZE 4000
+//TODO DETERMINE VALUES with S25FL256SAGMFI000 32 MB flash, sectors = 4096 x 32 + 64kB(65536) x 510
+#define DIRECTORY_OFFSET 4096 
+#define PROJECT_SECTOR_OFFSET 4096 
+#define CHIP_SECTOR_OFFSET 12288
+#define FILE_SECTOR_OFFSET 57344 //NOTE FOR TEST, this file sector only has 2 4KB sectors with V1 flash chip 
+
+#define FLASH_SECTOR_SIZE 4096 //NOTE actually 4096 bytes 
 
 #define PROJECT_HEADER_SIZE 20 //chip size without pointers
 #define MAX_PROJECT_SIZE 52 // allows for 27 chips

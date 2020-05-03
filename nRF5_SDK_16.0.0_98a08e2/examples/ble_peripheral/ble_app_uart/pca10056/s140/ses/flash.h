@@ -1,6 +1,10 @@
 
 #include "nrf_drv_qspi.h"
 
+#define CHIP_1ST_SECTOR 8192
+#define CHIP_2ND_SECTOR 12288
+#define CHIP_3RD_SECTOR 16384
+
 void flash_erase(uint32_t addr, nrf_qspi_erase_len_t length); 
 
 void flash_write(uint8_t* buffer_tx, uint32_t start_addr, size_t DATA_SIZE_BYTES);

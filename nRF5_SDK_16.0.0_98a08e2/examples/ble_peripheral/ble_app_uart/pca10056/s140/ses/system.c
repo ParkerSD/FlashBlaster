@@ -86,6 +86,7 @@ void push_file_to_recents(file_struct* file_selected) //shift recent files, push
     }
 }
 
+
 bool recents_check(void)
 {
     if(REC_ file0 != NULL)
@@ -257,7 +258,7 @@ file_struct* file_list_index(int index, chip_struct* chip_curr)
     file_struct* fileN;
     fileN = chip_curr->file_first; 
 
-    for(int i = 0; i < index; i++) // minus 1 loop since file_first was already factored in
+    for(int i = 0; i < index; i++)
     {
         if(fileN->file_next != NULL)
         {
@@ -366,7 +367,7 @@ chip_struct* chip_list_index(int index, project_struct* project_curr)
     chip_struct* chipN;
     chipN = project_curr->chip_first; 
 
-    for(int i = 0; i < index; i++) // minus 1 loop since file_first was already factored in
+    for(int i = 0; i < index; i++)
     {
         if(chipN->chip_next != NULL)
         {
@@ -474,7 +475,7 @@ project_struct* project_list_index(int index)
     project_struct* projectN;
     projectN = SYS_ project_first; 
 
-    for(int i = 0; i < index; i++) // minus 1 loop since file_first was already factored in
+    for(int i = 0; i < index; i++) 
     {
         if(projectN->project_next != NULL)
         {
@@ -703,42 +704,42 @@ void flash_init(void)
 
    // init flash for test below 
     flash_erase(0, NRF_QSPI_ERASE_LEN_64KB); // erase all 
-    flash_erase(64000, NRF_QSPI_ERASE_LEN_64KB);
-//    flash_erase(4000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(8000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(12000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(16000, NRF_QSPI_ERASE_LEN_4KB);
-//    flash_erase(20000, NRF_QSPI_ERASE_LEN_4KB);
+    flash_erase(65536, NRF_QSPI_ERASE_LEN_64KB); //0x10000
+//    flash_erase(4096, NRF_QSPI_ERASE_LEN_4KB); //0x1000
+//    flash_erase(8192, NRF_QSPI_ERASE_LEN_4KB); //0x2000
+//    flash_erase(12288, NRF_QSPI_ERASE_LEN_4KB); //0x3000
+//    flash_erase(16384, NRF_QSPI_ERASE_LEN_4KB); //0x4000
+//    flash_erase(20480, NRF_QSPI_ERASE_LEN_4KB); //0x5000
 
                                               //NOTE are these addresses needed? project is fixed size (52 bytes)
-                                            //proj1        //proj2       //proj3
-    //DIRECTORY           //project cnt   // 4000  //    // 4052  //   // 4104  //
-    uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 15, 160, 0, 0, 15, 212, 0, 0, 16, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
+                                            //proj1      //proj2       //proj3
+    //DIRECTORY           //project cnt   // 4096  //  // 4148  //   // 4200  //
+    uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 16, 0, 0, 0, 16, 52, 0, 0, 16, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
     flash_write(directory, 0, 32); // write test directory
     
     //TODO chip directory
     uint8_t chip_count_global[WORD_SIZE] = {0, 0, 0, 3};
-    flash_write(chip_count_global, 2000, WORD_SIZE);
+    flash_write(chip_count_global, 2048, WORD_SIZE); //0x800
 
     //TODO file directory 
     uint8_t file_count_global[WORD_SIZE] = {0, 0, 0, 0};
     uint8_t file_bytes_programmed[WORD_SIZE] = {0, 0, 0, 0}; 
-    flash_write(file_count_global, 2004, WORD_SIZE); //addr first half: 0-1999 / second half: 2000-3999 
-    flash_write(file_bytes_programmed, 2008, WORD_SIZE);
+    flash_write(file_count_global, 2052, WORD_SIZE);  
+    flash_write(file_bytes_programmed, 2056, WORD_SIZE);
     
-
+  
 
     //NOTE PROJECT 0 - 24 bytes (including first chip addr) 
     uint8_t project_string_test0[] = {"project0"}; //long form, single write {'p', 'r', 'o', 'j', 'e', 'c', 't', '0', 0, 0, 0, 1, 0, 0, 2, 0}; 
     uint8_t chip_num_test[WORD_SIZE] = {0, 0, 0, 3};
-    uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 31, 64}; //address 8000 when bit shifted
-    uint8_t chip_ptr_sec_test[WORD_SIZE] = {0, 0, 31, 120}; //address 8056 
-    uint8_t chip_ptr_three_test[WORD_SIZE] = {0, 0, 31, 176}; //address 8112 
-    flash_write(project_string_test0, 4000, MAX_STRING_SIZE); // name sting 16 bytes long 
-    flash_write(chip_num_test, 4016, WORD_SIZE); // chip num 4 bytes, address 48 (after string) 
-    flash_write(chip_ptr_first_test, 4020, WORD_SIZE); // write first chip ptr after chip_num value of first project
-    flash_write(chip_ptr_sec_test, 4024, WORD_SIZE);
-    flash_write(chip_ptr_three_test, 4028, WORD_SIZE);
+    uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 32, 0}; //address 8192 when bit shifted
+    uint8_t chip_ptr_sec_test[WORD_SIZE] = {0, 0, 32, 56}; //address 8248 
+    uint8_t chip_ptr_three_test[WORD_SIZE] = {0, 0, 32, 112}; //address 8304 
+    flash_write(project_string_test0, 4096, MAX_STRING_SIZE); // name sting 16 bytes long 
+    flash_write(chip_num_test, 4112, WORD_SIZE); // chip num 4 bytes, address 48 (after string) 
+    flash_write(chip_ptr_first_test, 4116, WORD_SIZE); // write first chip ptr after chip_num value of first project
+    flash_write(chip_ptr_sec_test, 4120, WORD_SIZE);
+    flash_write(chip_ptr_three_test, 4124, WORD_SIZE);
 
         //CHIP 0 - 28 bytes (including first file addr) 
         uint8_t chip_string_test0[] = {"chip0"}; //16 bytes
@@ -747,9 +748,9 @@ void flash_init(void)
 //        uint8_t files_first_addr[WORD_SIZE] = {0, 0, 78, 32}; // 20000 - address of file0
 //        uint8_t files_sec_addr[WORD_SIZE] = {0, 0, 78, 60}; // 20028 - address of file1
 //        uint8_t files_third_addr[WORD_SIZE] = {0, 0, 78, 88}; // 20056 - address of file2
-        flash_write(chip_string_test0, 8000, MAX_STRING_SIZE);
-        flash_write(chip_type_ID, 8016, WORD_SIZE);
-        flash_write(files_num, 8020, WORD_SIZE);
+        flash_write(chip_string_test0, 8192, MAX_STRING_SIZE);
+        flash_write(chip_type_ID, 8208, WORD_SIZE);
+        flash_write(files_num, 8212, WORD_SIZE);
 //        flash_write(files_first_addr, 8024, WORD_SIZE);
 //        flash_write(files_sec_addr, 8028, WORD_SIZE);
 //        flash_write(files_third_addr, 8032, WORD_SIZE);   
@@ -788,9 +789,9 @@ void flash_init(void)
 //        uint8_t files_first_addr1[WORD_SIZE] = {0, 0, 78, 116}; // 20084 - file3
 //        uint8_t files_sec_addr1[WORD_SIZE] = {0, 0, 78, 144}; // 20112 - file4
 //        uint8_t files_third_addr1[WORD_SIZE] = {0, 0, 78, 172}; // 20140 - file5
-        flash_write(chip_string_test1, 8056, MAX_STRING_SIZE);
-        flash_write(chip_type_ID1, 8072, WORD_SIZE);
-        flash_write(files_num1, 8076, WORD_SIZE);
+        flash_write(chip_string_test1, 8248, MAX_STRING_SIZE);
+        flash_write(chip_type_ID1, 8264, WORD_SIZE);
+        flash_write(files_num1, 8268, WORD_SIZE);
 //        flash_write(files_first_addr1, 8080, WORD_SIZE);
 //        flash_write(files_sec_addr1, 8084, WORD_SIZE);
 //        flash_write(files_third_addr1, 8088, WORD_SIZE);
@@ -827,21 +828,21 @@ void flash_init(void)
         uint8_t chip_type_ID2[WORD_SIZE] = {0, 0, 7, 0}; 
         uint8_t files_num2[WORD_SIZE] = {0, 0, 0, 0}; 
 //        uint8_t files_first_addr2[WORD_SIZE] = {0, 0, 255, 255}; 
-        flash_write(chip_string_test2, 8112, MAX_STRING_SIZE);
-        flash_write(chip_type_ID2, 8128, WORD_SIZE);
-        flash_write(files_num2, 8132, WORD_SIZE);
+        flash_write(chip_string_test2, 8304, MAX_STRING_SIZE);
+        flash_write(chip_type_ID2, 8320, WORD_SIZE);
+        flash_write(files_num2, 8324, WORD_SIZE);
 //        flash_write(files_first_addr2, 8136, WORD_SIZE);
     
     //NOTE PROJECT 1
     uint8_t project_string_test1[] = {"project1"};
     uint8_t chip_num_test1[WORD_SIZE] = {0, 0, 0, 0};
-    flash_write(project_string_test1, 4052, MAX_STRING_SIZE); // name string 16 bytes long 
-    flash_write(chip_num_test1, 4068, WORD_SIZE);
+    flash_write(project_string_test1, 4148, MAX_STRING_SIZE); // name string 16 bytes long 
+    flash_write(chip_num_test1, 4164, WORD_SIZE);
     
     //NOTE PROJECT 2 
     uint8_t project_string_test2[] = {"project2"};
     uint8_t chip_num_test2[WORD_SIZE] = {0, 0, 0, 0};
-    flash_write(project_string_test2, 4104, MAX_STRING_SIZE); // name string 16 bytes long 
-    flash_write(chip_num_test2, 4120, WORD_SIZE);
+    flash_write(project_string_test2, 4200, MAX_STRING_SIZE); // name string 16 bytes long 
+    flash_write(chip_num_test2, 4216, WORD_SIZE);
     
 }
