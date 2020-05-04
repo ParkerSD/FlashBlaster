@@ -25,8 +25,10 @@
 #define FILE_SECTOR_OFFSET 57344 //NOTE FOR TEST, this file sector only has 2 4KB sectors with V1 flash chip 
 
 #define FLASH_SECTOR_SIZE 4096 //NOTE actually 4096 bytes 
+#define CHIP_SECTOR_SIZE 12288
 
 #define PROJECT_HEADER_SIZE 20 //chip size without pointers
+#define CHIP_NUM_OFFSET 16 
 #define MAX_PROJECT_SIZE 52 // allows for 27 chips
 #define CHIP_LIST_SIZE 32 //chip list of project
 

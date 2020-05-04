@@ -712,7 +712,7 @@ void flash_init(void)
 //    flash_erase(20480, NRF_QSPI_ERASE_LEN_4KB); //0x5000
 
                                               //NOTE are these addresses needed? project is fixed size (52 bytes)
-                                            //proj1      //proj2       //proj3
+                                            //proj0      //proj1       //proj2
     //DIRECTORY           //project cnt   // 4096  //  // 4148  //   // 4200  //
     uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 16, 0, 0, 0, 16, 52, 0, 0, 16, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
     flash_write(directory, 0, 32); // write test directory

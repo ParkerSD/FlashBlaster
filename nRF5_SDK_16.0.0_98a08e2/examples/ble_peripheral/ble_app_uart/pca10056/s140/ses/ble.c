@@ -236,11 +236,12 @@ void add_project(void)
     char *project_name;
     uint8_t project_name_length;
     project_name = ble_parse_name(); 
-    project_name_length = string_length;
+    project_name_length = string_length; //not used 
     
-    //1. add project address to directory project_num x word_size
-    //2. increment directory/project cnt
-    //3. write project string and chip_num 0 to project sector 
+    //1. write project string and chip_num 0 to project sector 
+    //2. add project address to directory project_num x word_size
+    //3. increment directory/project cnt
+     
     uint32_t num_projects;
     uint8_t num_projects_buff[WORD_SIZE];
     uint8_t project_addr_buff[WORD_SIZE]; 
@@ -277,25 +278,88 @@ void add_project(void)
     sector_buff[new_project_dir_addr+3] = new_project_addr & 0xFF;
 
     flash_write(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE); //rewrite directory
- 
 }
 
 
 void add_chip(void)
 {
     char *chip_name;
-    uint8_t chip_name_length;
+    uint8_t chip_name_length; // not used 
     char *project_name;
     uint8_t project_name_length;
+    uint8_t chip_id[WORD_SIZE] = {0, 0, 0, 0}; //TODO fetch actual chip ID 
 
     chip_name = ble_parse_name();
     chip_name_length = string_length;
     
-    //TODO Seek to parent based on name
     project_name = ble_parse_name();
     project_name_length = string_length;
 
-    //TODO add chip to flash
+    //Seek to parent based on name
+    uint32_t project_addr = seek_to_project(project_name, project_name_length); //projects start at 4096, 52 bytes per project 
+    if(project_addr == NULL)
+    {   
+        //ERROR: no project found
+        nrf_gpio_pin_set(LED_RED);
+    }
+            // add chip to flash
+    //1. read chip_count_global, add chip to chip sector with file_num = 0
+    //2. increment chip_count_global in directory
+    //3. increment chip_num and chip_addr_pointer in parent project
+    uint32_t num_chips_global;
+    uint8_t num_chips_buff[WORD_SIZE];
+    uint8_t chip_addr_buff[WORD_SIZE]; 
+    uint8_t sector_buff[CHIP_SECTOR_SIZE];
+
+    flash_read(num_chips_buff, CHIP_COUNT_GLOBAL_ADDR, WORD_SIZE); //read chip_num_global total
+    num_chips_global = num_chips_buff[0] << 24 | num_chips_buff[1] << 16 | num_chips_buff[2] << 8 | num_chips_buff[3];
+    
+    //update chip sector with new chip data
+    uint8_t file_num_init[WORD_SIZE] = {0, 0, 0, 0};
+    uint32_t new_chip_sector_addr = num_chips_global * MAX_CHIP_SIZE;
+    flash_read(sector_buff, CHIPS_START_ADDR, CHIP_SECTOR_SIZE);
+    flash_erase(CHIPS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB); //erase first sector 
+    flash_erase(CHIPS_START_ADDR + FLASH_SECTOR_SIZE, NRF_QSPI_ERASE_LEN_4KB); //erase second sector 
+    flash_erase(CHIPS_START_ADDR + (2*FLASH_SECTOR_SIZE), NRF_QSPI_ERASE_LEN_4KB); //erase third sector 
+    memcpy(&sector_buff[new_chip_sector_addr], chip_name, MAX_STRING_SIZE); //copy new chip name into sector
+    memcpy(&sector_buff[new_chip_sector_addr + MAX_STRING_SIZE], chip_id, WORD_SIZE); // chip_id
+    memcpy(&sector_buff[new_chip_sector_addr + FILE_NUM_OFFSET], file_num_init, WORD_SIZE); // file_num = 0
+    flash_write(sector_buff, CHIPS_START_ADDR, CHIP_SECTOR_SIZE); // rewrite sector 
+    
+    //update directory
+    flash_read(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE); 
+    flash_erase(DIRECTORY_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
+    num_chips_global++;
+    sector_buff[CHIP_COUNT_GLOBAL_ADDR] = (num_chips_global >> 24) & 0xFF;  
+    sector_buff[CHIP_COUNT_GLOBAL_ADDR+1] = (num_chips_global >> 16) & 0xFF;
+    sector_buff[CHIP_COUNT_GLOBAL_ADDR+2] = (num_chips_global >> 8) & 0xFF;
+    sector_buff[CHIP_COUNT_GLOBAL_ADDR+3] = num_chips_global & 0xFF;
+    flash_write(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
+
+    //update parent project
+    uint32_t new_chip_addr = new_chip_sector_addr + CHIPS_START_ADDR;
+    flash_read(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); 
+    flash_erase(PROJECTS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
+    //add chip_addr_ptr to project
+    uint32_t project_sector_addr = project_addr - PROJECTS_START_ADDR; 
+    uint32_t num_chips_project = sector_buff[project_sector_addr + CHIP_NUM_OFFSET] << 24 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 1] << 16 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 2] << 8 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 3];
+    uint32_t chip_ptr_addr = PROJECT_HEADER_SIZE + (num_chips_project * WORD_SIZE);
+    sector_buff[project_sector_addr + chip_ptr_addr] = (new_chip_addr >> 24) & 0xFF;  
+    sector_buff[project_sector_addr + chip_ptr_addr+1] = (new_chip_addr >> 16) & 0xFF;
+    sector_buff[project_sector_addr + chip_ptr_addr+2] = (new_chip_addr >> 8) & 0xFF;
+    sector_buff[project_sector_addr + chip_ptr_addr+3] = new_chip_addr & 0xFF;
+    //increment chip_num in project
+    num_chips_project++;
+    sector_buff[project_sector_addr + CHIP_NUM_OFFSET] = (num_chips_project >> 24) & 0xFF;  
+    sector_buff[project_sector_addr + CHIP_NUM_OFFSET+1] = (num_chips_project >> 16) & 0xFF;
+    sector_buff[project_sector_addr + CHIP_NUM_OFFSET+2] = (num_chips_project >> 8) & 0xFF;
+    sector_buff[project_sector_addr + CHIP_NUM_OFFSET+3] = num_chips_project & 0xFF;
+    flash_write(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE);
+
+//NOTE FOR TEST 
+// uint8_t data_buff[FLASH_SECTOR_SIZE];
+// flash_read(data_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE);
+// prog_flag = true;
 }
 
 
@@ -321,13 +385,13 @@ uint32_t add_file(void)
     prog_flag = true; //flags nus handler to start appending incoming data 
     
     // flash seek functions
-    uint32_t project_addr = seek_to_project(project_name, project_name_length); //projects start at 4000, 52 bytes per project 
+    uint32_t project_addr = seek_to_project(project_name, project_name_length); //projects start at 4096, 52 bytes per project 
     if(project_addr == NULL)
     {   
         //ERROR: no project found
         nrf_gpio_pin_set(LED_RED);
     }
-    uint32_t chip_addr = seek_to_chip(project_addr, chip_name, chip_name_length); //chips start at addr 8000, 56 bytes per chip 
+    uint32_t chip_addr = seek_to_chip(project_addr, chip_name, chip_name_length); //chips start at addr 8192, 56 bytes per chip 
     if(chip_addr == NULL)
     {   
         //ERROR: no chip found
@@ -370,7 +434,7 @@ void ble_cmd_parser(void)
 
         if(cmd[0] == '1' && cmd[1] =='0') //add project 
         {
-            add_project();
+            add_project(); 
         }
         else if(cmd[0] == '2' && cmd[1] =='0') //add chip 
         {
@@ -405,7 +469,7 @@ void ble_cmd_parser(void)
         }
         //TODO free names after writing to flash
 
-        //parser_trace = 0; //reset for enxt command
+        parser_trace = 0; //reset for next command
     }
 }
 
