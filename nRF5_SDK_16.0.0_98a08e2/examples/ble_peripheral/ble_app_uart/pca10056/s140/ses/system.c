@@ -717,16 +717,17 @@ void flash_init(void)
     uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 16, 0, 0, 0, 16, 52, 0, 0, 16, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32
     flash_write(directory, 0, 32); // write test directory
     
+
     //TODO chip directory
     uint8_t chip_count_global[WORD_SIZE] = {0, 0, 0, 3};
     flash_write(chip_count_global, 2048, WORD_SIZE); //0x800
+
 
     //TODO file directory 
     uint8_t file_count_global[WORD_SIZE] = {0, 0, 0, 0};
     uint8_t file_bytes_programmed[WORD_SIZE] = {0, 0, 0, 0}; 
     flash_write(file_count_global, 2052, WORD_SIZE);  
     flash_write(file_bytes_programmed, 2056, WORD_SIZE);
-    
   
 
     //NOTE PROJECT 0 - 24 bytes (including first chip addr) 
@@ -744,7 +745,7 @@ void flash_init(void)
         //CHIP 0 - 28 bytes (including first file addr) 
         uint8_t chip_string_test0[] = {"chip0"}; //16 bytes
         uint8_t chip_type_ID[WORD_SIZE] = {0, 0, 7, 0}; 
-        uint8_t files_num[WORD_SIZE] = {0, 0, 0, 0}; //NOTE FOR TEST: SHOULD BE INCREMENTED AFTER DATA TRANSFER
+        uint8_t files_num[WORD_SIZE] = {0, 0, 0, 0}; //NOTE SHOULD BE INCREMENTED AFTER DATA TRANSFER
 //        uint8_t files_first_addr[WORD_SIZE] = {0, 0, 78, 32}; // 20000 - address of file0
 //        uint8_t files_sec_addr[WORD_SIZE] = {0, 0, 78, 60}; // 20028 - address of file1
 //        uint8_t files_third_addr[WORD_SIZE] = {0, 0, 78, 88}; // 20056 - address of file2

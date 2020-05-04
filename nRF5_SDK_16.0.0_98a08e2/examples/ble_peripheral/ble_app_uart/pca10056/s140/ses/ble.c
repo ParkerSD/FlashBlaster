@@ -86,7 +86,7 @@ static ble_uuid_t m_adv_uuids[]          =                                      
     {BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}
 };
 
-uint8_t nus_data_global[244]; //max MTU matches chucksize of react.js app 
+uint8_t nus_data_global[BLE_PACKET_SIZE]; //max MTU matches chucksize of react.js app 
 static uint8_t parser_trace = 0; 
 static uint16_t packet_index = 0;
 static uint8_t string_length; 
@@ -237,7 +237,47 @@ void add_project(void)
     uint8_t project_name_length;
     project_name = ble_parse_name(); 
     project_name_length = string_length;
-    //TODO add project to flash
+    
+    //1. add project address to directory project_num x word_size
+    //2. increment directory/project cnt
+    //3. write project string and chip_num 0 to project sector 
+    uint32_t num_projects;
+    uint8_t num_projects_buff[WORD_SIZE];
+    uint8_t project_addr_buff[WORD_SIZE]; 
+    uint8_t sector_buff[FLASH_SECTOR_SIZE]; //buffer directory for modification
+
+    flash_read(num_projects_buff, ADDR_NUM_PROJECTS, WORD_SIZE); //read project_num total
+    num_projects = num_projects_buff[0] << 24 | num_projects_buff[1] << 16 | num_projects_buff[2] << 8 | num_projects_buff[3];
+
+    flash_read(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); //buffer project sector for modification
+    flash_erase(PROJECTS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
+    uint8_t chip_num_init[WORD_SIZE] = {0, 0, 0, 0};
+    uint32_t project_addr_sector = num_projects * MAX_PROJECT_SIZE;
+    memcpy(&sector_buff[project_addr_sector], project_name, MAX_STRING_SIZE); // copy project name string to buffer
+    memcpy(&sector_buff[project_addr_sector + MAX_STRING_SIZE], chip_num_init, WORD_SIZE); // copy chip_num to buffer
+    flash_write(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); //rewrite modified sector buffer
+
+
+    uint32_t new_project_addr = (num_projects * MAX_PROJECT_SIZE) + PROJECTS_START_ADDR; //calc new project start address 
+    uint32_t new_project_dir_addr = (num_projects * WORD_SIZE) + ADDR_PROJECT_PTR_FIRST; //project addr in directory
+    num_projects++; //increment num projects
+
+
+    flash_read(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
+    flash_erase(DIRECTORY_START_ADDR, NRF_QSPI_ERASE_LEN_4KB); 
+
+    sector_buff[0] = (num_projects >> 24) & 0xFF;  
+    sector_buff[1] = (num_projects >> 16) & 0xFF;
+    sector_buff[2] = (num_projects >> 8) & 0xFF;
+    sector_buff[3] = num_projects & 0xFF;
+
+    sector_buff[new_project_dir_addr] = (new_project_addr >> 24) & 0xFF;  
+    sector_buff[new_project_dir_addr+1] = (new_project_addr >> 16) & 0xFF;
+    sector_buff[new_project_dir_addr+2] = (new_project_addr >> 8) & 0xFF;
+    sector_buff[new_project_dir_addr+3] = new_project_addr & 0xFF;
+
+    flash_write(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE); //rewrite directory
+ 
 }
 
 
@@ -309,12 +349,12 @@ void packet_write_first(void)
      
     uint32_t bytes_prog = fetch_bytes_prog(); 
     file_data_addr_global = bytes_prog + DATA_SECTOR_START; 
-    flash_write(nus_data_global, file_data_addr_global, 244); //NOTE WORD WRITES ONLY, write remaining file data from first ble packet after header
+    flash_write(nus_data_global, file_data_addr_global, BLE_PACKET_SIZE); //NOTE WORD WRITES ONLY, write remaining file data from first ble packet after header
 }
 
 void packet_write(uint32_t data_start_addr)
 {
-    flash_write(nus_data_global, data_start_addr, 244);
+    flash_write(nus_data_global, data_start_addr, BLE_PACKET_SIZE);
 }
 
 
@@ -340,7 +380,7 @@ void ble_cmd_parser(void)
         else if(cmd[0] == '3' && cmd[1] =='0') //add file 
         {
             // add file to parent chip and project in flash
-           chip_addr_global = add_file(); 
+            chip_addr_global = add_file(); 
         }
         else if(cmd[0] == '0' && cmd[0] =='0') //add all
         {
@@ -364,6 +404,8 @@ void ble_cmd_parser(void)
             hibernate(); // reset device
         }
         //TODO free names after writing to flash
+
+        //parser_trace = 0; //reset for enxt command
     }
 }
 
@@ -398,29 +440,26 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
                 {
                     packet_write_first(); //calculate start address and write first packet
                     packet_index++;
-                    current_byte_pos -= 244; // subtract bytes programmed 
+                    current_byte_pos -= BLE_PACKET_SIZE; // subtract bytes programmed 
                 }
                 else
                 {
-                    uint32_t current_addr = (packet_index * 244) + file_data_addr_global; //global assigned in packet_write_first(); 
+                    uint32_t current_addr = (packet_index * BLE_PACKET_SIZE) + file_data_addr_global; //global assigned in packet_write_first(); 
                     packet_write(current_addr); 
 
                     //append entire nus_data_global array to file data in flash
                     //exception for last file (not full 244 bytes) 
 
                     packet_index++;
-                    current_byte_pos -= 244; 
+                    current_byte_pos -= BLE_PACKET_SIZE; 
                 }
             }
             if(current_byte_pos <= 0)
             {
                 //(AFTER PROGRAMMING COMPLETE)
                 prog_flag = false;
-                
-                //NOTE BELOW causing project 2 data overwritten in flash
+               
                 flash_file_num_inc(chip_addr_global);  //increment file_num in chip parent in flash
-                
-                //NOTE BELOW CAUSING CHIP SYNC ERROR - potenital overwrite in flash
                 flash_file_dir_update(file_data_length); //increment file_count_global and file_bytes_programmed in flash
                 
                 //NOTE FOR TEST 
