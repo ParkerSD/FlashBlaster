@@ -17,10 +17,14 @@ uint32_t seek_to_project(char* project_name, uint8_t name_length);
 
 uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t name_length);
 
-void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, uint32_t file_data_length);
+void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, uint32_t file_data_length, bool add_all_cmd);
 
 uint32_t fetch_bytes_prog(void);
 
 void flash_file_num_inc(uint32_t chip_addr_global);
 
 void flash_file_dir_update(int file_data_length);
+
+uint32_t flash_add_project(char*);
+
+uint32_t flash_add_chip(uint32_t project_addr, char* chip_name, uint8_t* chip_id, bool include_file);
