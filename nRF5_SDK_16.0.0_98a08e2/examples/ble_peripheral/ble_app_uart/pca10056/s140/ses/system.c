@@ -393,7 +393,13 @@ chip_struct* chip_new(char* data, project_struct* project_curr)
     chipY->file_first = NULL;
     chipY->chip_next = NULL;
     
-    chipY->file_list_addr = DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_HEADER_SIZE + (project_curr->chip_curr * MAX_CHIP_SIZE);
+    uint32_t chip_list_address = chipY->project_parent->chip_list_addr; //get chip list address from project
+    uint32_t chip_addr_position = chip_list_address + (project_curr->chip_curr * WORD_SIZE); //seek to address position in list
+    uint8_t chip_addr_buff[WORD_SIZE];
+    flash_read(chip_addr_buff, chip_addr_position, WORD_SIZE); //read chip address 
+    uint32_t chip_addr = chip_addr_buff[0] << 24 | chip_addr_buff[1] << 16 | chip_addr_buff[2] << 8 | chip_addr_buff[3];
+
+    chipY->file_list_addr = chip_addr + CHIP_HEADER_SIZE; //DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_HEADER_SIZE + (project_curr->chip_curr * MAX_CHIP_SIZE);
 
     if(project_curr->chip_curr != 0) //push node, add to project_next
     {  

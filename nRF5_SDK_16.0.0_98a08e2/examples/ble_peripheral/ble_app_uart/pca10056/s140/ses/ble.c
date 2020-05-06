@@ -96,6 +96,7 @@ static int current_byte_pos;
 static uint32_t file_data_addr_global;
 static uint32_t chip_addr_global; 
 bool prog_flag = false; 
+bool add_all_mode = false; 
 
 //NOTE TEMP 
 uint8_t chip_id[WORD_SIZE] = {0, 0, 0, 0};
@@ -323,12 +324,14 @@ void add_all(void)
     project_name_length = string_length;
 
     file_data_length = ble_parse_data_length(); 
+
+    prog_flag = true; //flags nus handler to start appending incoming data
     
     uint32_t project_addr = flash_add_project(project_name);
     uint32_t chip_addr = flash_add_chip(project_addr, chip_name, chip_id, true);
     file_header_write(chip_addr, file_name, NULL, file_data_length, true);
     
-    prog_flag = true; //flags nus handler to start appending incoming data
+    
 
 
 }
@@ -379,6 +382,7 @@ void ble_cmd_parser(void)
         else if(cmd[0] == '0' && cmd[0] =='0') //add all
         {
             add_all(); 
+            add_all_mode = true; 
         }
         else if(cmd[0] == '4' && cmd[1] =='0') //delete project 
         {
@@ -452,13 +456,23 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
             {
                 //(AFTER PROGRAMMING COMPLETE)
                 prog_flag = false;
-               
-                flash_file_num_inc(chip_addr_global);  //increment file_num in chip parent in flash
+                if(!add_all_mode)
+                {
+                    flash_file_num_inc(chip_addr_global);  //increment file_num in chip parent in flash
+                }
                 flash_file_dir_update(file_data_length); //increment file_count_global and file_bytes_programmed in flash
-                
+                add_all_mode = false; 
+
                 //NOTE FOR TEST 
 //                uint8_t data_buff[FLASH_SECTOR_SIZE];
 //                flash_read(data_buff, 0, FLASH_SECTOR_SIZE);
+//
+//                uint8_t data_buff1[FLASH_SECTOR_SIZE];
+//                flash_read(data_buff1, CHIPS_START_ADDR, FLASH_SECTOR_SIZE);
+//                prog_flag = true;
+//
+//                uint8_t data_buff2[FLASH_SECTOR_SIZE];
+//                flash_read(data_buff2, FILES_START_ADDR, FLASH_SECTOR_SIZE);
 //                prog_flag = true;
             }
         }

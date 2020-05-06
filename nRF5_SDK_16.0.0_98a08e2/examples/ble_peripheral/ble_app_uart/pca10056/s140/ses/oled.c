@@ -124,7 +124,7 @@ void oled_draw_logo(void)
 
     nrf_delay_ms(500);
 
-    for(int x = 0; x < 12; x++)
+    for(int x = 0; x < 6; x++)
     {
       SSD1351_set_cursor(21,44);
       SSD1351_printf(COLOR_BLACK, big_font, "FLASH");
@@ -139,9 +139,9 @@ void oled_draw_logo(void)
     SSD1351_write_command(SSD1351_CMD_INVERTDISPLAY);
     SSD1351_update();
     SSD1351_write_command(SSD1351_CMD_NORMALDISPLAY);
-    SSD1351_set_cursor(12,115);
-    SSD1351_printf(COLOR_WHITE, small_font, "By Parker Davis");
-    SSD1351_update();
+//    SSD1351_set_cursor(12,115);
+//    SSD1351_printf(COLOR_WHITE, small_font, "By Parker Davis");
+//    SSD1351_update();
 
 }
 
