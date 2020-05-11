@@ -34,10 +34,10 @@
 
 APP_TIMER_DEF(long_press_timer_id);
 
-project_struct* project_selected; 
-chip_struct* chip_selected; 
+static project_struct* project_selected; 
+static chip_struct* chip_selected; 
 
-
+//NOTE do any of these need to be volatile? 
 volatile bool enterFlag = false; 
 volatile bool upFlag = false;
 volatile bool downFlag = false;
@@ -45,9 +45,9 @@ volatile bool longTimerStarted = false;
 volatile bool rerender = false; //TODO: replace rerender flag with alt logic
 volatile bool recentsFlag = false;
 
-int8_t itemHighlighted = 0;
-int8_t selectedItem = 0; 
-int8_t screenStack = 0; 
+static int8_t itemHighlighted = 0;
+static int8_t selectedItem = 0; 
+static int8_t screenStack = 0; 
 
 
 
@@ -144,6 +144,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 else
                 {
                     screenStack--; 
+                    rerender = false;
                 }
                 break;
             case chip_screen:
@@ -173,7 +174,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
             case file_screen: 
                 if(chip_list_index(selectedItem, project_selected) != NULL) // if chip exists 
                 {
-                    chip_selected = files_sync(selectedItem, project_selected); // NOTE: return chip_struct?
+                    chip_selected = files_sync(selectedItem, project_selected); 
                     rerender = true;
                     list_clear();
                 }

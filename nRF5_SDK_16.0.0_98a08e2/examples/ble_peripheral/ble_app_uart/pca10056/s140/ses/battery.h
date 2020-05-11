@@ -1,8 +1,16 @@
 
-#define FULL_CHARGE 0x0250 //4.2 volts
-#define HALF_CHARGE 0x0205 //3.5 volts
-#define LOW_CHARGE 0x01A0  //3.0 volts
+
+
 #define NO_CHARGE 0x0170   //2.6 volts
+#define ONE_BAR_MAX 0x0185
+#define LOW_CHARGE 0x01A0  //3.0 volts
+#define THREE_BAR_MAX 0x01D0
+#define HALF_CHARGE 0x0205 //3.5 volts
+#define FIVE_BAR_MAX 0x0210
+#define SIX_BAR_MAX 0x0218
+#define SEVEN_BAR_MAX 0x0226
+#define EIGHT_BAR_MAX 0x0234
+#define FULL_CHARGE 0x0250 //4.2 volts
 
 
 typedef struct battery battery_struct; // needed if multiple structs declared in single file

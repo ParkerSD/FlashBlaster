@@ -59,7 +59,7 @@ char* projectNames[10] = {"Quake", "Jeep", "Nikola", "Tesla", "SpaceX", "Rockfor
 char chipHeader[] = {"Select Chip:"}; // or Project Name
 char* chipNames[10] = {"Atmel", "Nordic", "STM32", "Cirrus Logic", "NXP", "Renesas", "Pic32", "AVR", "Silicon Labs", "Qualcomm"}; // 
 
-char fileHeader[] = {"Select File:"}; // or Chip Name
+char fileHeader[] = {"Select Program:"}; // or Chip Name
 char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "that.bin", "banshee.bin", "pastry.elf", "killme.hex", "reget.bin", "mistakes.hex"}; 
 
 
@@ -136,7 +136,7 @@ void draw_initial_screen(void)
     L_ currentList = splash;
     L_ header = splashHeader; 
     
-    L_ items[0] = "Recent Files";
+    L_ items[0] = "Recent Programs";
     L_ items[1] = "Projects";
     recents_singleton = recents_init(); //TODO: load recents from flash 
     
@@ -393,12 +393,12 @@ chip_struct* chip_new(char* data, project_struct* project_curr)
     chipY->file_first = NULL;
     chipY->chip_next = NULL;
     
+    //get file list address from current chip 
     uint32_t chip_list_address = chipY->project_parent->chip_list_addr; //get chip list address from project
     uint32_t chip_addr_position = chip_list_address + (project_curr->chip_curr * WORD_SIZE); //seek to address position in list
     uint8_t chip_addr_buff[WORD_SIZE];
     flash_read(chip_addr_buff, chip_addr_position, WORD_SIZE); //read chip address 
     uint32_t chip_addr = chip_addr_buff[0] << 24 | chip_addr_buff[1] << 16 | chip_addr_buff[2] << 8 | chip_addr_buff[3];
-
     chipY->file_list_addr = chip_addr + CHIP_HEADER_SIZE; //DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_HEADER_SIZE + (project_curr->chip_curr * MAX_CHIP_SIZE);
 
     if(project_curr->chip_curr != 0) //push node, add to project_next
@@ -580,22 +580,22 @@ void clear_list(void)
 
 void rerender_list(int8_t itemHighlighted) // use screenStack 
 {   
-    if(strlen(L_ items[itemHighlighted]) > 3)
+    if(strlen(L_ items[itemHighlighted]) >= 3)
     {
         clear_list();
         draw_header();
    
-        if(strlen(L_ items[itemHighlighted]) > 3) // name must be longer than 3 char, less than MAX_STRING_SIZE
+        if(strlen(L_ items[itemHighlighted]) >= 3) // name must be longer than 3 char, less than MAX_STRING_SIZE
         {
             SSD1351_set_cursor(10,57);
             SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted]);
         }
-        if(strlen(L_ items[itemHighlighted+1]) > 3)
+        if(strlen(L_ items[itemHighlighted+1]) >= 3)
         {
             SSD1351_set_cursor(10,83);
             SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+1]);
         }
-        if(strlen(L_ items[itemHighlighted+2]) > 3)
+        if(strlen(L_ items[itemHighlighted+2]) >= 3)
         {
             SSD1351_set_cursor(10,105);
             SSD1351_printf(COLOR_WHITE, curr_font, L_ items[itemHighlighted+2]);
@@ -611,7 +611,7 @@ void rerender_list(int8_t itemHighlighted) // use screenStack
 
 void project_name_fetch(void)
 {
-    for(int x = 0; x < MAX_PROJECTS; x++) //MAX_PROJECTS = 27 
+    for(int x = 0; x < MAX_PROJECTS; x++) //MAX_PROJECTS = 26 
     {
         L_ items[x] = project_list_index(x)->project_name;
     }
@@ -620,7 +620,7 @@ void project_name_fetch(void)
 
 void chip_name_fetch(int8_t selectedItem)
 {
-    for(int x = 0; x < MAX_CHIPS; x++) //MAX_CHIPS = 27 
+    for(int x = 0; x < MAX_CHIPS; x++) //MAX_CHIPS = 8 
     {
         L_ items[x] = chip_list_index(x, project_list_index(selectedItem))->chip_name;
     }
@@ -629,7 +629,7 @@ void chip_name_fetch(int8_t selectedItem)
 
 void file_name_fetch(int8_t selectedItem)
 {
-    for(int x = 0; x < MAX_FILES; x++) //MAX_CHIPS = 27 
+    for(int x = 0; x < MAX_FILES; x++) //MAX_CHIPS = 8 
     {
         L_ items[x] = file_list_index(x, chip_list_index(selectedItem, project_list_index(selectedProject)))->file_name;
     }
@@ -657,7 +657,7 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
             case splash_screen:
                 L_ currentList = splash;
                 L_ header = splashHeader;
-                L_ items[0] = "Recent Files"; 
+                L_ items[0] = "Recent Programs"; 
                 L_ items[1] = "Projects";
                 break;
 

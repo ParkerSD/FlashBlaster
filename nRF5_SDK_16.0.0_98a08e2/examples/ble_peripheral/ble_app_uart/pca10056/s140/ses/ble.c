@@ -95,8 +95,8 @@ static int file_data_length;
 static int current_byte_pos;
 static uint32_t file_data_addr_global;
 static uint32_t chip_addr_global; 
-bool prog_flag = false; 
-bool add_all_mode = false; 
+static bool prog_flag = false; 
+static bool add_all_mode = false; 
 
 //NOTE TEMP 
 uint8_t chip_id[WORD_SIZE] = {0, 0, 0, 0};
@@ -460,8 +460,12 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
                 {
                     flash_file_num_inc(chip_addr_global);  //increment file_num in chip parent in flash
                 }
+                else
+                {
+                    add_all_mode = false; 
+                }
                 flash_file_dir_update(file_data_length); //increment file_count_global and file_bytes_programmed in flash
-                add_all_mode = false; 
+                
 
                 //NOTE FOR TEST 
 //                uint8_t data_buff[FLASH_SECTOR_SIZE];

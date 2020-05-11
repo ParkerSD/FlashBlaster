@@ -38,7 +38,7 @@ static nrf_saadc_value_t adc_buffer[SAMPLES_IN_BUFFER];
 static uint16_t sum;
 static uint16_t avg;
 
-battery_struct* battery; 
+static battery_struct* battery; 
 
 
 void timer_handler(nrf_timer_event_t event_type, void * p_context)
@@ -154,19 +154,19 @@ void battery_draw_icon(void) //charge bar is 5x9
 
     if(battery_val >= HALF_CHARGE)
     {   
-        if(battery_val <= 0x0210)
+        if(battery_val <= FIVE_BAR_MAX)
         {
             bars = 5; 
         }
-        else if(battery_val <= 0x0218)
+        else if(battery_val <= SIX_BAR_MAX)
         {
             bars = 6; 
         }
-        else if(battery_val <= 0x0226)
+        else if(battery_val <= SEVEN_BAR_MAX)
         {
             bars = 7; 
         }
-        else if(battery_val <= 0x0234)
+        else if(battery_val <= EIGHT_BAR_MAX)
         {
             bars = 8; 
         }
@@ -180,7 +180,7 @@ void battery_draw_icon(void) //charge bar is 5x9
     }
     else if(battery_val < HALF_CHARGE && battery_val >= LOW_CHARGE)
     {   
-        if(battery_val <= 0x01D0)
+        if(battery_val <= THREE_BAR_MAX)
         {
             bars = 3; 
         }
@@ -194,7 +194,7 @@ void battery_draw_icon(void) //charge bar is 5x9
     }
     else if(battery_val < LOW_CHARGE && battery_val >= NO_CHARGE)
     {   
-        if(battery_val <= 0x185)
+        if(battery_val <= ONE_BAR_MAX)
         {
             bars = 1; 
         }
