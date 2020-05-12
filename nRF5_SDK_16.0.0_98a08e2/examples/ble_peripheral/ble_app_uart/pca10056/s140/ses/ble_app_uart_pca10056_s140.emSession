@@ -64,28 +64,33 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="458" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.c" selected="0" top="420" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="34" useTextEdit="1" useBinaryEdit="0" left="0" path="system.h" selected="0" top="18" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="355" useTextEdit="1" useBinaryEdit="0" left="0" path="system.c" selected="0" top="298" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="46" y="456" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.c" selected="0" top="431" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="42" useTextEdit="1" useBinaryEdit="0" left="0" path="system.h" selected="0" top="18" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="136" useTextEdit="1" useBinaryEdit="0" left="0" path="system.c" selected="0" top="120" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="29" useTextEdit="1" useBinaryEdit="0" left="0" path="flash.h" selected="0" top="12" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="16" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="110" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error_weak.c" selected="0" top="80" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="72" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error.c" selected="0" top="56" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="37" useTextEdit="1" useBinaryEdit="0" left="0" path="button.c" selected="1" top="203" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="ssd1351.c" selected="0" top="20" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="144" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="117" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="205" useTextEdit="1" useBinaryEdit="0" left="0" path="button.c" selected="0" top="175" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="ssd1351.c" selected="0" top="593" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="144" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="usb.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="40" useTextEdit="1" useBinaryEdit="0" left="0" path="battery.c" selected="0" top="11" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1714" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/drivers/src/nrfx_usbd.c" selected="0" top="1671" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="ssd1351.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="127" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/timer/app_timer.h" selected="0" top="106" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="9053" useTextEdit="1" useBinaryEdit="0" left="0" path="sdk_config.h" selected="0" top="9041" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="11853" useTextEdit="1" useBinaryEdit="0" left="0" path="sdk_config.h" selected="0" top="11840" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="155" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/hal/nrf_qspi.h" selected="0" top="138" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="288" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="0" top="117" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="257" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="1" top="242" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="377" useTextEdit="1" useBinaryEdit="0" left="0" path="flash.c" selected="0" top="345" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="battery.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="10" useTextEdit="1" useBinaryEdit="0" left="0" path="battery.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="170" useTextEdit="1" useBinaryEdit="0" left="0" path="battery.c" selected="0" top="149" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../integration/nrfx/legacy/nrf_drv_spi.c" selected="0" top="51" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../integration/nrfx/legacy/nrf_drv_twi.c" selected="0" top="156" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="350" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" selected="0" top="328" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="8820" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="8804" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="66" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../integration/nrfx/legacy/nrf_drv_wdt.h" selected="0" top="49" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="114" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/drivers/include/nrfx_wdt.h" selected="0" top="96" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="101" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/drivers/src/nrfx_wdt.c" selected="0" top="81" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="ble_app_uart_pca10056_s140" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/davispa/Desktop/FlashBlaster Git/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/examples/ble_peripheral/ble_app_uart/pca10056/s140/config" debugSearchPath="" autoConnectCapabilities="3199"/>
+ <ARMCrossStudioWindow activeProject="ble_app_uart_pca10056_s140" fileDialogDefaultFilter="" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/davispa/Desktop/FlashBlaster Git/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/integration/nrfx/legacy" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

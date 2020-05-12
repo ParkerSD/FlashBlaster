@@ -84,6 +84,10 @@
 #include "flash.h"
 #include "battery.h"
 #include "ble.h"
+#include "nrfx_wdt.h"
+#include "nrf_wdt.h"
+#include "nrf_drv_wdt.h"
+
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -103,7 +107,7 @@
 #define SCHED_QUEUE_SIZE                10                                  // Maximum number of events in the scheduler queue.  
 #endif 
 
-
+static nrf_drv_wdt_channel_id wdt_channel_id; 
 /*
 void uart_event_handle(app_uart_evt_t * p_event)
 {
@@ -224,6 +228,7 @@ void idle_state_handle(void)
     if (NRF_LOG_PROCESS() == false)
     {
         nrf_pwr_mgmt_run();
+        NRF_WDT->RR[0] = WDT_RR_RR_Reload; // reset watchdog timer
     }
 }
 
@@ -233,18 +238,45 @@ static void scheduler_init(void)
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE); 
 } 
 
+void wdt_error_handler(void)
+{
+    //throw error
+}
+
+void watchdog_init(void)
+{
+    uint32_t op_status = NRF_SUCCESS;
+    nrf_drv_wdt_config_t watchdogConfig; 
+    watchdogConfig.behaviour = NRF_WDT_BEHAVIOUR_PAUSE_SLEEP_HALT;
+    watchdogConfig.reload_value = 3000;
+    watchdogConfig.interrupt_priority = APP_IRQ_PRIORITY_LOW;
+    op_status = nrf_drv_wdt_init(&watchdogConfig, wdt_error_handler);
+    APP_ERROR_CHECK(op_status);
+    op_status = nrf_drv_wdt_channel_alloc(&wdt_channel_id);
+    APP_ERROR_CHECK(op_status);
+    nrf_drv_wdt_enable();
+
+/*  //--DST implementation--//
+    NRF_WDT->CONFIG = (WDT_CONFIG_HALT_Pause << WDT_CONFIG_HALT_Pos) | ( WDT_CONFIG_SLEEP_Run << WDT_CONFIG_SLEEP_Pos);   //Configure Watchdog. a) Pause watchdog while the CPU is halted by the debugger.  b) Keep the watchdog running while the CPU is sleeping.
+    NRF_WDT->CRV = 3*32768;             //ca 3 sek. timout
+    NRF_WDT->RREN |= WDT_RREN_RR0_Msk;  //Enable reload register 0
+    NRF_WDT->TASKS_START = 1;           //Start the Watchdog timer
+*/
+}
 
 void flashblaster_init(void)
 {
     // bool erase_bonds;
     // Initialize.
-    
+
     power_clock_init();
     log_init();
     timers_init();
     //uart_init(); // error here, possible resource conflict.
     //buttons_leds_init(&erase_bonds);
     power_management_init();
+    watchdog_init();
+    
 
     ble_stack_init();
     scheduler_init(); 
@@ -269,6 +301,7 @@ void flashblaster_init(void)
     draw_initial_screen();
 
     battery_init();
+    
 }
 
 
@@ -280,6 +313,7 @@ void hibernate(void)
     nrf_gpio_pin_clear(FET_PIN);
     nrf_delay_ms(1000); // delay to avoid reboot after turn off
     nrf_gpio_cfg_sense_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
+    //NRF_WDT->TASKS_START = 0; // deactivate watchdog if needed
     NRF_POWER->SYSTEMOFF = 1;
 }
 
@@ -309,7 +343,7 @@ int main(void)
     // Enter main loop.
 
     for (;;)
-    {
+    {   
         idle_state_handle();
     }
 }

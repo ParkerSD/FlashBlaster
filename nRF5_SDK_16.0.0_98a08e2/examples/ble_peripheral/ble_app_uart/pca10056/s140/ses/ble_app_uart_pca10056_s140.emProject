@@ -132,6 +132,10 @@
       <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_timer.h" />
       <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_timer.c" />
       <file file_name="../../../../../../modules/nrfx/drivers/include/nrfx_timer.h" />
+      <file file_name="../../../../../../modules/nrfx/drivers/include/nrfx_wdt.h" />
+      <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_wdt.c" />
+      <file file_name="../../../../../../modules/nrfx/hal/nrf_wdt.h" />
+      <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_wdt.h" />
     </folder>
     <folder Name="Board Support">
       <file file_name="../../../../../../components/libraries/bsp/bsp.c" />
