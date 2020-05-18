@@ -248,7 +248,7 @@ void long_press_timeout_handler(void* p_context)
     else if(enterFlag && !upFlag)// enter long press
     {
         clear_leds(); // for test
-        nrf_gpio_pin_set(LED_GREEN);
+        nrf_gpio_pin_set(LED_ORANGE);
     }
     else if(enterFlag && upFlag) //if dual press
     {
@@ -257,7 +257,7 @@ void long_press_timeout_handler(void* p_context)
     else if(downFlag) //down long press
     {
         clear_leds(); // for test 
-        nrf_gpio_pin_set(LED_BLUE);
+        //nrf_gpio_pin_set(LED_BLUE);
     }
 }
 

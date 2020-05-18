@@ -1,4 +1,6 @@
 
+#define FIRST_BOOT 0 // this macro controls flash_init() and watchdog_inot() functions for first power up 
+
 #define DIRECTORY_START_ADDR 0 
 #define ADDR_NUM_PROJECTS 0
 #define ADDR_PROJECT_PTR_FIRST 4
@@ -46,6 +48,8 @@
 
 #define MAX_ITEMS 27 // max display items
 #define curr_font small_font
+
+
 
 
 

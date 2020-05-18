@@ -96,6 +96,8 @@
 #include "nrf_uarte.h"
 #endif
 
+
+
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
@@ -248,7 +250,7 @@ void watchdog_init(void)
     uint32_t op_status = NRF_SUCCESS;
     nrf_drv_wdt_config_t watchdogConfig; 
     watchdogConfig.behaviour = NRF_WDT_BEHAVIOUR_PAUSE_SLEEP_HALT;
-    watchdogConfig.reload_value = 3000;
+    watchdogConfig.reload_value = 15000; // increase to extend watchdog timeout 
     watchdogConfig.interrupt_priority = APP_IRQ_PRIORITY_LOW;
     op_status = nrf_drv_wdt_init(&watchdogConfig, wdt_error_handler);
     APP_ERROR_CHECK(op_status);
@@ -275,8 +277,10 @@ void flashblaster_init(void)
     //uart_init(); // error here, possible resource conflict.
     //buttons_leds_init(&erase_bonds);
     power_management_init();
+
+    #if FIRST_BOOT == false // defined in system.h
     watchdog_init();
-    
+    #endif 
 
     ble_stack_init();
     scheduler_init(); 

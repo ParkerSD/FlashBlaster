@@ -113,7 +113,7 @@ void qspi_init(void)
     // Compare Buffers
     if (memcmp(m_buffer_tx, m_buffer_rx, QSPI_TEST_DATA_SIZE) == 0)
     {
-       nrf_gpio_pin_set(LED_GREEN); //"Data Consistent"
+       nrf_gpio_pin_set(LED_ORANGE); //"Data Consistent"
     }
 #endif
 }

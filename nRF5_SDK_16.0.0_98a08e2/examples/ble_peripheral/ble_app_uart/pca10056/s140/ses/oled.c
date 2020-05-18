@@ -41,9 +41,9 @@ static int oled_type, oled_flip;
 
 void clear_leds(void)
 {
-    nrf_gpio_pin_clear(LED_BLUE);
+    //nrf_gpio_pin_clear(LED_BLUE);
     nrf_gpio_pin_clear(LED_RED);
-    nrf_gpio_pin_clear(LED_GREEN);
+    nrf_gpio_pin_clear(LED_ORANGE);
 }
 
 void gpio_init(void) // init gpio for oled drivers 
@@ -52,7 +52,11 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(RST_PIN); 
     nrf_gpio_cfg_output(DC_PIN); 
     nrf_gpio_cfg_output(FET_PIN); 
-    nrf_gpio_cfg_output(iRST); 
+    nrf_gpio_cfg_output(iRST);
+
+    //atmel
+    nrf_gpio_cfg_output(ATMEL_RESET); 
+    nrf_gpio_pin_set(ATMEL_RESET);
 
     //nrf_gpio_cfg_output(SWCLK); //NOTE FOR TEST
 
@@ -63,17 +67,17 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(22);
     nrf_gpio_cfg_output(23);
 
-    nrf_gpio_cfg_output(LED_BLUE); 
+    //nrf_gpio_cfg_output(LED_BLUE); 
     nrf_gpio_cfg_output(LED_RED); 
-    nrf_gpio_cfg_output(LED_GREEN);
+    nrf_gpio_cfg_output(LED_ORANGE);
     clear_leds();
 
     nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP);
 
-    nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLUP);
-    nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLDOWN);
+    nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_NOPULL);
+    nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_NOPULL);
 }
 
 

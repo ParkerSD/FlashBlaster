@@ -51,9 +51,8 @@
 
 
 #define DEBUG // I defined this here
-#define LED_BLUE 27 //P1.01
 #define LED_RED 26 //P1.01
-#define LED_GREEN 30 //P1.01
+#define LED_ORANGE 30 //P1.01
 
 /*lint -save -e14 */
 /**
@@ -104,8 +103,7 @@ __WEAK void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
     }
 #endif
     
-    nrf_gpio_pin_clear(LED_BLUE); 
-    nrf_gpio_pin_clear(LED_GREEN);
+    nrf_gpio_pin_clear(LED_ORANGE);
     nrf_gpio_pin_set(LED_RED); // set red led for error
 
     NRF_BREAKPOINT_COND;

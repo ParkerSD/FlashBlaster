@@ -625,7 +625,7 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     {
         case BLE_GAP_EVT_CONNECTED:
 
-            nrf_gpio_pin_set(LED_BLUE);
+            //nrf_gpio_pin_set(LED_BLUE);
             ble_draw_icon(COLOR_BLUE);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
             err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
@@ -634,7 +634,7 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 
         case BLE_GAP_EVT_DISCONNECTED:
 
-            nrf_gpio_pin_clear(LED_BLUE);
+            //nrf_gpio_pin_clear(LED_BLUE);
             ble_draw_icon(COLOR_BLACK);
             // LED indication will be changed when advertising starts.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
