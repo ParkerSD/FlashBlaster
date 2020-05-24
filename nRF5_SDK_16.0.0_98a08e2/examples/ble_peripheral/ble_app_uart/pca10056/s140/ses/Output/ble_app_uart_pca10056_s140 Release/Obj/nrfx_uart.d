@@ -50,21 +50,4 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/nrfx_uart.o: \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/libraries/util/sdk_resources.h \
  ../../../../../../components/softdevice/s140/headers/nrf_sd_def.h \
- ../../../../../../modules/nrfx/drivers/nrfx_errors.h \
- ../../../../../../modules/nrfx/drivers/include/nrfx_uart.h \
- ../../../../../../modules/nrfx/hal/nrf_uart.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\prs/nrfx_prs.h \
- ../../../../../../modules/nrfx/hal/nrf_gpio.h \
- ../../../../../../integration/nrfx/nrfx_log.h \
- ../../../../../../components/libraries/log/nrf_log.h \
- ../../../../../../components/libraries/util/sdk_common.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/string.h \
- ../../../../../../components/libraries/util/sdk_os.h \
- ../../../../../../components/libraries/util/app_util.h \
- ../../../../../../components/libraries/util/sdk_macros.h \
- ../../../../../../components/libraries/experimental_section_vars/nrf_section.h \
- ../../../../../../components/libraries/strerror/nrf_strerror.h \
- ../../../../../../components/libraries/log/src/nrf_log_internal.h \
- ../../../../../../components/libraries/log/nrf_log_instance.h \
- ../../../../../../components/libraries/log/nrf_log_types.h \
- ../../../../../../components/libraries/log/nrf_log_types.h
+ ../../../../../../modules/nrfx/drivers/nrfx_errors.h

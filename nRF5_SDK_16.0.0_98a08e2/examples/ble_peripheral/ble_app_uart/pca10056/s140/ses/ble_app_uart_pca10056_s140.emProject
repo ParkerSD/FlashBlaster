@@ -95,7 +95,6 @@
     </folder>
     <folder Name="nRF_Drivers">
       <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_clock.c" />
-      <file file_name="../../../../../../integration/nrfx/legacy/nrf_drv_uart.c" />
       <file file_name="../../../../../../modules/nrfx/soc/nrfx_atomic.c" />
       <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_clock.c" />
       <file file_name="../../../../../../modules/nrfx/drivers/src/nrfx_gpiote.c" />

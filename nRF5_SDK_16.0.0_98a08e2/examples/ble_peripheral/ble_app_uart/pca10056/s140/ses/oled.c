@@ -19,9 +19,6 @@
 #include "app_util_platform.h"
 #include "bsp_btn_ble.h"
 #include "nrf_pwr_mgmt.h"
-#include "nrf_drv_twi.h"
-#include "nrfx_twi.h"
-#include "nrfx_twim.h"
 #include "nrf_drv_spi.h"
 #include "oled.h"
 #include "ssd1351.h" 
@@ -31,8 +28,7 @@
 
 #define SSD1306Addr 0b0111100
 
-#define TWI_INSTANCE_ID 1 
-static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
+
 extern unsigned char ucFont[], ucSmallFont[];
 static int iScreenOffset; // current write offset of screen data
 static unsigned char ucScreen[1024]; // local copy of the image buffer
@@ -58,8 +54,6 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(ATMEL_RESET); 
     nrf_gpio_pin_set(ATMEL_RESET);
 
-    //nrf_gpio_cfg_output(SWCLK); //NOTE FOR TEST
-
     nrf_gpio_cfg_output(19); // QSPI
     nrf_gpio_cfg_output(17); 
     nrf_gpio_cfg_output(32); 
@@ -79,26 +73,6 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_NOPULL);
     nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_NOPULL);
 }
-
-
-void twi_init(void)
-{
-    ret_code_t err_code;
-
-    const nrf_drv_twi_config_t twi_config = {
-       .scl                = ARDUINO_SCL_PIN,
-       .sda                = ARDUINO_SDA_PIN,
-       .frequency          = NRF_DRV_TWI_FREQ_400K,
-       .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
-       .clear_bus_init     = false
-    };
-
-    err_code = nrf_drv_twi_init(&m_twi, &twi_config, NULL, NULL);
-    APP_ERROR_CHECK(err_code);
-
-    nrf_drv_twi_enable(&m_twi);
-}
-
 
 
 static void oledWriteCommand(unsigned char);

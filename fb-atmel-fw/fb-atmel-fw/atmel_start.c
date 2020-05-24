@@ -6,5 +6,5 @@
 void atmel_start_init(void)
 {
 	system_init();
-	spi_nor_flash_init();
+	//spi_nor_flash_init(); // not initing successfully
 }

@@ -51,8 +51,4 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/nrf_drv_uart.o: \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/libraries/util/sdk_resources.h \
  ../../../../../../components/softdevice/s140/headers/nrf_sd_def.h \
- ../../../../../../modules/nrfx/drivers/nrfx_errors.h \
- ../../../../../../modules/nrfx/drivers/include/nrfx_uarte.h \
- ../../../../../../modules/nrfx/hal/nrf_uarte.h \
- ../../../../../../modules/nrfx/drivers/include/nrfx_uart.h \
- ../../../../../../modules/nrfx/hal/nrf_uart.h
+ ../../../../../../modules/nrfx/drivers/nrfx_errors.h

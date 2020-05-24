@@ -112,7 +112,7 @@ void I2C_0_example(void)
 	uint8_t               c;
 
 	i2c_s_sync_get_io_descriptor(&I2C_0, &io);
-	i2c_s_sync_set_addr(&I2C_0, 1);
+	i2c_s_sync_set_addr(&I2C_0, 0x10);
 	i2c_s_sync_enable(&I2C_0);
 
 	io_read(io, &c, 1);

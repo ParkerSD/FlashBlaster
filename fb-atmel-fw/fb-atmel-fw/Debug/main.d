@@ -131,7 +131,8 @@ main.d main.o: .././main.c ../atmel_start.h ../driver_init.h \
  ../hal/include/hpl_timer.h ../hal/include/hal_i2c_s_sync.h \
  ../hal/include/hpl_i2c_s_sync.h ../hal/include/hal_wdt.h \
  ../hal/include/hpl_wdt.h ../spi_nor_flash_main.h \
- ../spi_nor_flash/s25fl116k/s25fl116k.h ../spi_nor_flash/spi_nor_flash.h
+ ../spi_nor_flash/s25fl116k/s25fl116k.h ../spi_nor_flash/spi_nor_flash.h \
+ ../examples/driver_examples.h
 
 ../atmel_start.h:
 
@@ -484,3 +485,5 @@ C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\SAMD51_DFP\1.2.139\samd51a
 ../spi_nor_flash/s25fl116k/s25fl116k.h:
 
 ../spi_nor_flash/spi_nor_flash.h:
+
+../examples/driver_examples.h:

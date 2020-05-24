@@ -103,12 +103,6 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/oled.o: \
  ../../../../../../components/boards/pca10056.h \
  ../../../../../../components/libraries/button/app_button.h \
  ../../../../../../components/libraries/pwr_mgmt/nrf_pwr_mgmt.h \
- ../../../../../../integration/nrfx/legacy/nrf_drv_twi.h \
- ../../../../../../modules/nrfx/drivers/include/nrfx_twim.h \
- ../../../../../../modules/nrfx/drivers/include/nrfx_twi_twim.h \
- ../../../../../../modules/nrfx/hal/nrf_twim.h \
- ../../../../../../modules/nrfx/drivers/include/nrfx_twi.h \
- ../../../../../../modules/nrfx/hal/nrf_twi.h \
  ../../../../../../integration/nrfx/legacy/nrf_drv_spi.h \
  ../../../../../../modules/nrfx/drivers/include/nrfx_spim.h \
  ../../../../../../modules/nrfx/hal/nrf_spim.h \
@@ -119,6 +113,12 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/oled.o: \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/math.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdarg.h \
  C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\fonts.h \
+ ../../../../../../integration/nrfx/legacy/nrf_drv_twi.h \
+ ../../../../../../modules/nrfx/drivers/include/nrfx_twim.h \
+ ../../../../../../modules/nrfx/drivers/include/nrfx_twi_twim.h \
+ ../../../../../../modules/nrfx/hal/nrf_twim.h \
+ ../../../../../../modules/nrfx/drivers/include/nrfx_twi.h \
+ ../../../../../../modules/nrfx/hal/nrf_twi.h \
  ../../../../../../components/libraries/delay/nrf_delay.h \
  C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\button.h \
  C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\system.h

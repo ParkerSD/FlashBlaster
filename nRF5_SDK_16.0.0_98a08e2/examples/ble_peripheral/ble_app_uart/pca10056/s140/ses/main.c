@@ -87,6 +87,9 @@
 #include "nrfx_wdt.h"
 #include "nrf_wdt.h"
 #include "nrf_drv_wdt.h"
+#include "nrf_drv_twi.h"
+#include "nrfx_twi.h"
+#include "nrfx_twim.h"
 
 
 #if defined (UART_PRESENT)
@@ -95,7 +98,6 @@
 #if defined (UARTE_PRESENT)
 #include "nrf_uarte.h"
 #endif
-
 
 
 #include "nrf_log.h"
@@ -109,86 +111,14 @@
 #define SCHED_QUEUE_SIZE                10                                  // Maximum number of events in the scheduler queue.  
 #endif 
 
+
+#define SCL_PIN 16
+#define SDA_PIN 14
+#define TWI_INSTANCE_ID 1 
+static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
+
+
 static nrf_drv_wdt_channel_id wdt_channel_id; 
-/*
-void uart_event_handle(app_uart_evt_t * p_event)
-{
-    static uint8_t data_array[BLE_NUS_MAX_DATA_LEN];
-    static uint8_t index = 0;
-    uint32_t       err_code;
-
-    switch (p_event->evt_type)
-    {
-        case APP_UART_DATA_READY:
-            UNUSED_VARIABLE(app_uart_get(&data_array[index]));
-            index++;
-
-            if ((data_array[index - 1] == '\n') ||
-                (data_array[index - 1] == '\r') ||
-                (index >= m_ble_nus_max_data_len))
-            {
-                if (index > 1)
-                {
-                    NRF_LOG_DEBUG("Ready to send data over BLE NUS");
-                    NRF_LOG_HEXDUMP_DEBUG(data_array, index);
-
-                    do
-                    {
-                        uint16_t length = (uint16_t)index;
-                        err_code = ble_nus_data_send(&m_nus, data_array, &length, m_conn_handle);
-                        if ((err_code != NRF_ERROR_INVALID_STATE) &&
-                            (err_code != NRF_ERROR_RESOURCES) &&
-                            (err_code != NRF_ERROR_NOT_FOUND))
-                        {
-                            APP_ERROR_CHECK(err_code);
-                        }
-                    } while (err_code == NRF_ERROR_RESOURCES);
-                }
-
-                index = 0;
-            }
-            break;
-
-        case APP_UART_COMMUNICATION_ERROR:
-            APP_ERROR_HANDLER(p_event->data.error_communication);
-            break;
-
-        case APP_UART_FIFO_ERROR:
-            APP_ERROR_HANDLER(p_event->data.error_code);
-            break;
-
-        default:
-            break;
-    }
-}
-
-static void uart_init(void)
-{
-    uint32_t                     err_code;
-    app_uart_comm_params_t const comm_params =
-    {
-        .rx_pin_no    = RX_PIN_NUMBER,
-        .tx_pin_no    = TX_PIN_NUMBER,
-        .rts_pin_no   = RTS_PIN_NUMBER,
-        .cts_pin_no   = CTS_PIN_NUMBER,
-        .flow_control = APP_UART_FLOW_CONTROL_DISABLED,
-        .use_parity   = false,
-#if defined (UART_PRESENT)
-        .baud_rate    = NRF_UART_BAUDRATE_115200
-#else
-        .baud_rate    = NRF_UARTE_BAUDRATE_115200
-#endif
-    };
-
-    APP_UART_FIFO_INIT(&comm_params,
-                       UART_RX_BUF_SIZE,
-                       UART_TX_BUF_SIZE,
-                       uart_event_handle,
-                       APP_IRQ_PRIORITY_LOWEST,
-                       err_code);
-    APP_ERROR_CHECK(err_code);
-}
-*/
 
 
 /**@brief Function for initializing the timer module.
@@ -266,6 +196,38 @@ void watchdog_init(void)
 */
 }
 
+void twi_init(void)
+{
+    ret_code_t err_code;
+
+    const nrf_drv_twi_config_t twi_config = {
+       .scl                = SCL_PIN,
+       .sda                = SDA_PIN,
+       .frequency          = NRF_DRV_TWI_FREQ_400K,
+       .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
+       .clear_bus_init     = false
+    };
+
+    err_code = nrf_drv_twi_init(&m_twi, &twi_config, NULL, NULL);
+    APP_ERROR_CHECK(err_code);
+
+    nrf_drv_twi_enable(&m_twi);
+}
+
+void twi_tx(void) //uint8_t* data, uint16_t length
+{
+    /*
+    nrf_drv_twi_tx(nrf_drv_twi_t const * p_instance,
+                          uint8_t               address,
+                          uint8_t const *       p_data,
+                          uint8_t               length,
+                          bool                  no_stop);
+    */
+  
+     char test_data[] = {'t','h','i','s',' ','i','s',' ','a',' ','t','e','s','t'};
+     nrf_drv_twi_tx(&m_twi, 0x10, test_data, 14, false);   
+}
+
 void flashblaster_init(void)
 {
     // bool erase_bonds;
@@ -274,7 +236,6 @@ void flashblaster_init(void)
     power_clock_init();
     log_init();
     timers_init();
-    //uart_init(); // error here, possible resource conflict.
     //buttons_leds_init(&erase_bonds);
     power_management_init();
 
@@ -294,17 +255,20 @@ void flashblaster_init(void)
     //usb_init(); // not needed until usb data needed, should test before next rev 
     usb_pwr_init();
     button_init();
-
+    
+    twi_init();
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
     qspi_init();
     
     oled_init(); 
     system_init();
     list_init();
-
     draw_initial_screen();
-
     battery_init();
+    
+
+    twi_tx();// NOTE FOR TEST 
+
     
 }
 

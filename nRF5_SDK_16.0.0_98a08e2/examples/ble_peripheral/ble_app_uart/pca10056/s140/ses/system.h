@@ -1,5 +1,5 @@
 
-#define FIRST_BOOT 0 // this macro controls flash_init() and watchdog_inot() functions for first power up 
+#define FIRST_BOOT 0 // enable once on boot then disable -- this macro controls flash_init() and watchdog_inot() functions for first power up 
 
 #define DIRECTORY_START_ADDR 0 
 #define ADDR_NUM_PROJECTS 0
