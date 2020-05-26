@@ -266,10 +266,6 @@ void flashblaster_init(void)
     draw_initial_screen();
     battery_init();
     
-
-    twi_tx();// NOTE FOR TEST 
-
-    
 }
 
 
@@ -290,7 +286,7 @@ int main(void)
 {   
     gpio_init();
     nrf_power_dcdcen_set(true);
-    if(!nrf_gpio_pin_read(BTN_ENTER) && !nrf_gpio_pin_read(BTN_UP)) 
+    if(!nrf_gpio_pin_read(BTN_ENTER)) // && !nrf_gpio_pin_read(BTN_UP)
     {
         flashblaster_init();
     }

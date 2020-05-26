@@ -10,7 +10,7 @@
 //<i>This sets enable/disable quad data mode
 //<id>conf_quad_mode
 #ifndef CONF_SPI_NOR_FLASH_0_QUAD_MODE
-#define CONF_SPI_NOR_FLASH_0_QUAD_MODE 1
+#define CONF_SPI_NOR_FLASH_0_QUAD_MODE 0
 #endif
 
 // <<< end of configuration section >>>

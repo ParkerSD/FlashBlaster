@@ -22,7 +22,7 @@ middlewares:
   SPI_NOR_FLASH_0:
     user_label: SPI_NOR_FLASH_0
     configuration:
-      conf_quad_mode: Enable
+      conf_quad_mode: Disable
     definition: Atmel:Generic_SPI_NOR_Flash:0.0.1::S25FL116K
     functionality: SPI_NOR_Flash
     api: Flash:SPI-NOR-Flash:S25FL116K

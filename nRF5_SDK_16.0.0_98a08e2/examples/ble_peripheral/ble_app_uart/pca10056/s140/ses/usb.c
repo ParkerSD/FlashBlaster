@@ -45,6 +45,8 @@ void power_usb_event_handler(nrf_drv_power_usb_evt_t event)
 //        nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLUP);
 
         battery_set_charging_state(true);
+
+        //battery_draw_icon(); //NOTE: prevents boot while usb plugged in 
 //        if (!nrf_drv_usbd_is_enabled())
 //        {
 //            nrf_drv_usbd_enable();

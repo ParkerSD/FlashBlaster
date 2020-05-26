@@ -214,7 +214,7 @@
           <AcmeProjectActionInfo Action="File" Source="config/hpl_sercom_config.h" IsConfig="true" Hash="s9E2Na9omfPtcSiFSWg2KQ" />
           <AcmeProjectActionInfo Action="File" Source="config/hpl_wdt_config.h" IsConfig="true" Hash="t5Z68OqOeo9Kr6F3uT2GTQ" />
           <AcmeProjectActionInfo Action="File" Source="config/peripheral_clk_config.h" IsConfig="true" Hash="cS9kJ+Xya+griYt0ahhKYA" />
-          <AcmeProjectActionInfo Action="File" Source="config/conf_spi_nor_flash.h" IsConfig="true" Hash="EgsbEgwxkXEC4lfXMOuUmA" />
+          <AcmeProjectActionInfo Action="File" Source="config/conf_spi_nor_flash.h" IsConfig="true" Hash="ON9u/h+nnU/HdicdT2PUsQ" />
         </AcmeActionInfos>
         <NonsecureFilesInfo />
       </AcmeProjectConfig>

@@ -37,8 +37,12 @@ static uint32_t              m_adc_evt_counter;
 static nrf_saadc_value_t adc_buffer[SAMPLES_IN_BUFFER];
 static uint16_t sum;
 static uint16_t avg;
+static uint32_t adc_speed; 
+static bool reinit_timer = false; 
 
 static battery_struct* battery; 
+
+
 
 
 void timer_handler(nrf_timer_event_t event_type, void * p_context)
@@ -71,7 +75,7 @@ void saadc_sampling_event_init(void)
     APP_ERROR_CHECK(err_code);
 
     /* setup m_timer for compare event every 2000ms */
-    uint32_t ticks = nrf_drv_timer_ms_to_ticks(&m_timer, 350);
+    uint32_t ticks = nrf_drv_timer_ms_to_ticks(&m_timer, adc_speed);
     nrf_drv_timer_extended_compare(&m_timer,
                                    NRF_TIMER_CC_CHANNEL0,
                                    ticks,
@@ -81,7 +85,7 @@ void saadc_sampling_event_init(void)
 
     uint32_t timer_compare_event_addr = nrf_drv_timer_compare_event_address_get(&m_timer,
                                                                                 NRF_TIMER_CC_CHANNEL0);
-    uint32_t saadc_sample_task_addr   = nrf_drv_saadc_sample_task_get();
+    uint32_t saadc_sample_task_addr = nrf_drv_saadc_sample_task_get();
 
     /* setup ppi channel so that timer compare event is triggering sample task in SAADC */
     err_code = nrf_drv_ppi_channel_alloc(&m_ppi_channel);
@@ -118,6 +122,20 @@ void saadc_callback(nrf_drv_saadc_evt_t const * p_event)
 
         adc_average();
         battery_draw_icon();
+
+        if(!reinit_timer) //reinit timer once 
+        {
+            adc_speed = 500; 
+            nrf_drv_timer_disable(&m_timer);
+            uint32_t ticks = nrf_drv_timer_ms_to_ticks(&m_timer, adc_speed);
+            nrf_drv_timer_extended_compare(&m_timer,
+                                           NRF_TIMER_CC_CHANNEL0,
+                                           ticks,
+                                           NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK,
+                                           false);
+            nrf_drv_timer_enable(&m_timer);
+            reinit_timer = true; 
+        }
     }
 }
 
@@ -154,19 +172,19 @@ void battery_draw_icon(void) //charge bar is 5x9
 
     if(battery_val >= HALF_CHARGE)
     {   
-        if(battery_val <= FIVE_BAR_MAX)
+        if(battery_val <= FIVE_BAR_MAX_VOLT)
         {
             bars = 5; 
         }
-        else if(battery_val <= SIX_BAR_MAX)
+        else if(battery_val <= SIX_BAR_MAX_VOLT)
         {
             bars = 6; 
         }
-        else if(battery_val <= SEVEN_BAR_MAX)
+        else if(battery_val <= SEVEN_BAR_MAX_VOLT)
         {
             bars = 7; 
         }
-        else if(battery_val <= EIGHT_BAR_MAX)
+        else if(battery_val <= EIGHT_BAR_MAX_VOLT)
         {
             bars = 8; 
         }
@@ -180,7 +198,7 @@ void battery_draw_icon(void) //charge bar is 5x9
     }
     else if(battery_val < HALF_CHARGE && battery_val >= LOW_CHARGE)
     {   
-        if(battery_val <= THREE_BAR_MAX)
+        if(battery_val <= THREE_BAR_MAX_VOLT)
         {
             bars = 3; 
         }
@@ -194,7 +212,7 @@ void battery_draw_icon(void) //charge bar is 5x9
     }
     else if(battery_val < LOW_CHARGE && battery_val >= NO_CHARGE)
     {   
-        if(battery_val <= ONE_BAR_MAX)
+        if(battery_val <= ONE_BAR_MAX_VOLT)
         {
             bars = 1; 
         }
@@ -268,16 +286,23 @@ void battery_draw_outline(uint16_t color)
 void adc_init(void)
 {
     saadc_init();
+    adc_speed = 1; // quick sample on boot 
     saadc_sampling_event_init();
-    saadc_sampling_event_enable();
+    saadc_sampling_event_enable();    
 }
 
 void battery_init(void)
 {
     battery = malloc(sizeof(battery_struct)); 
     
-    //TODO add condition, if usb is not connected
-    battery->charging_state = false; 
+    if(nrf_gpio_pin_read(BB_EN)) // read bb_en pin to determine if usb is connected on boot 
+    {
+        battery_set_charging_state(false);
+    }
+    else
+    {
+         battery_set_charging_state(true); 
+    }
 
     adc_init();
 }
