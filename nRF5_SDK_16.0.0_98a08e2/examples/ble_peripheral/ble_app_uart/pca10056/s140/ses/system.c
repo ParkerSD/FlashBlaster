@@ -631,7 +631,7 @@ void chip_name_fetch(int8_t selectedItem)
 
 void file_name_fetch(int8_t selectedItem)
 {
-    for(int x = 0; x < MAX_FILES; x++) //MAX_CHIPS = 8 
+    for(int x = 0; x < MAX_FILES; x++) //MAX_FILES = 8 
     {
         L_ items[x] = file_list_index(x, chip_list_index(selectedItem, project_list_index(selectedProject)))->file_name;
     }

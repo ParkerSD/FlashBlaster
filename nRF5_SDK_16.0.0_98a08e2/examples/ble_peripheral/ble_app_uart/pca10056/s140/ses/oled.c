@@ -54,13 +54,6 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(ATMEL_RESET); 
     nrf_gpio_pin_set(ATMEL_RESET);
 
-    nrf_gpio_cfg_output(19); // QSPI
-    nrf_gpio_cfg_output(17); 
-    nrf_gpio_cfg_output(32); 
-    nrf_gpio_cfg_output(21); 
-    nrf_gpio_cfg_output(22);
-    nrf_gpio_cfg_output(23);
-
     //nrf_gpio_cfg_output(LED_BLUE); 
     nrf_gpio_cfg_output(LED_RED); 
     nrf_gpio_cfg_output(LED_ORANGE);

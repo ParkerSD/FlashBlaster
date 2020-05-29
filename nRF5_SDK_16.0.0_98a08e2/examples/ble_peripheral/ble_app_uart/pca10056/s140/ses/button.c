@@ -31,6 +31,8 @@
 #include "app_timer.h" 
 #include "app_error.h" 
 #include "system.h" 
+#include "flash.h" 
+#include "twi.h"
 
 APP_TIMER_DEF(long_press_timer_id);
 
@@ -143,7 +145,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 }
                 else
                 {
-                    screenStack--; 
+                    screenStack--; //do not progress 
                     rerender = false;
                 }
                 break;
@@ -167,7 +169,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                     }
                     else
                     {
-                        screenStack--; 
+                        screenStack--; //do not progress 
                     }
                 }
                 break;
@@ -180,21 +182,51 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 }
                 else
                 {
-                    screenStack--; 
+                    screenStack--; //do not progress 
                 }
                 break;
             case exe_screen:
                 if(file_list_index(selectedItem, chip_selected) != NULL)
                 {
-                    // execute programming 
-                    push_file_to_recents(file_list_index(selectedItem, chip_selected)); //add file to recents, push last off stack
+                                // execute programming //
+                    // 1.) use selectedItem name to seek for file header in flash
+                    // 2.) deinit qspi and its pins 
+                    // 3.) send file data address and data length 
+                    // 4.) enter into progress bar write mode 
+                    // 5.) receive progress updates from atmel over i2c until success or fail 
+                    // 6.) reinit qspi 
+
+                    file_struct* target_file = file_list_index(selectedItem, chip_selected);
+                    uint32_t file_data_addr = target_file->file_data;
+                    uint32_t file_data_len = target_file->data_length; 
+
+                    qspi_deinit();
+                    
+                    uint8_t data_addr_buff[4]; //TODO Extract these operations to function 
+                    data_addr_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+                    data_addr_buff[1] = (file_data_addr >> 16) & 0xFF;
+                    data_addr_buff[2] = (file_data_addr >> 8) & 0xFF;
+                    data_addr_buff[3] = file_data_addr & 0xFF;
+                    twi_cmd_tx(addr_cmd, data_addr_buff, 4);
+
+                    uint8_t data_len_buff[4];
+                    data_len_buff[0] = (file_data_len >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+                    data_len_buff[1] = (file_data_len >> 16) & 0xFF;
+                    data_len_buff[2] = (file_data_len >> 8) & 0xFF;
+                    data_len_buff[3] = file_data_len & 0xFF;
+                    twi_cmd_tx(len_cmd, data_len_buff, 4);
+
+                    //enter progress bar screen 
+                    
+                    //qspi_init();
+                    push_file_to_recents(target_file); //add file to recents, push last off stack
                     screenStack = 0;
                     rerender = true;
                     list_clear();
                 }
                 else
                 {
-                    screenStack--; 
+                    screenStack--; //do not progress 
                 }
                 break;
             default: 

@@ -87,9 +87,8 @@
 #include "nrfx_wdt.h"
 #include "nrf_wdt.h"
 #include "nrf_drv_wdt.h"
-#include "nrf_drv_twi.h"
-#include "nrfx_twi.h"
-#include "nrfx_twim.h"
+#include "twi.h"
+
 
 
 #if defined (UART_PRESENT)
@@ -110,12 +109,6 @@
 #else 
 #define SCHED_QUEUE_SIZE                10                                  // Maximum number of events in the scheduler queue.  
 #endif 
-
-
-#define SCL_PIN 16
-#define SDA_PIN 14
-#define TWI_INSTANCE_ID 1 
-static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 
 
 static nrf_drv_wdt_channel_id wdt_channel_id; 
@@ -196,37 +189,7 @@ void watchdog_init(void)
 */
 }
 
-void twi_init(void)
-{
-    ret_code_t err_code;
 
-    const nrf_drv_twi_config_t twi_config = {
-       .scl                = SCL_PIN,
-       .sda                = SDA_PIN,
-       .frequency          = NRF_DRV_TWI_FREQ_400K,
-       .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
-       .clear_bus_init     = false
-    };
-
-    err_code = nrf_drv_twi_init(&m_twi, &twi_config, NULL, NULL);
-    APP_ERROR_CHECK(err_code);
-
-    nrf_drv_twi_enable(&m_twi);
-}
-
-void twi_tx(void) //uint8_t* data, uint16_t length
-{
-    /*
-    nrf_drv_twi_tx(nrf_drv_twi_t const * p_instance,
-                          uint8_t               address,
-                          uint8_t const *       p_data,
-                          uint8_t               length,
-                          bool                  no_stop);
-    */
-  
-     char test_data[] = {'t','h','i','s',' ','i','s',' ','a',' ','t','e','s','t'};
-     nrf_drv_twi_tx(&m_twi, 0x10, test_data, 14, false);   
-}
 
 void flashblaster_init(void)
 {
@@ -257,7 +220,7 @@ void flashblaster_init(void)
     button_init();
     
     twi_init();
-    spi_init(); //SPI in blocking mode(no handler inited), may cause issues with BLE later
+    spi_init(); //SPI in blocking mode(no handler inited), may cause issues later
     qspi_init();
     
     oled_init(); 
@@ -294,17 +257,11 @@ int main(void)
     {
         hibernate(); 
     }
-
-    //TODO: should be able to render strings based on presence of data in flash, should not be initing entire filesystem in RAM
-    // only store one file hierarchy in RAM, render and pop fucntions, set_current_project(), set_current_chip() , set_current_file()
-    // file directory section in flash which is read at boot and can keep tracka of all current projects and their dependencies
     
     // SWD bitbang protocol ref: black magic probe github, and silicon labs swd app note
     // either APP-side or Device-side controls
     // BT5 file transfer from phone app, DFU firmware updates 
     // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
-
-    // Enter main loop.
 
     for (;;)
     {   
@@ -312,7 +269,3 @@ int main(void)
     }
 }
 
-
-/**
- * @}
- */

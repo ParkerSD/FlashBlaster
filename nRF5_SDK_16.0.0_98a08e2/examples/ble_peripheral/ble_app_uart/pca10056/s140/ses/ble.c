@@ -180,7 +180,7 @@ char* fetch_name(uint16_t length)
         *(name + i) = nus_data_global[parser_trace + i];  
     }
 
-    memset((name + length), NULL, (MAX_STRING_SIZE - length)); 
+    memset((name + length), NULL, (MAX_STRING_SIZE - length));  //set empty chars to null 
     string_length = length; 
     parser_trace += length;
 
@@ -310,11 +310,11 @@ uint32_t add_file(void)
 void add_all(void)
 {
     char* file_name;
-    uint8_t file_name_length; 
+    uint8_t file_name_length; // not used 
     char* chip_name;
-    uint8_t chip_name_length;
+    uint8_t chip_name_length; // not used 
     char* project_name;
-    uint8_t project_name_length;
+    uint8_t project_name_length; // not used 
      
     file_name = ble_parse_name();
     file_name_length = string_length; 
@@ -331,9 +331,6 @@ void add_all(void)
     uint32_t chip_addr = flash_add_chip(project_addr, chip_name, chip_id, true);
     file_header_write(chip_addr, file_name, NULL, file_data_length, true);
     
-    
-
-
 }
 
 
@@ -401,6 +398,9 @@ void ble_cmd_parser(void)
             flash_init(); //reset flash
             hibernate(); // reset device
         }
+
+        //else if production mode cmd
+
         //TODO free names after writing to flash
 
         parser_trace = 0; //reset for next command

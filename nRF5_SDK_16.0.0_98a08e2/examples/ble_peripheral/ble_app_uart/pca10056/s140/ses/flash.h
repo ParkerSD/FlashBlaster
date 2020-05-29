@@ -13,6 +13,8 @@ void flash_read(uint8_t* buffer_tx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
 
 void qspi_init(void);
 
+void qspi_deinit(void);
+
 uint32_t seek_to_project(char* project_name, uint8_t name_length);
 
 uint32_t seek_to_chip(uint32_t project_addr, char* chip_name, uint8_t name_length);

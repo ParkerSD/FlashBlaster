@@ -73,6 +73,7 @@
 "Output/ble_app_uart_pca10056_s140 Release/Obj/flash.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/battery.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/ble.o"
+"Output/ble_app_uart_pca10056_s140 Release/Obj/twi.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/SEGGER_RTT.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/SEGGER_RTT_Syscalls_SES.o"
 "Output/ble_app_uart_pca10056_s140 Release/Obj/SEGGER_RTT_printf.o"

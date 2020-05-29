@@ -2,16 +2,16 @@ format_version: '2'
 name: My Project
 versions:
   api: '1.0'
-  backend: 1.7.345
+  backend: 1.7.303
   commit: 1e07622763d149970fd8808a8f12ff3b1e84e0d7
   content: unknown
   content_pack_name: unknown
   format: '2'
-  frontend: 1.7.345
+  frontend: 1.7.303
   packs_version_avr8: 1.0.1410
   packs_version_qtouch: unknown
   packs_version_sam: 1.0.1554
-  version_backend: 1.7.345
+  version_backend: 1.7.303
   version_frontend: ''
 board:
   identifier: CustomBoard
@@ -22,7 +22,7 @@ middlewares:
   SPI_NOR_FLASH_0:
     user_label: SPI_NOR_FLASH_0
     configuration:
-      conf_quad_mode: Disable
+      conf_quad_mode: Enable
     definition: Atmel:Generic_SPI_NOR_Flash:0.0.1::S25FL116K
     functionality: SPI_NOR_Flash
     api: Flash:SPI-NOR-Flash:S25FL116K
@@ -1051,49 +1051,7 @@ drivers:
       qspi_cpol: The inactive state value of SPCK is logic level zero.
       qspi_dlybs: 0
       qspi_dlycs: 0
-    optional_signals:
-    - identifier: QUAD_SPI_0:CS
-      pad: PB11
-      mode: Enabled
-      configuration: null
-      definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::optional_signal_definition::QSPI.CS
-      name: QSPI/CS
-      label: CS
-    - identifier: QUAD_SPI_0:DATA/0
-      pad: PA08
-      mode: Enabled
-      configuration: null
-      definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::optional_signal_definition::QSPI.DATA.0
-      name: QSPI/DATA/0
-      label: DATA/0
-    - identifier: QUAD_SPI_0:DATA/1
-      pad: PA09
-      mode: Enabled
-      configuration: null
-      definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::optional_signal_definition::QSPI.DATA.1
-      name: QSPI/DATA/1
-      label: DATA/1
-    - identifier: QUAD_SPI_0:DATA/2
-      pad: PA10
-      mode: Enabled
-      configuration: null
-      definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::optional_signal_definition::QSPI.DATA.2
-      name: QSPI/DATA/2
-      label: DATA/2
-    - identifier: QUAD_SPI_0:DATA/3
-      pad: PA11
-      mode: Enabled
-      configuration: null
-      definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::optional_signal_definition::QSPI.DATA.3
-      name: QSPI/DATA/3
-      label: DATA/3
-    - identifier: QUAD_SPI_0:SCK
-      pad: PB10
-      mode: Enabled
-      configuration: null
-      definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::optional_signal_definition::QSPI.SCK
-      name: QSPI/SCK
-      label: SCK
+    optional_signals: []
     variant: null
     clocks:
       domain_group: null
@@ -1165,7 +1123,7 @@ drivers:
           rtc_clk_selection: RTC source
   I2C_0:
     user_label: I2C_0
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::SERCOM3::driver_config_definition::I2C.Slave.Standard~2FFast-mode::HAL:Driver:I2C.Slave.Sync
+    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::SERCOM0::driver_config_definition::I2C.Slave.Standard~2FFast-mode::HAL:Driver:I2C.Slave.Sync
     functionality: I2C
     api: HAL:Driver:I2C_Slave_Sync
     configuration:
@@ -1184,11 +1142,11 @@ drivers:
     variant:
       specification: SDA=0, SCL=1
       required_signals:
-      - name: SERCOM3/PAD/0
-        pad: PA17
+      - name: SERCOM0/PAD/0
+        pad: PA08
         label: SDA
-      - name: SERCOM3/PAD/1
-        pad: PA16
+      - name: SERCOM0/PAD/1
+        pad: PA09
         label: SCL
     clocks:
       domain_group:
@@ -1239,49 +1197,13 @@ pads:
   PA08:
     name: PA08
     definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PA08
-    mode: Advanced
+    mode: I2C
     user_label: PA08
     configuration: null
   PA09:
     name: PA09
     definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PA09
-    mode: Advanced
+    mode: I2C
     user_label: PA09
-    configuration: null
-  PA10:
-    name: PA10
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PA10
-    mode: Advanced
-    user_label: PA10
-    configuration: null
-  PA11:
-    name: PA11
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PA11
-    mode: Advanced
-    user_label: PA11
-    configuration: null
-  PB10:
-    name: PB10
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PB10
-    mode: Digital input
-    user_label: PB10
-    configuration: null
-  PB11:
-    name: PB11
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PB11
-    mode: Digital input
-    user_label: PB11
-    configuration: null
-  PA16:
-    name: PA16
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PA16
-    mode: I2C
-    user_label: PA16
-    configuration: null
-  PA17:
-    name: PA17
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51G19A-MF::pad::PA17
-    mode: I2C
-    user_label: PA17
     configuration: null
 toolchain_options: []

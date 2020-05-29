@@ -83,6 +83,13 @@ void qspi_init(void)
 {
     uint32_t err_code;
 
+    nrf_gpio_cfg_output(19); // QSPI Pins
+    nrf_gpio_cfg_output(17); 
+    nrf_gpio_cfg_output(32); 
+    nrf_gpio_cfg_output(21); 
+    nrf_gpio_cfg_output(22);
+    nrf_gpio_cfg_output(23);
+
     nrf_drv_qspi_config_t config = NRF_DRV_QSPI_DEFAULT_CONFIG;
 
     err_code = nrf_drv_qspi_init(&config, qspi_handler, NULL); // used qspi_handler for arg 2
@@ -116,6 +123,20 @@ void qspi_init(void)
        nrf_gpio_pin_set(LED_ORANGE); //"Data Consistent"
     }
 #endif
+}
+
+void qspi_deinit(void)
+{
+
+    nrf_drv_qspi_uninit();
+
+    nrf_gpio_cfg_default(19); // QSPI Pins
+    nrf_gpio_cfg_default(17); 
+    nrf_gpio_cfg_default(32); 
+    nrf_gpio_cfg_default(21); 
+    nrf_gpio_cfg_default(22);
+    nrf_gpio_cfg_default(23);
+
 }
 
 

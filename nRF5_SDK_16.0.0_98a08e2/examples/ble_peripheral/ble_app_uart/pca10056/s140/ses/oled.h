@@ -52,8 +52,6 @@ typedef enum
 
 void gpio_init(void);
 
-void twi_init(void);
-
 void oled_init(void); 
 
 void oled_draw_target(uint16_t start_radius, uint16_t start_color);
