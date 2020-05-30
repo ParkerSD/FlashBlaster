@@ -6,8 +6,7 @@
 #define ATMEL_ADDRESS 0x10
 
 // TWI CMDS //
-#define addr_cmd 0x01 
-#define len_cmd 0x02 
+#define target_cmd 0xBB
 
 void twi_init(void);
 

@@ -202,19 +202,18 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
 
                     qspi_deinit();
                     
-                    uint8_t data_addr_buff[4]; //TODO Extract these operations to function 
-                    data_addr_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
-                    data_addr_buff[1] = (file_data_addr >> 16) & 0xFF;
-                    data_addr_buff[2] = (file_data_addr >> 8) & 0xFF;
-                    data_addr_buff[3] = file_data_addr & 0xFF;
-                    twi_cmd_tx(addr_cmd, data_addr_buff, 4);
+                    uint8_t data_buff[8];                               //TODO Extract these operations to function 
+                    data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
+                    data_buff[1] = (file_data_addr >> 16) & 0xFF;
+                    data_buff[2] = (file_data_addr >> 8) & 0xFF;
+                    data_buff[3] = file_data_addr & 0xFF;
+                    data_buff[4] = (file_data_len >> 24) & 0xFF; //bit shift 32bit length into 8bit array 
+                    data_buff[5] = (file_data_len >> 16) & 0xFF;
+                    data_buff[6] = (file_data_len >> 8) & 0xFF;
+                    data_buff[7] = file_data_len & 0xFF;
+                    twi_cmd_tx(target_cmd, data_buff, 8);
 
-                    uint8_t data_len_buff[4];
-                    data_len_buff[0] = (file_data_len >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
-                    data_len_buff[1] = (file_data_len >> 16) & 0xFF;
-                    data_len_buff[2] = (file_data_len >> 8) & 0xFF;
-                    data_len_buff[3] = file_data_len & 0xFF;
-                    twi_cmd_tx(len_cmd, data_len_buff, 4);
+                   
 
                     //enter progress bar screen 
                     
