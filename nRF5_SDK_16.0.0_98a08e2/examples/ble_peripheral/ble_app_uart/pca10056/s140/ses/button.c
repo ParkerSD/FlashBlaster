@@ -199,25 +199,29 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                     file_struct* target_file = file_list_index(selectedItem, chip_selected);
                     uint32_t file_data_addr = target_file->file_data;
                     uint32_t file_data_len = target_file->data_length; 
-
-                    qspi_deinit();
+                     
+                    //if(target_file != NULL && target_file->file_name != "Empty") //begin programming process
+                    //{
+                        qspi_deinit();
                     
-                    uint8_t data_buff[8];                               //TODO Extract these operations to function 
-                    data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
-                    data_buff[1] = (file_data_addr >> 16) & 0xFF;
-                    data_buff[2] = (file_data_addr >> 8) & 0xFF;
-                    data_buff[3] = file_data_addr & 0xFF;
-                    data_buff[4] = (file_data_len >> 24) & 0xFF; //bit shift 32bit length into 8bit array 
-                    data_buff[5] = (file_data_len >> 16) & 0xFF;
-                    data_buff[6] = (file_data_len >> 8) & 0xFF;
-                    data_buff[7] = file_data_len & 0xFF;
-                    twi_cmd_tx(target_cmd, data_buff, 8);
+                        uint8_t data_buff[8];                               //TODO Extract these operations to function 
+                        data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
+                        data_buff[1] = (file_data_addr >> 16) & 0xFF;
+                        data_buff[2] = (file_data_addr >> 8) & 0xFF;
+                        data_buff[3] = file_data_addr & 0xFF;
+                        data_buff[4] = (file_data_len >> 24) & 0xFF; //bit shift 32bit length into 8bit array 
+                        data_buff[5] = (file_data_len >> 16) & 0xFF;
+                        data_buff[6] = (file_data_len >> 8) & 0xFF;
+                        data_buff[7] = file_data_len & 0xFF;
 
-                   
+                        //twi_cmd_tx(target_cmd, data_buff, 8); //TODO: change pins for new hardware
 
-                    //enter progress bar screen 
+                        oled_draw_progress_bar(); //enter progress bar screen 
                     
-                    //qspi_init();
+                        //qspi_init(); //reinit and deinit atmel qspi
+
+                    //}
+
                     push_file_to_recents(target_file); //add file to recents, push last off stack
                     screenStack = 0;
                     rerender = true;

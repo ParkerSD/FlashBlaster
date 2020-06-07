@@ -159,3 +159,25 @@ void draw_text(int y, char* text) // 0 < y < 8
 //    oledWriteString(1, y, text, FONT_SMALL);
 }
 
+void oled_draw_progress_bar(void)
+{
+    uint16_t width = 124;
+    uint16_t height = 15;
+    uint16_t y_point = 63;
+    uint16_t x_point = 2;
+
+    clear_screen();
+    SSD1351_set_cursor(28,50);
+    SSD1351_printf(COLOR_WHITE, small_font, "Flashing...");
+    SSD1351_draw_rect(x_point, y_point, width, height, COLOR_WHITE);
+    SSD1351_update();
+    
+    //rx programming status (uint8_t) from atmel via twi
+    for(int i = 0; i < 124; i++)
+    {
+        SSD1351_draw_line(i + x_point + 1, y_point + 1, i + x_point + 1, y_point + height - 1, COLOR_GREEN);
+        SSD1351_update();
+    }
+
+    clear_screen();
+}

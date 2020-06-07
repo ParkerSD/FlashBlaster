@@ -62,8 +62,9 @@ void oled_draw_logo(void);
 
 void clear_leds(void);
 
-
 void draw_text(int y, char* text); //0 < y < 7 
+
+void oled_draw_progress_bar(void);
 
 
 
