@@ -470,9 +470,9 @@ void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, 
     flash_write(curr_file_addr_buff, file_addr_chip, WORD_SIZE); //write file address in chip
 
   //NOTE FOR TEST 
-//                uint8_t data_buff[500];
-//                flash_read(data_buff, chip_addr, 500);
-//                m_finished = true;
+//  uint8_t data_buff[500];
+//  flash_read(data_buff, chip_addr, 500);
+//  m_finished = true;
                 
                 
  

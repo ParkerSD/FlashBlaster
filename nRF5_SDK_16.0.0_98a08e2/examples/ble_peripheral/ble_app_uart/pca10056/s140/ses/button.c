@@ -191,7 +191,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                                 // execute programming //
                     // 1.) use selectedItem name to seek for file header in flash
                     // 2.) deinit qspi and its pins 
-                    // 3.) send file data address and data length 
+                    // 3.) send file data address and data length, target flash address, and chip type
                     // 4.) enter into progress bar write mode 
                     // 5.) receive progress updates from atmel over i2c until success or fail 
                     // 6.) reinit qspi 
@@ -214,7 +214,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                         data_buff[6] = (file_data_len >> 8) & 0xFF;
                         data_buff[7] = file_data_len & 0xFF;
 
-                        //twi_cmd_tx(target_cmd, data_buff, 8); //TODO: change pins for new hardware
+                        twi_cmd_tx(target_cmd, data_buff, 8); //TODO: change pins for new hardware
 
                         oled_draw_progress_bar(); //enter progress bar screen 
                     
@@ -283,10 +283,11 @@ void long_press_timeout_handler(void* p_context)
     else if(enterFlag && !upFlag)// enter long press
     {
         clear_leds(); // for test
-        nrf_gpio_pin_set(LED_ORANGE);
+       // nrf_gpio_pin_set(LED_ORANGE);
     }
     else if(enterFlag && upFlag) //if dual press
     {
+        atmel_reset();
         hibernate();
     }
     else if(downFlag) //down long press

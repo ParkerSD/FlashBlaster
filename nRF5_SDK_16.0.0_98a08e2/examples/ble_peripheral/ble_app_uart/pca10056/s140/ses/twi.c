@@ -6,6 +6,9 @@
 #include "nrfx_twi.h"
 #include "nrfx_twim.h"
 #include "twi.h"
+#include "nrf_gpio.h"
+#include "nrf_delay.h"
+#include "oled.h"
 
 
 
@@ -40,10 +43,10 @@ void twi_cmd_tx(uint8_t cmd, uint8_t* data, uint8_t data_length)
                           uint8_t               length,
                           bool                  no_stop);
     */
-    uint8_t start_byte = 0xCC;
+
     uint8_t packet_len = 2 + data_length;
     uint8_t packet_buff[packet_len];
-    packet_buff[0] = 0xCC;
+    packet_buff[0] = start_byte;
     packet_buff[1] = cmd;
 
     for(int i = 0; i < data_length; i++)
@@ -52,4 +55,24 @@ void twi_cmd_tx(uint8_t cmd, uint8_t* data, uint8_t data_length)
     }
 
     nrf_drv_twi_tx(&m_twi, ATMEL_ADDRESS, packet_buff, packet_len, false);
+}
+
+void twi_cmd_rx(uint8_t* rx_buffer, uint8_t length)
+{
+    /*
+    nrf_drv_twi_rx(nrf_drv_twi_t const * p_instance,
+                              uint8_t               address,
+                              uint8_t *             p_data,
+                              uint8_t               length)
+    {
+    */
+    nrf_drv_twi_rx(&m_twi, ATMEL_ADDRESS, rx_buffer, length);
+
+}
+
+void atmel_reset(void)
+{
+    nrf_gpio_pin_clear(ATMEL_RESET_PIN);
+    nrf_delay_ms(5);
+    nrf_gpio_pin_set(ATMEL_RESET_PIN);
 }

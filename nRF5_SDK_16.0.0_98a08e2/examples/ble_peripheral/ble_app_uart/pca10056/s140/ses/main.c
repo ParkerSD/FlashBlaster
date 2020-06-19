@@ -204,7 +204,7 @@ void flashblaster_init(void)
 
     #if FIRST_BOOT == false // defined in system.h
     watchdog_init();
-    #endif 
+    #endif  
 
     ble_stack_init();
     scheduler_init(); 
@@ -232,6 +232,7 @@ void flashblaster_init(void)
 }
 
 
+
 void hibernate(void)
 {
     //nrf_delay_ms(500);
@@ -251,6 +252,7 @@ int main(void)
     nrf_power_dcdcen_set(true);
     if(!nrf_gpio_pin_read(BTN_ENTER)) // && !nrf_gpio_pin_read(BTN_UP)
     {
+        atmel_reset();
         flashblaster_init();
     }
     else

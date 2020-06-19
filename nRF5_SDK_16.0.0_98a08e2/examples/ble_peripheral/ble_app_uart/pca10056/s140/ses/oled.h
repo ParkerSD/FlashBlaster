@@ -18,7 +18,7 @@
 #define FET_PIN 33 //P1.01
 
 //atmel pins
-#define ATMEL_RESET 30 
+#define ATMEL_RESET_PIN 30 
 
 //#define LED_BLUE 27 
 #define LED_RED 42 //P1.10
@@ -65,6 +65,8 @@ void clear_leds(void);
 void draw_text(int y, char* text); //0 < y < 7 
 
 void oled_draw_progress_bar(void);
+
+void draw_err_no_targ(void);
 
 
 

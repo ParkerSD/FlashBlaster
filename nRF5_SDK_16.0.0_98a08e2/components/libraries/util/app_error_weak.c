@@ -51,8 +51,8 @@
 
 
 #define DEBUG // I defined this here
-#define LED_RED 26 //P1.01
-#define LED_ORANGE 30 //P1.01
+#define LED_RED 42 //P1.10
+#define LED_ORANGE 43 //P1.11
 
 /*lint -save -e14 */
 /**

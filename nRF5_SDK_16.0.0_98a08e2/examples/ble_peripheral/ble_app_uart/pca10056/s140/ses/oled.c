@@ -25,6 +25,7 @@
 #include "fonts.h" 
 #include "button.h" 
 #include "system.h"
+#include "twi.h"
 
 #define SSD1306Addr 0b0111100
 
@@ -51,8 +52,8 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(iRST);
 
     //atmel
-    nrf_gpio_cfg_output(ATMEL_RESET); 
-    nrf_gpio_pin_set(ATMEL_RESET);
+    nrf_gpio_cfg_output(ATMEL_RESET_PIN);
+    nrf_gpio_pin_set(ATMEL_RESET_PIN);
 
     //nrf_gpio_cfg_output(LED_BLUE); 
     nrf_gpio_cfg_output(LED_RED); 
@@ -159,6 +160,18 @@ void draw_text(int y, char* text) // 0 < y < 8
 //    oledWriteString(1, y, text, FONT_SMALL);
 }
 
+void draw_err_no_targ(void)
+{
+    clear_screen();
+    SSD1351_set_cursor(33,50);
+    SSD1351_printf(COLOR_RED, med_font, "ERROR:");//draw error
+    SSD1351_set_cursor(5,70);
+    SSD1351_printf(COLOR_WHITE, small_font, "Target Not Found");
+    SSD1351_update();
+    nrf_delay_ms(2000);
+}
+
+
 void oled_draw_progress_bar(void)
 {
     uint16_t width = 124;
@@ -172,12 +185,43 @@ void oled_draw_progress_bar(void)
     SSD1351_draw_rect(x_point, y_point, width, height, COLOR_WHITE);
     SSD1351_update();
     
-    //rx programming status (uint8_t) from atmel via twi
+    //read programming status / error status from atmel via twi
+    uint8_t prog_status;
+    uint8_t rx_buf[3];
+    while(prog_status != prog_complete && prog_status != prog_error) // 124 = prog_complete
+    {
+        twi_cmd_rx(rx_buf, 3);
+        if(rx_buf[0] == start_byte)
+        {
+            if(rx_buf[1] == error_cmd)
+            {
+                if(rx_buf[2] == error_no_target)
+                {
+                    draw_err_no_targ();
+                }
+
+                atmel_reset(); 
+                prog_status = prog_error; // exit loop
+
+            }
+            else if(rx_buf[1] == progress_cmd)
+            {
+                prog_status = rx_buf[2]; //logic broken unless every num from 1-124 is sent
+                SSD1351_draw_line(prog_status + x_point + 1, y_point + 1, prog_status + x_point + 1, y_point + height - 1, COLOR_GREEN);
+                SSD1351_update();
+
+                // prog_status = prog_complete // exit loop
+            }
+        }
+    }
+    
+    /*
     for(int i = 0; i < 124; i++)
     {
         SSD1351_draw_line(i + x_point + 1, y_point + 1, i + x_point + 1, y_point + height - 1, COLOR_GREEN);
         SSD1351_update();
     }
+    */
 
     clear_screen();
 }

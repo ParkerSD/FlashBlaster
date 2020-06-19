@@ -545,7 +545,7 @@ void system_init(void) // create global system struct and read directory info fr
 {   
     system_singleton = system_new();
     #if FIRST_BOOT
-    flash_init(); //NOTE: watchdog will timeout during flash erase
+    flash_init();  //NOTE: watchdog will timeout during flash erase
     #endif
     projects_sync(); 
 }
