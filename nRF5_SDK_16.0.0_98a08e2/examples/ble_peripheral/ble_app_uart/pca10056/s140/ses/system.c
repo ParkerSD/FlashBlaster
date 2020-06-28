@@ -52,7 +52,7 @@ uint8_t selectedProject;
 
 // Hardcoded Values
 char systemFirmware[] = {"FlashBlaster V0"}; 
-char splashHeader[] = {"Select:"}; 
+char splashHeader[] = {"TEST:"}; 
 char projectHeader[] = {"Select Project:"}; 
 char* projectNames[10] = {"Quake", "Jeep", "Nikola", "Tesla", "SpaceX", "Rockford Internal", "Subaru", "Nissan", "Ducati", "Toyota"}; // TODO: chop and hardcode as appropriate structs 
 
@@ -280,7 +280,7 @@ file_struct* file_new(char* data, chip_struct* chip_curr)
     fileY->chip_parent = chip_curr;
     fileY->file_name = string_fetch(data);
     fileY->file_next = NULL;
-    fileY->time_stamp = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);
+    fileY->start_addr = *(data+16) << 24 | *(data+17) << 16 | *(data+18) << 8 | *(data+19);
     fileY->data_length = *(data+20) << 24 | *(data+21) << 16 | *(data+22) << 8 | *(data+23);
     fileY->file_data = *(data+24) << 24 | *(data+25) << 16 | *(data+26) << 8 | *(data+27);
 
@@ -307,7 +307,7 @@ file_struct* file_create(void)
     fileX->file_next = NULL;
     fileX->file_data = NULL;
     fileX->chip_parent = NULL;
-    fileX->time_stamp = NULL;
+    fileX->start_addr = NULL;
     fileX->data_length = NULL;
  
     return fileX;
@@ -712,14 +712,16 @@ void flash_init(void)
 
    // init flash for test below 
     flash_erase(0, NRF_QSPI_ERASE_LEN_64KB); // erase all 
-    flash_erase(65536, NRF_QSPI_ERASE_LEN_64KB); //0x10000
+    flash_erase(0x10000, NRF_QSPI_ERASE_LEN_64KB); //0x10000
+    flash_erase(0x20000, NRF_QSPI_ERASE_LEN_64KB);
+    //TODO: erase entire flash 32MB
 //    flash_erase(4096, NRF_QSPI_ERASE_LEN_4KB); //0x1000
 //    flash_erase(8192, NRF_QSPI_ERASE_LEN_4KB); //0x2000
 //    flash_erase(12288, NRF_QSPI_ERASE_LEN_4KB); //0x3000
 //    flash_erase(16384, NRF_QSPI_ERASE_LEN_4KB); //0x4000
 //    flash_erase(20480, NRF_QSPI_ERASE_LEN_4KB); //0x5000
 
-                                              //NOTE these addresses are being used but not needed, project is fixed size (52 bytes)
+                                              //NOTE: these addresses are being used but not needed, project is fixed size (52 bytes)
                                             //proj0      //proj1       //proj2
     //DIRECTORY           //project cnt   // 4096  //  // 4148  //   // 4200  //
     //uint8_t directory[32] = {0, 0, 0, 3, 0, 0, 16, 0, 0, 0, 16, 52, 0, 0, 16, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // num projects: 1, first project address: 32

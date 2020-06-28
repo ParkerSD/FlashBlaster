@@ -95,7 +95,7 @@ void oled_draw_logo(void)
     SSD1351_update();
 
     nrf_delay_ms(500);
-
+    
     for(int x = 0; x < 6; x++)
     {
       SSD1351_set_cursor(21,44);
@@ -160,13 +160,27 @@ void draw_text(int y, char* text) // 0 < y < 8
 //    oledWriteString(1, y, text, FONT_SMALL);
 }
 
-void draw_err_no_targ(void)
+void oled_draw_err(uint8_t err_id)
 {
     clear_screen();
     SSD1351_set_cursor(33,50);
     SSD1351_printf(COLOR_RED, med_font, "ERROR:");//draw error
     SSD1351_set_cursor(5,70);
-    SSD1351_printf(COLOR_WHITE, small_font, "Target Not Found");
+    switch(err_id)
+    {
+        case error_no_target:
+            SSD1351_printf(COLOR_WHITE, small_font, "Target Not Found");
+            break;
+        case error_no_dbg_pwr:
+            SSD1351_printf(COLOR_WHITE, small_font, "Failure To Init");
+            break;
+        case error_dbg_locked:
+            SSD1351_printf(COLOR_WHITE, small_font, "Debug Port Locked");
+            break;
+        default:
+            break;
+    }
+
     SSD1351_update();
     nrf_delay_ms(2000);
 }
@@ -195,22 +209,22 @@ void oled_draw_progress_bar(void)
         {
             if(rx_buf[1] == error_cmd)
             {
-                if(rx_buf[2] == error_no_target)
-                {
-                    draw_err_no_targ();
-                }
-
+                oled_draw_err(rx_buf[2]);
                 atmel_reset(); 
                 prog_status = prog_error; // exit loop
-
             }
             else if(rx_buf[1] == progress_cmd)
             {
                 prog_status = rx_buf[2]; //logic broken unless every num from 1-124 is sent
                 SSD1351_draw_line(prog_status + x_point + 1, y_point + 1, prog_status + x_point + 1, y_point + height - 1, COLOR_GREEN);
                 SSD1351_update();
-
-                // prog_status = prog_complete // exit loop
+                
+             
+                if(rx_buf[2] == prog_complete)
+                {
+                    prog_status = prog_complete; // exit loop
+                }
+             
             }
         }
     }

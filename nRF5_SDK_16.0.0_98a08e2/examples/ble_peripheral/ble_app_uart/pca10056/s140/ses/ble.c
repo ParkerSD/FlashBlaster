@@ -55,7 +55,7 @@
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
 
-#define APP_ADV_DURATION                0 //no timeout                            /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
+#define APP_ADV_DURATION                10000//0 = no timeout                            /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
 #define MIN_CONN_INTERVAL               MSEC_TO_UNITS(7.5, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
 #define MAX_CONN_INTERVAL               MSEC_TO_UNITS(7.5, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
@@ -97,13 +97,21 @@ static uint32_t file_data_addr_global;
 static uint32_t chip_addr_global; 
 static bool prog_flag = false; 
 static bool add_all_mode = false; 
-
-//NOTE TEMP 
-uint8_t chip_id[WORD_SIZE] = {0, 0, 0, 0};
+static uint8_t chip_id[WORD_SIZE]; //chip_id decoded from chip name string 
 
 
 
-//***********************************************//
+/*
+static struct chips_supported
+{
+    char NRF52840[8] = {"NRF52840"};
+    char NRF52832[8] = {"NRF52832"};
+    char ATSAMC21[8] = {"ATSAMC21"};
+    char ATSAMC51[8] = {"ATSAMC51"};
+}
+*/
+
+
 
 /**@brief Function for starting advertising.
  */
@@ -229,6 +237,66 @@ uint32_t ble_parse_data_length(void)
     return data_length;
 }
 
+uint32_t ble_parse_start_address(void)
+{
+    char hex_string[9];
+    for(int i=0; i<8; i++)
+    {
+        hex_string[i] = nus_data_global[parser_trace+i];
+    }
+    hex_string[8] = '\0';
+    uint32_t address = strtoul(hex_string, NULL, 16);
+
+    return address; 
+}
+
+bool string_compare(char* name, char* target_name, uint8_t name_length)
+{
+    for(int i = 0; i < name_length; i++)
+    {
+        if(*(name + i) != *(target_name + i))
+        {
+            return false; 
+        }
+    }
+
+    return true; 
+}
+
+void ble_decode_chip_id(char* chip_name, uint8_t chip_name_length) //NOTE: add statements here to increase supported chips and update atmel
+{
+   //1. compare strings
+   //2. assign value to chip_id[3] global 
+
+   if(string_compare(chip_name, "NRF52840", chip_name_length))
+   {
+      chip_id[3] = 0; //NOTE: increment value in LSB until 256 chips reached
+   }
+   else if(string_compare(chip_name, "NRF52832", chip_name_length))
+   {
+      chip_id[3] = 1; 
+   }
+   else if(string_compare(chip_name, "ATSAMD51", chip_name_length))
+   {
+      chip_id[3] = 2; 
+   }
+   else if(string_compare(chip_name, "ATSAMD21", chip_name_length))
+   {
+      chip_id[3] = 3; 
+   }
+   else if(string_compare(chip_name, "STM32F0", chip_name_length))
+   {
+      chip_id[3] = 4; 
+   }
+   else if(string_compare(chip_name, "STM32F1", chip_name_length))
+   {
+      chip_id[3] = 5; 
+   }
+
+   //else 
+   // error - chip not supported
+}
+
 
 void add_project(void)
 {   
@@ -244,14 +312,12 @@ void add_project(void)
 void add_chip(void)
 {
     char *chip_name;
-    uint8_t chip_name_length; // not used 
+    uint8_t chip_name_length; 
     char *project_name;
     uint8_t project_name_length;
-    //uint8_t chip_id[WORD_SIZE] = {0, 0, 0, 0}; //TODO malloc and fetch actual chip ID, currently global 
-
     chip_name = ble_parse_name();
     chip_name_length = string_length;
-    
+    ble_decode_chip_id(chip_name, chip_name_length); //determine chip_id from name
     project_name = ble_parse_name();
     project_name_length = string_length;
 
@@ -276,6 +342,7 @@ uint32_t add_file(void)
     uint8_t chip_name_length;
     char* project_name;
     uint8_t project_name_length;
+    uint32_t start_address;
      
     file_name = ble_parse_name();
     file_name_length = string_length; 
@@ -285,6 +352,7 @@ uint32_t add_file(void)
     project_name_length = string_length;
 
     file_data_length = ble_parse_data_length(); 
+    start_address = ble_parse_start_address();
     
     prog_flag = true; //flags nus handler to start appending incoming data 
     
@@ -302,7 +370,7 @@ uint32_t add_file(void)
         nrf_gpio_pin_set(LED_RED);
     }
 
-    file_header_write(chip_addr, file_name, NULL, file_data_length, false); //write file header and append file addr to chip 
+    file_header_write(chip_addr, file_name, start_address, file_data_length, false); //write file header and append file addr to chip 
     
     return chip_addr; 
 } 
@@ -312,24 +380,27 @@ void add_all(void)
     char* file_name;
     uint8_t file_name_length; // not used 
     char* chip_name;
-    uint8_t chip_name_length; // not used 
+    uint8_t chip_name_length;
     char* project_name;
     uint8_t project_name_length; // not used 
+    uint32_t start_address;
      
     file_name = ble_parse_name();
     file_name_length = string_length; 
     chip_name = ble_parse_name();
     chip_name_length = string_length;
+    ble_decode_chip_id(chip_name, chip_name_length); //determine chip_id from chip_name
     project_name = ble_parse_name();
     project_name_length = string_length;
 
     file_data_length = ble_parse_data_length(); 
+    start_address = ble_parse_start_address();
 
     prog_flag = true; //flags nus handler to start appending incoming data
     
     uint32_t project_addr = flash_add_project(project_name);
     uint32_t chip_addr = flash_add_chip(project_addr, chip_name, chip_id, true);
-    file_header_write(chip_addr, file_name, NULL, file_data_length, true);
+    file_header_write(chip_addr, file_name, start_address, file_data_length, true);
     
 }
 

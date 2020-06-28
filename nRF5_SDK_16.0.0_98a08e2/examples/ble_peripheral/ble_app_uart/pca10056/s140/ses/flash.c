@@ -418,7 +418,7 @@ uint32_t flash_add_chip(uint32_t project_addr, char* chip_name, uint8_t* chip_id
 }
 
 
-void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, uint32_t file_data_length, bool add_all_cmd)
+void file_header_write(uint32_t chip_addr, char* file_name, uint32_t start_address, uint32_t file_data_length, bool add_all_cmd)
 {   
     uint32_t file_count; 
     uint8_t file_count_buff[WORD_SIZE]; 
@@ -429,8 +429,15 @@ void file_header_write(uint32_t chip_addr, char* file_name, uint8_t* timestamp, 
 
     //write file name string in file flash section
     uint32_t curr_file_addr = DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_SECTOR_OFFSET + (FILE_HEADER_SIZE * file_count); // determine address in file section
-    flash_write(file_name, curr_file_addr, MAX_STRING_SIZE);    
-    //flash_write(timestamp, curr_file_addr + MAX_STRING_SIZE, WORD_SIZE); //TODO fetch and write timestamp
+    flash_write(file_name, curr_file_addr, MAX_STRING_SIZE);  
+    
+    //write start address to file header
+    uint8_t start_address_buff[WORD_SIZE];
+    start_address_buff[0] = (start_address >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+    start_address_buff[1] = (start_address >> 16) & 0xFF;
+    start_address_buff[2] = (start_address >> 8) & 0xFF;
+    start_address_buff[3] = start_address & 0xFF;
+    flash_write(start_address_buff, curr_file_addr + MAX_STRING_SIZE, WORD_SIZE); 
     
     //write data length to file
     uint8_t file_data_length_buff[WORD_SIZE];

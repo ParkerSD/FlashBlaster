@@ -33,6 +33,7 @@
 #include "system.h" 
 #include "flash.h" 
 #include "twi.h"
+#include "ble.h"
 
 APP_TIMER_DEF(long_press_timer_id);
 
@@ -199,28 +200,41 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                     file_struct* target_file = file_list_index(selectedItem, chip_selected);
                     uint32_t file_data_addr = target_file->file_data;
                     uint32_t file_data_len = target_file->data_length; 
-                     
-                    //if(target_file != NULL && target_file->file_name != "Empty") //begin programming process
-                    //{
+                    uint32_t file_start_addr = target_file->start_addr; 
+                    uint32_t chip_target_id = target_file->chip_parent->chip_type_id;
+                    
+                    if(!string_compare(target_file->file_name, "Empty", 5)) //begin programming process
+                    {
                         qspi_deinit();
                     
-                        uint8_t data_buff[8];                               //TODO Extract these operations to function 
+                        uint8_t data_buff[16];                        //TODO Extract these operations to function 
                         data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
                         data_buff[1] = (file_data_addr >> 16) & 0xFF;
                         data_buff[2] = (file_data_addr >> 8) & 0xFF;
                         data_buff[3] = file_data_addr & 0xFF;
-                        data_buff[4] = (file_data_len >> 24) & 0xFF; //bit shift 32bit length into 8bit array 
+
+                        data_buff[4] = (file_data_len >> 24) & 0xFF;  
                         data_buff[5] = (file_data_len >> 16) & 0xFF;
                         data_buff[6] = (file_data_len >> 8) & 0xFF;
                         data_buff[7] = file_data_len & 0xFF;
 
-                        twi_cmd_tx(target_cmd, data_buff, 8); //TODO: change pins for new hardware
+                        data_buff[8] = (file_start_addr >> 24) & 0xFF;  
+                        data_buff[9] = (file_start_addr >> 16) & 0xFF;
+                        data_buff[10] = (file_start_addr >> 8) & 0xFF;
+                        data_buff[11] = file_start_addr & 0xFF;
+
+                        data_buff[12] = (chip_target_id >> 24) & 0xFF; 
+                        data_buff[13] = (chip_target_id >> 16) & 0xFF;
+                        data_buff[14] = (chip_target_id >> 8) & 0xFF;
+                        data_buff[15] = chip_target_id & 0xFF;
+
+                        twi_cmd_tx(target_cmd, data_buff, 16);
 
                         oled_draw_progress_bar(); //enter progress bar screen 
                     
                         //qspi_init(); //reinit and deinit atmel qspi
 
-                    //}
+                    }
 
                     push_file_to_recents(target_file); //add file to recents, push last off stack
                     screenStack = 0;
@@ -283,7 +297,7 @@ void long_press_timeout_handler(void* p_context)
     else if(enterFlag && !upFlag)// enter long press
     {
         clear_leds(); // for test
-       // nrf_gpio_pin_set(LED_ORANGE);
+        // nrf_gpio_pin_set(LED_ORANGE);
     }
     else if(enterFlag && upFlag) //if dual press
     {
@@ -293,7 +307,7 @@ void long_press_timeout_handler(void* p_context)
     else if(downFlag) //down long press
     {
         clear_leds(); // for test 
-        //nrf_gpio_pin_set(LED_BLUE);
+        // nrf_gpio_pin_set(LED_BLUE);
     }
 }
 

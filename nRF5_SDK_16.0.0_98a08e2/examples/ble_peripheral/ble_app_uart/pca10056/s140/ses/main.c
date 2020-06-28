@@ -203,8 +203,8 @@ void flashblaster_init(void)
     power_management_init();
 
     #if FIRST_BOOT == false // defined in system.h
-    watchdog_init();
-    #endif  
+    watchdog_init(); 
+    #endif 
 
     ble_stack_init();
     scheduler_init(); 

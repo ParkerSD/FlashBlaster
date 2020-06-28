@@ -106,7 +106,7 @@ typedef struct file
     uint32_t file_data; // address program data in flash
     int file_index;
     chip_struct* chip_parent; 
-    uint32_t time_stamp; 
+    uint32_t start_addr; 
     uint32_t data_length;
 }file_struct; 
 

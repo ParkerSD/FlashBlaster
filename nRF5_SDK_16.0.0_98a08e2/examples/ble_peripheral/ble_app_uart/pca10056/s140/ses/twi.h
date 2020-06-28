@@ -16,6 +16,8 @@
 
 //error type defines 
 #define error_no_target 0x00
+#define error_no_dbg_pwr 0x01
+#define error_dbg_locked 0x02
 
 
 void twi_init(void);

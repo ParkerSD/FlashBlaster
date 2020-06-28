@@ -66,7 +66,7 @@ void draw_text(int y, char* text); //0 < y < 7
 
 void oled_draw_progress_bar(void);
 
-void draw_err_no_targ(void);
+void oled_draw_err(uint8_t err_id);
 
 
 

@@ -15,6 +15,7 @@ uint32_t add_file(void);
 void add_chip(void);
 void add_project(void);
 uint32_t ble_parse_data_length(void);
+uint32_t ble_parse_start_address(void);
 char* ble_parse_name(void);
 uint32_t char_string_to_int(uint8_t digits);
 char* fetch_name(uint16_t length);
@@ -26,3 +27,6 @@ void idle_state_handle(void);
 
 void packet_write_first(void);
 void packet_write(uint32_t data_start_addr);
+
+bool string_compare(char* name, char* target_name, uint8_t name_length);
+void ble_decode_chip_id(char* chip_name, uint8_t chip_name_length);
