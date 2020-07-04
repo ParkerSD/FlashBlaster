@@ -25,5 +25,3 @@ void twi_init(void);
 void twi_cmd_tx(uint8_t cmd, uint8_t* data, uint8_t data_length);
 
 void twi_cmd_rx(uint8_t* rx_buffer, uint8_t length);
-
-void atmel_reset(void);

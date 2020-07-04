@@ -43,11 +43,11 @@ system_struct* system_singleton;
 
 
 //NOTE NOT USED 
-uint8_t projectIterator = 0; 
-uint8_t chipIterator = 0; 
-uint8_t fileIterator = 0;
+static uint8_t projectIterator = 0; 
+static uint8_t chipIterator = 0; 
+static uint8_t fileIterator = 0;
 
-uint8_t selectedProject; 
+static uint8_t selectedProject; 
  
 
 // Hardcoded Values
@@ -546,7 +546,7 @@ void system_init(void) // create global system struct and read directory info fr
     system_singleton = system_new();
     #if FIRST_BOOT
     flash_init();  //NOTE: watchdog will timeout during flash erase
-    #endif
+    #endif 
     projects_sync(); 
 }
 
@@ -704,6 +704,25 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
     }
 }
 
+void atmel_reset(void)
+{
+    nrf_gpio_pin_clear(ATMEL_RESET_PIN);
+    nrf_delay_ms(5);
+    nrf_gpio_pin_set(ATMEL_RESET_PIN);
+}
+
+void atmel_boot(void)
+{
+    nrf_gpio_pin_set(BOOT_PIN);
+    atmel_reset();
+    nrf_delay_ms(5);
+}
+
+void atmel_shutdown(void)
+{
+    nrf_gpio_pin_clear(BOOT_PIN);
+    atmel_reset();
+}
 
 void flash_init(void) 
 {   

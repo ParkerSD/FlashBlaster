@@ -178,4 +178,8 @@ void clear_list(void);
 void rerender_list(int8_t);
 void clear_screen(void);
 
+void atmel_reset(void);
+void atmel_boot(void);
+void atmel_shutdown(void); 
+
 uint32_t bytes_to_word(uint8_t* bytes, uint32_t word); //  converts four byte array to word

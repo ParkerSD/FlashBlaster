@@ -11,6 +11,7 @@
 #include "nrf_gpio.h"
 #include "oled.h"
 #include "battery.h"
+#include "ssd1351.h"
 
 
 void power_clock_init(void)
@@ -40,9 +41,6 @@ void power_usb_event_handler(nrf_drv_power_usb_evt_t event)
     switch (event)
     {
     case NRF_DRV_POWER_USB_EVT_DETECTED:
-        //NOTE: not used anymore
-//        nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLDOWN);
-//        nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLUP);
 
         battery_set_charging_state(true);
 
@@ -56,11 +54,8 @@ void power_usb_event_handler(nrf_drv_power_usb_evt_t event)
 
         //TODO: add ADC battery voltage condition 
 
-        //NOTE: not used anymore
-//        nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_PULLUP);
-//        nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_PULLDOWN);
-
         battery_set_charging_state(false);
+
 //        if (nrf_drv_usbd_is_started())
 //        {
 //            nrf_drv_usbd_stop();

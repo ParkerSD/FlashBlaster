@@ -48,12 +48,17 @@ void gpio_init(void) // init gpio for oled drivers
     //nrf_gpio_cfg_output(CS_PIN); //now defined as SS_PIN in SPIO Init
     nrf_gpio_cfg_output(RST_PIN); 
     nrf_gpio_cfg_output(DC_PIN); 
-    nrf_gpio_cfg_output(FET_PIN); 
-    nrf_gpio_cfg_output(iRST);
+    nrf_gpio_cfg_output(FET_PIN); //not used 
+    nrf_gpio_cfg_output(iRST); //not used
 
     //atmel
     nrf_gpio_cfg_output(ATMEL_RESET_PIN);
     nrf_gpio_pin_set(ATMEL_RESET_PIN);
+
+    nrf_gpio_cfg_output(BOOT_PIN); //set true before reset to boot atmel
+    nrf_gpio_pin_clear(BOOT_PIN);
+
+    nrf_gpio_cfg_input(I2CS_INT, NRF_GPIO_PIN_PULLDOWN);
 
     //nrf_gpio_cfg_output(LED_BLUE); 
     nrf_gpio_cfg_output(LED_RED); 
@@ -210,7 +215,7 @@ void oled_draw_progress_bar(void)
             if(rx_buf[1] == error_cmd)
             {
                 oled_draw_err(rx_buf[2]);
-                atmel_reset(); 
+                atmel_shutdown(); 
                 prog_status = prog_error; // exit loop
             }
             else if(rx_buf[1] == progress_cmd)

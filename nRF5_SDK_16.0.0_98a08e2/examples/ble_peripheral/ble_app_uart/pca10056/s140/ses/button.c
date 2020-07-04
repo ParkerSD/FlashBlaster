@@ -67,6 +67,13 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         upFlag = true;
         timer_start();
     
+
+    }
+    if(button_action == APP_BUTTON_RELEASE)
+    {
+        upFlag = false;
+        timer_stop();
+
         itemHighlighted--;
         rerender = true;
         if(itemHighlighted < 0)
@@ -84,11 +91,6 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
             rerender_list(itemHighlighted);
         }
     }
-    if(button_action == APP_BUTTON_RELEASE)
-    {
-        upFlag = false;
-        timer_stop();
-    }
 }
 
 
@@ -98,6 +100,12 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
     {   
         downFlag = true; 
         timer_start();
+    }
+
+    if(button_action == APP_BUTTON_RELEASE)
+    {
+        downFlag = false;
+        timer_stop();
 
         itemHighlighted++;
         rerender = true; 
@@ -111,23 +119,24 @@ void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long pr
             rerender_list(itemHighlighted);
         }
     }
-    if(button_action == APP_BUTTON_RELEASE)
-    {
-        downFlag = false;
-        timer_stop();
-    }
 }
 
 
 void enter_callback(uint8_t pin_no, uint8_t button_action)
 {   
+    
     if(button_action == APP_BUTTON_PUSH)
     {   
         enterFlag = true;
         timer_start();
+    }
+
+    if(button_action == APP_BUTTON_RELEASE)
+    {
+        enterFlag = false;
+        timer_stop();
 
         selectedItem = itemHighlighted; 
-       
         screenStack++;
         switch(screenStack)
         {   
@@ -206,6 +215,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                     if(!string_compare(target_file->file_name, "Empty", 5)) //begin programming process
                     {
                         qspi_deinit();
+                        atmel_boot();
                     
                         uint8_t data_buff[16];                        //TODO Extract these operations to function 
                         data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
@@ -232,7 +242,8 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
 
                         oled_draw_progress_bar(); //enter progress bar screen 
                     
-                        //qspi_init(); //reinit and deinit atmel qspi
+                        atmel_shutdown(); 
+                        qspi_init(); //reinit and deinit atmel qspi
 
                     }
 
@@ -249,17 +260,12 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
             default: 
                 break; 
         }
-        if(rerender)
+        if(rerender && nrf_gpio_pin_read(BTN_ENTER))
         { 
             itemHighlighted = 0; // reset to first item in list
             rerender_screen(itemHighlighted, selectedItem, screenStack, recentsFlag);
             rerender = false; 
         }
-    }
-    if(button_action == APP_BUTTON_RELEASE)
-    {
-        enterFlag = false;
-        timer_stop();
     }
 }
 
@@ -296,18 +302,16 @@ void long_press_timeout_handler(void* p_context)
     }
     else if(enterFlag && !upFlag)// enter long press
     {
-        clear_leds(); // for test
-        // nrf_gpio_pin_set(LED_ORANGE);
+        atmel_shutdown();
+        hibernate();
     }
     else if(enterFlag && upFlag) //if dual press
     {
-        atmel_reset();
-        hibernate();
+
     }
     else if(downFlag) //down long press
     {
-        clear_leds(); // for test 
-        // nrf_gpio_pin_set(LED_BLUE);
+ 
     }
 }
 

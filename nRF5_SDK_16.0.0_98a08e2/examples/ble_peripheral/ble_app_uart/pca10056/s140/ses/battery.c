@@ -192,6 +192,10 @@ void battery_draw_icon(void) //charge bar is 5x9
         {
             bars = 9; 
         }
+        else if(battery_val > FULL_CHARGE)
+        {
+            bars = 9; 
+        }
         battery_draw_outline(COLOR_GREEN);
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, bars, 4, COLOR_GREEN);

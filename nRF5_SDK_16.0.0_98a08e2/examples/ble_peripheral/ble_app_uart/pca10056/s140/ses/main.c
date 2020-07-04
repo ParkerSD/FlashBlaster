@@ -235,10 +235,8 @@ void flashblaster_init(void)
 
 void hibernate(void)
 {
-    //nrf_delay_ms(500);
-    clear_leds();
+   
     nrf_gpio_pin_clear(RST_PIN); // turn off display
-    nrf_gpio_pin_clear(FET_PIN);
     nrf_delay_ms(1000); // delay to avoid reboot after turn off
     nrf_gpio_cfg_sense_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
     //NRF_WDT->TASKS_START = 0; // deactivate watchdog if needed
@@ -250,10 +248,12 @@ int main(void)
 {   
     gpio_init();
     nrf_power_dcdcen_set(true);
+    nrf_delay_ms(10); //prevent false boot
     if(!nrf_gpio_pin_read(BTN_ENTER)) // && !nrf_gpio_pin_read(BTN_UP)
     {
-        atmel_reset();
         flashblaster_init();
+        atmel_shutdown();
+
     }
     else
     {

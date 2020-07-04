@@ -14,11 +14,13 @@
 #define BB_EN 26 //TODO NOW PIN 26 
 #define RST_PIN 36 //P1.04
 #define DC_PIN 37 //P1.05
-#define iRST 11 //P1.01
-#define FET_PIN 33 //P1.01
+#define iRST 11 //not used
+#define FET_PIN 33 //not used
 
 //atmel pins
 #define ATMEL_RESET_PIN 30 
+#define BOOT_PIN 45 //hold high before reset to boot atmel 
+#define I2CS_INT 43 // indication that atmel has i2c slave tx data waiting for read
 
 //#define LED_BLUE 27 
 #define LED_RED 42 //P1.10

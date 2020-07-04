@@ -70,9 +70,3 @@ void twi_cmd_rx(uint8_t* rx_buffer, uint8_t length)
 
 }
 
-void atmel_reset(void)
-{
-    nrf_gpio_pin_clear(ATMEL_RESET_PIN);
-    nrf_delay_ms(5);
-    nrf_gpio_pin_set(ATMEL_RESET_PIN);
-}
