@@ -30,6 +30,8 @@
 #include "button.h" 
 #include "system.h"
 #include "flash.h"
+#include "twi.h"
+#include "ble.h"
 
 
 #define SYS_ system_singleton->
@@ -52,7 +54,7 @@ static uint8_t selectedProject;
 
 // Hardcoded Values
 char systemFirmware[] = {"FlashBlaster V0"}; 
-char splashHeader[] = {"TEST:"}; 
+char splashHeader[] = {"Main Menu:"}; 
 char projectHeader[] = {"Select Project:"}; 
 char* projectNames[10] = {"Quake", "Jeep", "Nikola", "Tesla", "SpaceX", "Rockford Internal", "Subaru", "Nissan", "Ducati", "Toyota"}; // TODO: chop and hardcode as appropriate structs 
 
@@ -62,6 +64,70 @@ char* chipNames[10] = {"Atmel", "Nordic", "STM32", "Cirrus Logic", "NXP", "Renes
 char fileHeader[] = {"Select Program:"}; // or Chip Name
 char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "that.bin", "banshee.bin", "pastry.elf", "killme.hex", "reget.bin", "mistakes.hex"}; 
 
+
+
+void program_target(file_struct* target_file)
+{
+    uint32_t file_data_addr = target_file->file_data;
+    uint32_t file_data_len = target_file->data_length; 
+    uint32_t file_start_addr = target_file->start_addr; 
+    uint32_t chip_target_id = target_file->chip_parent->chip_type_id;
+                    
+    if(!string_compare(target_file->file_name, "Empty", 5)) //begin programming process
+    {
+        qspi_deinit();
+        atmel_boot();
+                    
+        uint8_t data_buff[16];                        //TODO Extract these operations to function 
+        data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
+        data_buff[1] = (file_data_addr >> 16) & 0xFF;
+        data_buff[2] = (file_data_addr >> 8) & 0xFF;
+        data_buff[3] = file_data_addr & 0xFF;
+
+        data_buff[4] = (file_data_len >> 24) & 0xFF;  
+        data_buff[5] = (file_data_len >> 16) & 0xFF;
+        data_buff[6] = (file_data_len >> 8) & 0xFF;
+        data_buff[7] = file_data_len & 0xFF;
+
+        data_buff[8] = (file_start_addr >> 24) & 0xFF;  
+        data_buff[9] = (file_start_addr >> 16) & 0xFF;
+        data_buff[10] = (file_start_addr >> 8) & 0xFF;
+        data_buff[11] = file_start_addr & 0xFF;
+
+        data_buff[12] = (chip_target_id >> 24) & 0xFF; 
+        data_buff[13] = (chip_target_id >> 16) & 0xFF;
+        data_buff[14] = (chip_target_id >> 8) & 0xFF;
+        data_buff[15] = chip_target_id & 0xFF;
+
+        twi_cmd_tx(target_cmd, data_buff, 16);
+
+        oled_draw_progress_bar(); //enter progress bar screen 
+                    
+        atmel_shutdown(); 
+        qspi_init(); //reinit and deinit atmel qspi
+
+    }
+
+}
+
+file_struct* recents_index(int8_t selectedItem)
+{
+    switch(selectedItem)
+    {
+        case 0:
+            return recents_singleton->file0;
+
+        case 1:
+            return recents_singleton->file1;
+
+        case 2:
+            return recents_singleton->file2;
+        default:
+            break; 
+
+    }
+
+}
 
 recents_struct* recents_init(void) //TODO save recents to flash on hibernate, load on boot
 {

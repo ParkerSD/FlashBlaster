@@ -1,12 +1,12 @@
 Output/ble_app_uart_pca10056_s140\ Release/Obj/nrfx_gpiote.o: \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\nrfx_gpiote.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\nrfx_gpiote.c \
  ../../../../../../modules/nrfx/nrfx.h \
  ../../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../../modules/nrfx/drivers/nrfx_common.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stddef.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/__crossworks.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stddef.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
  ../../../../../../modules/nrfx/mdk/nrf.h \
  ../../../../../../modules/nrfx/mdk/nrf52840.h \
  ../../../../../../components/toolchain/cmsis/include/core_cm4.h \
@@ -41,7 +41,7 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/nrfx_gpiote.o: \
  ../../../../../../components/softdevice/s140/headers/nrf_nvic.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/util/app_error.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdio.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdio.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/softdevice/s140/headers/nrf_error.h \
  ../../../../../../components/libraries/util/app_error_weak.h \
@@ -55,7 +55,7 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/nrfx_gpiote.o: \
  ../../../../../../modules/nrfx/hal/nrf_gpiote.h \
  ../../../../../../modules/nrfx/hal/nrf_gpio.h \
  ../../../../../../components/libraries/util/nrf_bitmask.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/string.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \
  ../../../../../../integration/nrfx/nrfx_log.h \
  ../../../../../../components/libraries/log/nrf_log.h \
  ../../../../../../components/libraries/util/sdk_common.h \

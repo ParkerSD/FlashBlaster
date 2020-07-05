@@ -164,6 +164,10 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 {
                     //TODO: execute programming for selected file from recents, use global recents_struct
                     //TODO: index recents_struct based on selectedItem and save file to flash
+
+                    file_struct* recents_target = recents_index(selectedItem); 
+                    program_target(recents_target);
+
                     screenStack = 0;
                     rerender = true;
                     recentsFlag = false;
@@ -207,45 +211,8 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                     // 6.) reinit qspi 
 
                     file_struct* target_file = file_list_index(selectedItem, chip_selected);
-                    uint32_t file_data_addr = target_file->file_data;
-                    uint32_t file_data_len = target_file->data_length; 
-                    uint32_t file_start_addr = target_file->start_addr; 
-                    uint32_t chip_target_id = target_file->chip_parent->chip_type_id;
-                    
-                    if(!string_compare(target_file->file_name, "Empty", 5)) //begin programming process
-                    {
-                        qspi_deinit();
-                        atmel_boot();
-                    
-                        uint8_t data_buff[16];                        //TODO Extract these operations to function 
-                        data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
-                        data_buff[1] = (file_data_addr >> 16) & 0xFF;
-                        data_buff[2] = (file_data_addr >> 8) & 0xFF;
-                        data_buff[3] = file_data_addr & 0xFF;
 
-                        data_buff[4] = (file_data_len >> 24) & 0xFF;  
-                        data_buff[5] = (file_data_len >> 16) & 0xFF;
-                        data_buff[6] = (file_data_len >> 8) & 0xFF;
-                        data_buff[7] = file_data_len & 0xFF;
-
-                        data_buff[8] = (file_start_addr >> 24) & 0xFF;  
-                        data_buff[9] = (file_start_addr >> 16) & 0xFF;
-                        data_buff[10] = (file_start_addr >> 8) & 0xFF;
-                        data_buff[11] = file_start_addr & 0xFF;
-
-                        data_buff[12] = (chip_target_id >> 24) & 0xFF; 
-                        data_buff[13] = (chip_target_id >> 16) & 0xFF;
-                        data_buff[14] = (chip_target_id >> 8) & 0xFF;
-                        data_buff[15] = chip_target_id & 0xFF;
-
-                        twi_cmd_tx(target_cmd, data_buff, 16);
-
-                        oled_draw_progress_bar(); //enter progress bar screen 
-                    
-                        atmel_shutdown(); 
-                        qspi_init(); //reinit and deinit atmel qspi
-
-                    }
+                    program_target(target_file);
 
                     push_file_to_recents(target_file); //add file to recents, push last off stack
                     screenStack = 0;
@@ -307,6 +274,7 @@ void long_press_timeout_handler(void* p_context)
     }
     else if(enterFlag && upFlag) //if dual press
     {
+        advertising_start();
 
     }
     else if(downFlag) //down long press

@@ -1,15 +1,15 @@
 Output/ble_app_uart_pca10056_s140\ Release/Obj/nrf_drv_clock.o: \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.c \
  ../../../../../../components/libraries/util/nordic_common.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.h \
  ../../../../../../modules/nrfx/drivers/include/nrfx_clock.h \
  ../../../../../../modules/nrfx/nrfx.h \
  ../../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../../modules/nrfx/drivers/nrfx_common.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stddef.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/__crossworks.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stddef.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
  ../../../../../../modules/nrfx/mdk/nrf.h \
  ../../../../../../modules/nrfx/mdk/nrf52840.h \
  ../../../../../../components/toolchain/cmsis/include/core_cm4.h \
@@ -43,7 +43,7 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/nrf_drv_clock.o: \
  ../../../../../../components/softdevice/s140/headers/nrf_nvic.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/util/app_error.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdio.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdio.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/softdevice/s140/headers/nrf_error.h \
  ../../../../../../components/libraries/util/app_error_weak.h \
@@ -60,7 +60,7 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/nrf_drv_clock.o: \
  ../../../../../../components/libraries/experimental_section_vars/nrf_section.h \
  ../../../../../../components/softdevice/common/nrf_sdh_soc.h \
  ../../../../../../components/libraries/util/sdk_common.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/string.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \
  ../../../../../../components/libraries/util/sdk_os.h \
  ../../../../../../components/libraries/util/app_util.h \
  ../../../../../../components/libraries/util/sdk_macros.h \

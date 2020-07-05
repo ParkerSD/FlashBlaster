@@ -1,8 +1,8 @@
 Output/ble_app_uart_pca10056_s140\ Release/Obj/ble.o: \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\ble.c \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdint.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/string.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/__crossworks.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\ble.c \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
  ../../../../../../components/libraries/util/nordic_common.h \
  ../../../../../../modules/nrfx/mdk/nrf.h \
  ../../../../../../modules/nrfx/mdk/nrf52840.h \
@@ -19,7 +19,7 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/ble.o: \
  ../../../../../../modules/nrfx/mdk/compiler_abstraction.h \
  ../../../../../../components/softdevice/s140/headers/ble_hci.h \
  ../../../../../../components/ble/common/ble_advdata.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdbool.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
  ../../../../../../components/softdevice/s140/headers/ble.h \
  ../../../../../../components/softdevice/s140/headers/nrf_svc.h \
  ../../../../../../components/softdevice/s140/headers/nrf_error.h \
@@ -40,7 +40,7 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/ble.o: \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/softdevice/s140/headers/nrf_error.h \
  ../../../../../../components/libraries/util/app_util.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stddef.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stddef.h \
  ../../../../../../components/softdevice/s140/headers/nrf52/nrf_mbr.h \
  ../../../../../../components/softdevice/s140/headers/nrf_svc.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
@@ -67,7 +67,7 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/ble.o: \
  ../../../../../../components/ble/common/ble_srv_common.h \
  ../../../../../../components/libraries/timer/app_timer.h \
  ../../../../../../components/libraries/util/app_error.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdio.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdio.h \
  ../../../../../../components/libraries/util/app_error_weak.h \
  ../../../../../../components/libraries/log/nrf_log_instance.h \
  ../../../../../../components/libraries/experimental_section_vars/nrf_section.h \
@@ -113,24 +113,24 @@ Output/ble_app_uart_pca10056_s140\ Release/Obj/ble.o: \
  ../../../../../../modules/nrfx/hal/nrf_spim.h \
  ../../../../../../modules/nrfx/drivers/include/nrfx_spi.h \
  ../../../../../../modules/nrfx/hal/nrf_spi.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\oled.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\button.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\ssd1351.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdlib.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/math.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.30a/include/stdarg.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\fonts.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\oled.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\button.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\ssd1351.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdlib.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/math.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdarg.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\fonts.h \
  ../../../../../../components/libraries/delay/nrf_delay.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\usb.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\usb.h \
  ../../../../../../components/libraries/scheduler/app_scheduler.h \
  ../../../../../../modules/nrfx/hal/nrf_power.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\system.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\flash.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\system.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\flash.h \
  ../../../../../../integration/nrfx/legacy/nrf_drv_qspi.h \
  ../../../../../../modules/nrfx/drivers/include/nrfx_qspi.h \
  ../../../../../../modules/nrfx/hal/nrf_qspi.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\battery.h \
- C:\Users\davispa\Desktop\FlashBlaster\ Git\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\ble.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\battery.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\ble_peripheral\ble_app_uart\pca10056\s140\ses\ble.h \
  ../../../../../../modules/nrfx/hal/nrf_uart.h \
  ../../../../../../modules/nrfx/hal/nrf_uarte.h \
  ../../../../../../components/libraries/log/nrf_log.h \

@@ -173,7 +173,7 @@ void watchdog_init(void)
     uint32_t op_status = NRF_SUCCESS;
     nrf_drv_wdt_config_t watchdogConfig; 
     watchdogConfig.behaviour = NRF_WDT_BEHAVIOUR_PAUSE_SLEEP_HALT;
-    watchdogConfig.reload_value = 15000; // increase to extend watchdog timeout 
+    watchdogConfig.reload_value = 10000; // increase to extend watchdog timeout 
     watchdogConfig.interrupt_priority = APP_IRQ_PRIORITY_LOW;
     op_status = nrf_drv_wdt_init(&watchdogConfig, wdt_error_handler);
     APP_ERROR_CHECK(op_status);
@@ -244,16 +244,16 @@ void hibernate(void)
 }
 
 
+
 int main(void)
 {   
     gpio_init();
     nrf_power_dcdcen_set(true);
-    nrf_delay_ms(10); //prevent false boot
+    nrf_delay_ms(1); //prevent false boot
     if(!nrf_gpio_pin_read(BTN_ENTER)) // && !nrf_gpio_pin_read(BTN_UP)
     {
         flashblaster_init();
         atmel_shutdown();
-
     }
     else
     {

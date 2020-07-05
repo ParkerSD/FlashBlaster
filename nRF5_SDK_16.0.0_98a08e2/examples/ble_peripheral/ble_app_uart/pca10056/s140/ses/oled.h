@@ -70,6 +70,10 @@ void oled_draw_progress_bar(void);
 
 void oled_draw_err(uint8_t err_id);
 
+void oled_advertising_indicate(uint32_t ad_duration);
+
+void oled_stop_ad_timer(void);
+
 
 
 

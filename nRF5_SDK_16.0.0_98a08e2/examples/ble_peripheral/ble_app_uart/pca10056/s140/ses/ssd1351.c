@@ -166,11 +166,11 @@ uint16_t SSD1351_get_rgb(uint8_t r, uint8_t g, uint8_t b){
   */
 void SSD1351_init(void){
   nrf_gpio_pin_set(RST_PIN);
-  nrf_delay_ms(200);
+  nrf_delay_ms(10); //was 200
   nrf_gpio_pin_clear(RST_PIN);
-  nrf_delay_ms(200);
+  nrf_delay_ms(10); //was 200
   nrf_gpio_pin_set(RST_PIN);
-  nrf_delay_ms(200);
+  nrf_delay_ms(10); //was 200
 
   SSD1351_write_command(SSD1351_CMD_COMMANDLOCK);
   SSD1351_write_data(0x12);
@@ -182,7 +182,7 @@ void SSD1351_init(void){
   SSD1351_write_data(0xF1);
   SSD1351_write_command(SSD1351_CMD_MUXRATIO);
   SSD1351_write_data(127);
-  nrf_delay_ms(300);
+  nrf_delay_ms(10); //was 300
 
   SSD1351_write_command(SSD1351_CMD_SETREMAP);
   SSD1351_write_data(0b00110010);// was x20
@@ -232,6 +232,7 @@ void SSD1351_init(void){
   SSD1351_write_data(0x01);
 
   SSD1351_write_command(SSD1351_CMD_DISPLAYON);
+  nrf_delay_ms(10);
 }
 
 /**

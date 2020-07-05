@@ -138,6 +138,8 @@ typedef struct recents
 }recents_struct;
 
 
+void program_target(file_struct* target_file);
+file_struct* recents_index(int8_t selectedItem);
 bool recents_check(void);
 void push_file_to_recents(file_struct*);
 void flash_init(void); 

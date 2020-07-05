@@ -26,8 +26,14 @@
 #include "button.h" 
 #include "system.h"
 #include "twi.h"
+#include "ble.h"
 
 #define SSD1306Addr 0b0111100
+
+APP_TIMER_DEF(ad_timer_id);
+static bool bt_sym_present = false;
+static uint16_t oled_ad_count = 0;
+static uint32_t ad_seconds; 
 
 
 extern unsigned char ucFont[], ucSmallFont[];
@@ -78,15 +84,12 @@ static void oledWriteCommand(unsigned char);
 
 void oled_init(void)
 {
-    nrf_gpio_pin_set(FET_PIN); 
-    nrf_delay_ms(10); 
 
     SSD1351_init();
     
     clear_screen();
-
-    oled_draw_logo();
-   
+    
+    //oled_draw_logo();
 }
 
 
@@ -131,7 +134,6 @@ void oled_draw_target(uint16_t start_radius, uint16_t start_color)
    int16_t Xcenter = 64;
    int16_t Ycenter = 64; 
 
-    
    for(int x = 0; x < 10; x++)
    {
       SSD1351_draw_filled_circle(Xcenter, Ycenter, current_radius - (x * 5) , current_color + (x * 20));
@@ -190,6 +192,43 @@ void oled_draw_err(uint8_t err_id)
     nrf_delay_ms(2000);
 }
 
+void oled_stop_ad_timer(void)
+{
+    uint32_t ret = app_timer_stop(ad_timer_id);
+    APP_ERROR_CHECK(ret);
+}
+
+void oled_ad_callback(void* p_context)
+{
+    if(bt_sym_present)
+    {
+        ble_draw_icon(COLOR_BLACK);//erase
+        bt_sym_present = false;
+    }
+    else
+    {
+        ble_draw_icon(COLOR_BLUE);//draw
+        bt_sym_present = true;
+    }
+
+    oled_ad_count++; 
+    if(oled_ad_count == ad_seconds)
+    {
+        oled_stop_ad_timer(); 
+        oled_ad_count = 0;
+    }
+
+}
+void oled_advertising_indicate(uint32_t ad_duration)
+{
+ 
+    ad_seconds = ((ad_duration*10)/1000);
+    uint32_t ret = app_timer_create(&ad_timer_id, APP_TIMER_MODE_REPEATED, oled_ad_callback);
+    APP_ERROR_CHECK(ret); 
+    ret = app_timer_start(ad_timer_id, APP_TIMER_TICKS(1000), NULL); //fire every half second
+    APP_ERROR_CHECK(ret); 
+
+}
 
 void oled_draw_progress_bar(void)
 {
