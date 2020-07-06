@@ -55,7 +55,7 @@
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
 
-#define APP_ADV_DURATION                2000//0 = no timeout                            /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
+#define APP_ADV_DURATION                2000 // 0 = no timeout                            /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
 #define MIN_CONN_INTERVAL               MSEC_TO_UNITS(7.5, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
 #define MAX_CONN_INTERVAL               MSEC_TO_UNITS(7.5, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
@@ -97,6 +97,7 @@ static uint32_t file_data_addr_global;
 static uint32_t chip_addr_global; 
 static bool prog_flag = false; 
 static bool add_all_mode = false; 
+static bool ad_started = false;
 static uint8_t chip_id[WORD_SIZE]; //chip_id decoded from chip name string 
 
 
@@ -111,15 +112,22 @@ static struct chips_supported
 }
 */
 
-
+void ble_set_ad_stopped(void)
+{
+    ad_started = false;
+}
 
 /**@brief Function for starting advertising.
  */
 void advertising_start(void)
 {
-    oled_advertising_indicate(APP_ADV_DURATION);
-    uint32_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
-    APP_ERROR_CHECK(err_code);
+    if(!ad_started)
+    {
+        oled_advertising_indicate(APP_ADV_DURATION);
+        uint32_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
+        APP_ERROR_CHECK(err_code);
+        ad_started = true; 
+    }
 }
 
 /**@brief Function for assert macro callback.

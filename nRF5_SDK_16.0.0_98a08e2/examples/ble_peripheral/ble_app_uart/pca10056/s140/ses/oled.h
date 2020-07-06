@@ -10,11 +10,11 @@
 #define OLED_H_
 
 //#define CS_PIN 38 //P1.06
-#define LDO_EN 4  //TODO NOW PIN 4
-#define BB_EN 26 //TODO NOW PIN 26 
+#define LDO_EN 4  //NOTE used for detecting usb on boot
+#define BB_EN 26 //NOTE not used 
 #define RST_PIN 36 //P1.04
 #define DC_PIN 37 //P1.05
-#define iRST 11 //not used
+#define iRST 11 //not used, moved to atmel
 #define FET_PIN 33 //not used
 
 //atmel pins

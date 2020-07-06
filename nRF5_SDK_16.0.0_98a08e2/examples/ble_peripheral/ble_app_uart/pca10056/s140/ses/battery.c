@@ -299,13 +299,13 @@ void battery_init(void)
 {
     battery = malloc(sizeof(battery_struct)); 
     
-    if(nrf_gpio_pin_read(BB_EN)) // read bb_en pin to determine if usb is connected on boot 
+    if(nrf_gpio_pin_read(LDO_EN)) // read ldo_en pin to determine if usb is connected on boot 
     {
-        battery_set_charging_state(false);
+        battery_set_charging_state(true);
     }
     else
     {
-         battery_set_charging_state(true); 
+         battery_set_charging_state(false); 
     }
 
     adc_init();

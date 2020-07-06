@@ -54,8 +54,8 @@ void gpio_init(void) // init gpio for oled drivers
     //nrf_gpio_cfg_output(CS_PIN); //now defined as SS_PIN in SPIO Init
     nrf_gpio_cfg_output(RST_PIN); 
     nrf_gpio_cfg_output(DC_PIN); 
-    nrf_gpio_cfg_output(FET_PIN); //not used 
-    nrf_gpio_cfg_output(iRST); //not used
+    nrf_gpio_cfg_output(FET_PIN); //not used, removed 
+    nrf_gpio_cfg_output(iRST); //not used, moved to atmel
 
     //atmel
     nrf_gpio_cfg_output(ATMEL_RESET_PIN);
@@ -67,15 +67,15 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_input(I2CS_INT, NRF_GPIO_PIN_PULLDOWN);
 
     //nrf_gpio_cfg_output(LED_BLUE); 
-    nrf_gpio_cfg_output(LED_RED); 
-    nrf_gpio_cfg_output(LED_ORANGE);
+    nrf_gpio_cfg_output(LED_RED); //NOTE for debug
+    nrf_gpio_cfg_output(LED_ORANGE); //NOTE for debug 
     clear_leds();
 
     nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP);
 
-    nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_NOPULL);
+    nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_NOPULL); //NOTE not used 
     nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_NOPULL);
 }
 
@@ -194,6 +194,7 @@ void oled_draw_err(uint8_t err_id)
 
 void oled_stop_ad_timer(void)
 {
+    ble_set_ad_stopped();
     uint32_t ret = app_timer_stop(ad_timer_id);
     APP_ERROR_CHECK(ret);
 }
@@ -254,7 +255,6 @@ void oled_draw_progress_bar(void)
             if(rx_buf[1] == error_cmd)
             {
                 oled_draw_err(rx_buf[2]);
-                atmel_shutdown(); 
                 prog_status = prog_error; // exit loop
             }
             else if(rx_buf[1] == progress_cmd)

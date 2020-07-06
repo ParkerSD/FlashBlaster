@@ -24,7 +24,7 @@
 #define DIRECTORY_OFFSET 4096 
 #define PROJECT_SECTOR_OFFSET 4096 
 #define CHIP_SECTOR_OFFSET 12288
-#define FILE_SECTOR_OFFSET 57344 //NOTE FOR TEST, this file sector only has 2 4KB sectors with V1 flash chip 
+#define FILE_SECTOR_OFFSET 57344 //NOTE NOT USED , FOR TEST, this file sector only has 2 4KB sectors with V1 flash chip 
 
 #define FLASH_SECTOR_SIZE 4096 
 #define CHIP_SECTOR_SIZE 12288
@@ -42,11 +42,11 @@
 #define FILE_HEADER_SIZE 28 // ship size without pointers
 #define FILE_DATA_ADDR_OFFSET 24
 
-#define MAX_PROJECTS 26 //system max 
+#define MAX_PROJECTS 8 //system max, was 26
 #define MAX_CHIPS 8 //max per project 
 #define MAX_FILES 8 //max per chip 
 
-#define MAX_ITEMS 27 // max display items
+#define MAX_ITEMS 8 // max display items, was 27
 #define curr_font small_font
 
 

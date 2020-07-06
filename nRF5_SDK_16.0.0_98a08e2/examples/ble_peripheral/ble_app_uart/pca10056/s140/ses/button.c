@@ -39,14 +39,13 @@ APP_TIMER_DEF(long_press_timer_id);
 
 static project_struct* project_selected; 
 static chip_struct* chip_selected; 
-
-//NOTE do any of these need to be volatile? 
-volatile bool enterFlag = false; 
-volatile bool upFlag = false;
-volatile bool downFlag = false;
-volatile bool longTimerStarted = false;
-volatile bool rerender = false; //TODO: replace rerender flag with alt logic
-volatile bool recentsFlag = false;
+ 
+static bool enterFlag = false; 
+static bool upFlag = false;
+static bool downFlag = false;
+static bool longTimerStarted = false;
+static bool rerender = false; //TODO: replace rerender flag with alt logic
+static bool recentsFlag = false;
 
 static int8_t itemHighlighted = 0;
 static int8_t selectedItem = 0; 
@@ -94,7 +93,7 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
 }
 
 
-void button_down_callback(uint8_t pin_no, uint8_t button_action) //TODO: long press timer 
+void button_down_callback(uint8_t pin_no, uint8_t button_action) 
 {
     if(button_action == APP_BUTTON_PUSH)
     {   

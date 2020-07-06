@@ -38,7 +38,7 @@
 #define L_ list_singleton->
 #define REC_ recents_singleton-> 
 
-
+//NOTE can declare as static
 recents_struct* recents_singleton;
 list_struct* list_singleton;
 system_struct* system_singleton; 
@@ -53,16 +53,12 @@ static uint8_t selectedProject;
  
 
 // Hardcoded Values
-char systemFirmware[] = {"FlashBlaster V0"}; 
-char splashHeader[] = {"Main Menu:"}; 
-char projectHeader[] = {"Select Project:"}; 
-char* projectNames[10] = {"Quake", "Jeep", "Nikola", "Tesla", "SpaceX", "Rockford Internal", "Subaru", "Nissan", "Ducati", "Toyota"}; // TODO: chop and hardcode as appropriate structs 
+static char systemFirmware[] = {"FlashBlaster V0"}; 
+static char splashHeader[] = {"Main Menu:"}; 
+static char projectHeader[] = {"Select Project:"}; 
+static char chipHeader[] = {"Select Chip:"}; // or Project Name
+static char fileHeader[] = {"Select Program:"}; // or Chip Name
 
-char chipHeader[] = {"Select Chip:"}; // or Project Name
-char* chipNames[10] = {"Atmel", "Nordic", "STM32", "Cirrus Logic", "NXP", "Renesas", "Pic32", "AVR", "Silicon Labs", "Qualcomm"}; // 
-
-char fileHeader[] = {"Select Program:"}; // or Chip Name
-char* fileNames[10] = {"pickthis.bin", "promotion.bin", "Bug.bin", "this.hex", "that.bin", "banshee.bin", "pastry.elf", "killme.hex", "reget.bin", "mistakes.hex"}; 
 
 
 
@@ -76,7 +72,7 @@ void program_target(file_struct* target_file)
     if(!string_compare(target_file->file_name, "Empty", 5)) //begin programming process
     {
         qspi_deinit();
-        atmel_boot();
+        //atmel_boot();
                     
         uint8_t data_buff[16];                        //TODO Extract these operations to function 
         data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
@@ -103,7 +99,7 @@ void program_target(file_struct* target_file)
 
         oled_draw_progress_bar(); //enter progress bar screen 
                     
-        atmel_shutdown(); 
+        //atmel_shutdown(); // NOTE: atmel should stay booted to tristate qspi pins 
         qspi_init(); //reinit and deinit atmel qspi
 
     }
@@ -611,7 +607,7 @@ void system_init(void) // create global system struct and read directory info fr
 {   
     system_singleton = system_new();
     #if FIRST_BOOT
-    flash_init();  //NOTE: watchdog will timeout during flash erase
+    flash_init();  //NOTE: watchdog will timeout during flash erase unless disabled
     #endif 
     projects_sync(); 
 }
@@ -788,6 +784,7 @@ void atmel_shutdown(void)
 {
     nrf_gpio_pin_clear(BOOT_PIN);
     atmel_reset();
+    nrf_delay_ms(5);
 }
 
 void flash_init(void) 

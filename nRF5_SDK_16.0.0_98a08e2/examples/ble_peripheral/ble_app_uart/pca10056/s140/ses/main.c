@@ -193,18 +193,13 @@ void watchdog_init(void)
 
 void flashblaster_init(void)
 {
-    // bool erase_bonds;
+
     // Initialize.
 
     power_clock_init();
     log_init();
     timers_init();
-    //buttons_leds_init(&erase_bonds);
     power_management_init();
-
-    #if FIRST_BOOT == false // defined in system.h
-    watchdog_init(); 
-    #endif 
 
     ble_stack_init();
     scheduler_init(); 
@@ -235,7 +230,6 @@ void flashblaster_init(void)
 
 void hibernate(void)
 {
-   
     nrf_gpio_pin_clear(RST_PIN); // turn off display
     nrf_delay_ms(1000); // delay to avoid reboot after turn off
     nrf_gpio_cfg_sense_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
@@ -249,22 +243,24 @@ int main(void)
 {   
     gpio_init();
     nrf_power_dcdcen_set(true);
-    nrf_delay_ms(1); //prevent false boot
-    if(!nrf_gpio_pin_read(BTN_ENTER)) // && !nrf_gpio_pin_read(BTN_UP)
+
+    #if FIRST_BOOT == false // defined in system.h
+    watchdog_init(); 
+    #endif 
+    
+    //nrf_delay_ms(1); //prevent false boot
+    if(!nrf_gpio_pin_read(BTN_ENTER)) 
     {
+        atmel_boot();
         flashblaster_init();
-        atmel_shutdown();
     }
     else
     {
+        atmel_shutdown();
         hibernate(); 
     }
-    
-    // SWD bitbang protocol ref: black magic probe github, and silicon labs swd app note
-    // either APP-side or Device-side controls
-    // BT5 file transfer from phone app, DFU firmware updates 
-    // maximize utiliy of display, maximize ergonoics, a developer and production line tool 
-
+   
+ 
     for (;;)
     {   
         idle_state_handle();
