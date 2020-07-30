@@ -34,6 +34,7 @@
 #include "flash.h"
 #include "battery.h"
 #include "ble.h"
+#include "twi.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -501,6 +502,7 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
 {
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {        
+        //oled_draw_transfer_progress();// not working, priority mismatch?
         for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
         {
             nus_data_global[i] = p_evt->params.rx_data.p_data[i];
@@ -534,7 +536,8 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
             }
             if(current_byte_pos <= 0)
             {
-                //(AFTER PROGRAMMING COMPLETE)
+                // AFTER PROGRAMMING COMPLETE
+                //oled_draw_transfer_complete(); 
                 prog_flag = false;
                 if(!add_all_mode)
                 {
@@ -546,6 +549,7 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
                 }
                 flash_file_dir_update(file_data_length); //increment file_count_global and file_bytes_programmed in flash
                 
+                device_shutdown();
 
                 //NOTE FOR TEST 
 //                uint8_t data_buff[FLASH_SECTOR_SIZE];
@@ -705,7 +709,6 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     {
         case BLE_GAP_EVT_CONNECTED:
 
-            //nrf_gpio_pin_set(LED_BLUE);
             oled_stop_ad_timer(); 
             ble_draw_icon(COLOR_BLUE);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
@@ -716,7 +719,6 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 
         case BLE_GAP_EVT_DISCONNECTED:
 
-            //nrf_gpio_pin_clear(LED_BLUE);
             ble_draw_icon(COLOR_BLACK);
             // LED indication will be changed when advertising starts.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
@@ -751,6 +753,7 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
+            oled_draw_err(error_client_timeout); //PC(central) is client 
             break;
 
         case BLE_GATTS_EVT_TIMEOUT:
@@ -758,6 +761,7 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
+            oled_draw_err(error_server_timeout); //flashblaster(peripheral) is server
             break;
 
         default:

@@ -46,7 +46,7 @@
 #define MAX_CHIPS 8 //max per project 
 #define MAX_FILES 8 //max per chip 
 
-#define MAX_ITEMS 8 // max display items, was 27
+#define MAX_ITEMS 10 // max display items, was 27
 #define curr_font small_font
 
 
@@ -180,8 +180,12 @@ void clear_list(void);
 void rerender_list(int8_t);
 void clear_screen(void);
 
+void atmel_reset_hold(void);
+void atmel_reset_release(void);
 void atmel_reset(void);
 void atmel_boot(void);
 void atmel_shutdown(void); 
+
+void device_shutdown(void);
 
 uint32_t bytes_to_word(uint8_t* bytes, uint32_t word); //  converts four byte array to word

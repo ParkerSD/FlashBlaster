@@ -59,8 +59,11 @@ static char projectHeader[] = {"Select Project:"};
 static char chipHeader[] = {"Select Chip:"}; // or Project Name
 static char fileHeader[] = {"Select Program:"}; // or Chip Name
 
-
-
+void device_shutdown(void)
+{
+    nrf_gpio_pin_clear(BOOT_PIN); // turn of atmel
+    hibernate();
+}
 
 void program_target(file_struct* target_file)
 {
@@ -72,8 +75,10 @@ void program_target(file_struct* target_file)
     if(!string_compare(target_file->file_name, "Empty", 5)) //begin programming process
     {
         qspi_deinit();
-        //atmel_boot();
-                    
+
+        nrf_gpio_pin_set(BOOT_PIN); //testing 
+        atmel_reset();
+     
         uint8_t data_buff[16];                        //TODO Extract these operations to function 
         data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
         data_buff[1] = (file_data_addr >> 16) & 0xFF;
@@ -99,11 +104,8 @@ void program_target(file_struct* target_file)
 
         oled_draw_progress_bar(); //enter progress bar screen 
                     
-        //atmel_shutdown(); // NOTE: atmel should stay booted to tristate qspi pins 
         qspi_init(); //reinit and deinit atmel qspi
-
     }
-
 }
 
 file_struct* recents_index(int8_t selectedItem)
@@ -606,8 +608,8 @@ project_struct* project_create(void)
 void system_init(void) // create global system struct and read directory info from flash, create project structs 
 {   
     system_singleton = system_new();
-    #if FIRST_BOOT
-    flash_init();  //NOTE: watchdog will timeout during flash erase unless disabled
+    #if FIRST_BOOT  
+    flash_init();    //NOTE: watchdog will timeout during flash erase unless disabled
     #endif 
     projects_sync(); 
 }
@@ -769,22 +771,31 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
 void atmel_reset(void)
 {
     nrf_gpio_pin_clear(ATMEL_RESET_PIN);
-    nrf_delay_ms(5);
+    nrf_delay_ms(10);
     nrf_gpio_pin_set(ATMEL_RESET_PIN);
+    nrf_delay_ms(10);
+}
+
+void atmel_reset_hold(void)
+{
+    nrf_gpio_pin_clear(ATMEL_RESET_PIN);
+    nrf_delay_ms(10);
+}
+
+void atmel_reset_release(void)
+{
+    nrf_gpio_pin_set(ATMEL_RESET_PIN);
+    nrf_delay_ms(50);
 }
 
 void atmel_boot(void)
 {
-    nrf_gpio_pin_set(BOOT_PIN);
     atmel_reset();
-    nrf_delay_ms(5);
 }
 
 void atmel_shutdown(void)
 {
-    nrf_gpio_pin_clear(BOOT_PIN);
-    atmel_reset();
-    nrf_delay_ms(5);
+
 }
 
 void flash_init(void) 

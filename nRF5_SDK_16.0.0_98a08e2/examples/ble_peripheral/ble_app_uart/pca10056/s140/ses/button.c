@@ -268,17 +268,15 @@ void long_press_timeout_handler(void* p_context)
     }
     else if(enterFlag && !upFlag)// enter long press
     {
-        atmel_shutdown();
-        hibernate();
+        device_shutdown();
     }
     else if(enterFlag && upFlag) //if dual press
     {
         advertising_start();
-
     }
     else if(downFlag) //down long press
     {
- 
+        // do something
     }
 }
 

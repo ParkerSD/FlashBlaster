@@ -195,12 +195,11 @@ void flashblaster_init(void)
 {
 
     // Initialize.
-
     power_clock_init();
     log_init();
     timers_init();
     power_management_init();
-
+    
     ble_stack_init();
     scheduler_init(); 
     gap_params_init();
@@ -213,17 +212,16 @@ void flashblaster_init(void)
     //usb_init(); // not needed until usb data needed, should test before next rev 
     usb_pwr_init();
     button_init();
-    
+   
     twi_init();
     spi_init(); //SPI in blocking mode(no handler inited), may cause issues later
-    qspi_init();
+    qspi_init(); 
     
     oled_init(); 
     system_init();
     list_init();
     draw_initial_screen();
     battery_init();
-    
 }
 
 
@@ -245,18 +243,23 @@ int main(void)
     nrf_power_dcdcen_set(true);
 
     #if FIRST_BOOT == false // defined in system.h
-    watchdog_init(); 
+    watchdog_init();   
     #endif 
-    
+
     //nrf_delay_ms(1); //prevent false boot
     if(!nrf_gpio_pin_read(BTN_ENTER)) 
     {
-        atmel_boot();
+        //nrf_gpio_pin_set(BOOT_PIN); // nordic stopped booting when bootpin cleared (atmel off) 
+        //atmel_reset();
+        
         flashblaster_init();
+
+        //nrf_gpio_pin_clear(BOOT_PIN); // comment out to program atmel
+        //atmel_reset();
     }
     else
     {
-        atmel_shutdown();
+        //atmel_shutdown(); // can't send twi before initted, beware: fault ends in no boot with watchdog resetting
         hibernate(); 
     }
    

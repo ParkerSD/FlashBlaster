@@ -82,7 +82,7 @@ static void configure_memory()
 void qspi_init(void)
 {
     uint32_t err_code;
-
+    
     nrf_gpio_cfg_output(19); // QSPI Pins
     nrf_gpio_cfg_output(17); 
     nrf_gpio_cfg_output(32); 

@@ -62,7 +62,7 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_pin_set(ATMEL_RESET_PIN);
 
     nrf_gpio_cfg_output(BOOT_PIN); //set true before reset to boot atmel
-    nrf_gpio_pin_clear(BOOT_PIN);
+    //nrf_gpio_pin_clear(BOOT_PIN);
 
     nrf_gpio_cfg_input(I2CS_INT, NRF_GPIO_PIN_PULLDOWN);
 
@@ -167,6 +167,22 @@ void draw_text(int y, char* text) // 0 < y < 8
 //    oledWriteString(1, y, text, FONT_SMALL);
 }
 
+void oled_draw_transfer_progress(void)
+{
+    clear_screen();
+    SSD1351_set_cursor(20,50);
+    SSD1351_printf(COLOR_YELLOW, med_font, "Transfering");//draw error
+}
+
+void oled_draw_transfer_complete(void)
+{
+    clear_screen();
+    SSD1351_set_cursor(20,50);
+    SSD1351_printf(COLOR_GREEN, med_font, "Transfer");//draw error
+    SSD1351_set_cursor(20,70);
+    SSD1351_printf(COLOR_GREEN, med_font, "Complete");//draw error
+}
+
 void oled_draw_err(uint8_t err_id)
 {
     clear_screen();
@@ -184,6 +200,13 @@ void oled_draw_err(uint8_t err_id)
         case error_dbg_locked:
             SSD1351_printf(COLOR_WHITE, small_font, "Debug Port Locked");
             break;
+        case error_client_timeout: // PC(central) is client
+            SSD1351_printf(COLOR_WHITE, small_font, "Client Timeout");
+            break;
+        case error_server_timeout: // Flashblaster(peripheral) is server
+            SSD1351_printf(COLOR_WHITE, small_font, "Server Timeout");
+            break;
+
         default:
             break;
     }
@@ -192,12 +215,14 @@ void oled_draw_err(uint8_t err_id)
     nrf_delay_ms(2000);
 }
 
+
 void oled_stop_ad_timer(void)
 {
     ble_set_ad_stopped();
     uint32_t ret = app_timer_stop(ad_timer_id);
     APP_ERROR_CHECK(ret);
 }
+
 
 void oled_ad_callback(void* p_context)
 {
@@ -220,6 +245,8 @@ void oled_ad_callback(void* p_context)
     }
 
 }
+
+
 void oled_advertising_indicate(uint32_t ad_duration)
 {
  
@@ -230,6 +257,7 @@ void oled_advertising_indicate(uint32_t ad_duration)
     APP_ERROR_CHECK(ret); 
 
 }
+
 
 void oled_draw_progress_bar(void)
 {

@@ -74,6 +74,9 @@ void oled_advertising_indicate(uint32_t ad_duration);
 
 void oled_stop_ad_timer(void);
 
+void oled_draw_transfer_progress(void);
+
+void oled_draw_transfer_complete(void);
 
 
 

@@ -10,14 +10,18 @@
 #define target_cmd 0xBB // payload = data address, data length, target flash address, chip type
 #define progress_cmd 0xAA // payload = one byte of flash write progress from atmel
 #define error_cmd 0xEE // followed by error type
+#define shutdwn_cmd 0xF1 //shut down atmel
 
-#define prog_complete 124 // equals number of vertical lines in progress bar drawing
+#define prog_complete 123 // equals number of vertical lines in progress bar drawing
 #define prog_error 0xFD // used to exit proggramming loop 
 
 //error type defines 
 #define error_no_target 0x00
 #define error_no_dbg_pwr 0x01
 #define error_dbg_locked 0x02
+#define error_client_timeout 0x03
+#define error_server_timeout 0x04
+
 
 
 void twi_init(void);
