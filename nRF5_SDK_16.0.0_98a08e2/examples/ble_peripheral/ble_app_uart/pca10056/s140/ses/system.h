@@ -31,7 +31,7 @@
 
 #define PROJECT_HEADER_SIZE 20 //chip size without pointers
 #define CHIP_NUM_OFFSET 16 
-#define MAX_PROJECT_SIZE 52 // allows for 27 chips
+#define MAX_PROJECT_SIZE 52 // allows for 27 chips, but MAX_PROJECTS limits to 8 
 #define CHIP_LIST_SIZE 32 //chip list of project
 
 #define CHIP_HEADER_SIZE 24 // ship size without pointers

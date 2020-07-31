@@ -16,11 +16,14 @@
 #define prog_error 0xFD // used to exit proggramming loop 
 
 //error type defines 
-#define error_no_target 0x00
-#define error_no_dbg_pwr 0x01
-#define error_dbg_locked 0x02
-#define error_client_timeout 0x03
-#define error_server_timeout 0x04
+#define ERROR_NO_TARGET 0x00
+#define ERROR_NO_DBG_PWR 0x01
+#define ERROR_DBG_LOCKED 0x02
+#define ERROR_CLIENT_TIMEOUT 0x03
+#define ERROR_SERVER_TIMEOUT 0x04
+#define PROJECT_LIMIT_REACHED 0x05
+#define CHIP_LIMIT_REACHED 0x06
+#define FILE_LIMIT_REACHED 0x07
 
 
 

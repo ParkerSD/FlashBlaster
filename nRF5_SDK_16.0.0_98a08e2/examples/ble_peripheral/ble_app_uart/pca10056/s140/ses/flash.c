@@ -12,6 +12,7 @@
 #include "oled.h"
 #include "nrf_gpio.h"
 #include "system.h"
+#include "twi.h"
 
 #define QSPI_TEST 0 //set true to enable qspi test 
 
@@ -67,7 +68,7 @@ static void configure_memory()
     err_code = nrf_drv_qspi_cinstr_xfer(&cinstr_cfg, NULL, NULL);
     APP_ERROR_CHECK(err_code);
 
-    // Switch to qspi mode
+   // Switch to qspi mode
 //    cinstr_cfg.opcode = QSPI_STD_CMD_WRSR; //TODO: NOT CONVERTING TO QUAD MODE
 //    cinstr_cfg.length = NRF_QSPI_CINSTR_LEN_2B;
 //    err_code = nrf_drv_qspi_cinstr_xfer(&cinstr_cfg, &temporary, NULL);
@@ -324,164 +325,192 @@ uint32_t flash_add_project(char* project_name)
 
     flash_read(num_projects_buff, ADDR_NUM_PROJECTS, WORD_SIZE); //read project_num total
     num_projects = num_projects_buff[0] << 24 | num_projects_buff[1] << 16 | num_projects_buff[2] << 8 | num_projects_buff[3];
-    
-    //update project sector
-    flash_read(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); //buffer project sector for modification
-    flash_erase(PROJECTS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
-    uint8_t chip_num_init[WORD_SIZE] = {0, 0, 0, 0};
-    uint32_t project_addr_sector = num_projects * MAX_PROJECT_SIZE;
-    memcpy(&sector_buff[project_addr_sector], project_name, MAX_STRING_SIZE); // copy project name string to buffer
-    memcpy(&sector_buff[project_addr_sector + MAX_STRING_SIZE], chip_num_init, WORD_SIZE); // copy chip_num to buffer
-    flash_write(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); //rewrite modified sector buffer
+    if(num_projects <= MAX_PROJECTS) //do not exceed project count limit
+    {
+        //update project sector
+        flash_read(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); //buffer project sector for modification
+        flash_erase(PROJECTS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
+        uint8_t chip_num_init[WORD_SIZE] = {0, 0, 0, 0};
+        uint32_t project_addr_sector = num_projects * MAX_PROJECT_SIZE;
+        memcpy(&sector_buff[project_addr_sector], project_name, MAX_STRING_SIZE); // copy project name string to buffer
+        memcpy(&sector_buff[project_addr_sector + MAX_STRING_SIZE], chip_num_init, WORD_SIZE); // copy chip_num to buffer
+        flash_write(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); //rewrite modified sector buffer
 
-    //update directory
-    uint32_t new_project_addr = (num_projects * MAX_PROJECT_SIZE) + PROJECTS_START_ADDR; //calc new project start address 
-    uint32_t new_project_dir_addr = (num_projects * WORD_SIZE) + ADDR_PROJECT_PTR_FIRST; //project addr in directory
-    num_projects++; //increment num projects
-    flash_read(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
-    flash_erase(DIRECTORY_START_ADDR, NRF_QSPI_ERASE_LEN_4KB); 
+        //update directory
+        uint32_t new_project_addr = (num_projects * MAX_PROJECT_SIZE) + PROJECTS_START_ADDR; //calc new project start address 
+        uint32_t new_project_dir_addr = (num_projects * WORD_SIZE) + ADDR_PROJECT_PTR_FIRST; //project addr in directory
+        num_projects++; //increment num projects
+        flash_read(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
+        flash_erase(DIRECTORY_START_ADDR, NRF_QSPI_ERASE_LEN_4KB); 
 
-    sector_buff[0] = (num_projects >> 24) & 0xFF;  
-    sector_buff[1] = (num_projects >> 16) & 0xFF;
-    sector_buff[2] = (num_projects >> 8) & 0xFF;
-    sector_buff[3] = num_projects & 0xFF;
+        sector_buff[0] = (num_projects >> 24) & 0xFF;  
+        sector_buff[1] = (num_projects >> 16) & 0xFF;
+        sector_buff[2] = (num_projects >> 8) & 0xFF;
+        sector_buff[3] = num_projects & 0xFF;
 
-    sector_buff[new_project_dir_addr] = (new_project_addr >> 24) & 0xFF;  
-    sector_buff[new_project_dir_addr+1] = (new_project_addr >> 16) & 0xFF;
-    sector_buff[new_project_dir_addr+2] = (new_project_addr >> 8) & 0xFF;
-    sector_buff[new_project_dir_addr+3] = new_project_addr & 0xFF;
+        sector_buff[new_project_dir_addr] = (new_project_addr >> 24) & 0xFF;  
+        sector_buff[new_project_dir_addr+1] = (new_project_addr >> 16) & 0xFF;
+        sector_buff[new_project_dir_addr+2] = (new_project_addr >> 8) & 0xFF;
+        sector_buff[new_project_dir_addr+3] = new_project_addr & 0xFF;
 
-    flash_write(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE); //rewrite directory
+        flash_write(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE); //rewrite directory
 
-    return new_project_addr; 
+        return new_project_addr; 
+    }
+    else
+    {
+        oled_draw_err(PROJECT_LIMIT_REACHED);// throw project limit reached error
+        return NULL; 
+    }
 }
 
 
 uint32_t flash_add_chip(uint32_t project_addr, char* chip_name, uint8_t* chip_id, bool add_all_cmd)
 {
     uint32_t num_chips_global;
+    uint32_t num_chips_local;
     uint8_t num_chips_buff[WORD_SIZE];
     uint8_t chip_addr_buff[WORD_SIZE]; 
     uint8_t sector_buff[CHIP_SECTOR_SIZE];
     uint8_t file_num_init[WORD_SIZE] = {0, 0, 0, 0}; 
 
-    flash_read(num_chips_buff, CHIP_COUNT_GLOBAL_ADDR, WORD_SIZE); //read chip_num_global total
-    num_chips_global = num_chips_buff[0] << 24 | num_chips_buff[1] << 16 | num_chips_buff[2] << 8 | num_chips_buff[3];
-    
-    if(add_all_cmd)
+    flash_read(num_chips_buff, project_addr + CHIP_NUM_OFFSET, WORD_SIZE); //read project's chip count check that chips per project do not exceed MAX_CHIPS
+    num_chips_local = num_chips_buff[0] << 24 | num_chips_buff[1] << 16 | num_chips_buff[2] << 8 | num_chips_buff[3];
+    if(num_chips_local <= MAX_CHIPS) // do not exceed chip count limit per project 
     {
-      file_num_init[3] = 1; //increment file_num if add_all_cmd used
-    }
-
-    //update chip sector with new chip 
-    uint32_t new_chip_sector_addr = num_chips_global * MAX_CHIP_SIZE;
-    flash_read(sector_buff, CHIPS_START_ADDR, CHIP_SECTOR_SIZE);
-    flash_erase(CHIPS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB); //erase first sector 
-    flash_erase(CHIPS_START_ADDR + FLASH_SECTOR_SIZE, NRF_QSPI_ERASE_LEN_4KB); //erase second sector 
-    flash_erase(CHIPS_START_ADDR + (2*FLASH_SECTOR_SIZE), NRF_QSPI_ERASE_LEN_4KB); //erase third sector 
-    memcpy(&sector_buff[new_chip_sector_addr], chip_name, MAX_STRING_SIZE); //copy new chip name into sector
-    memcpy(&sector_buff[new_chip_sector_addr + MAX_STRING_SIZE], chip_id, WORD_SIZE); // chip_id
-    memcpy(&sector_buff[new_chip_sector_addr + FILE_NUM_OFFSET], file_num_init, WORD_SIZE); 
-    flash_write(sector_buff, CHIPS_START_ADDR, CHIP_SECTOR_SIZE); // rewrite sector 
+        flash_read(num_chips_buff, CHIP_COUNT_GLOBAL_ADDR, WORD_SIZE); //read chip_num_global total
+        num_chips_global = num_chips_buff[0] << 24 | num_chips_buff[1] << 16 | num_chips_buff[2] << 8 | num_chips_buff[3];
     
-    //update directory
-    flash_read(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE); 
-    flash_erase(DIRECTORY_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
-    num_chips_global++;
-    sector_buff[CHIP_COUNT_GLOBAL_ADDR] = (num_chips_global >> 24) & 0xFF;  
-    sector_buff[CHIP_COUNT_GLOBAL_ADDR+1] = (num_chips_global >> 16) & 0xFF;
-    sector_buff[CHIP_COUNT_GLOBAL_ADDR+2] = (num_chips_global >> 8) & 0xFF;
-    sector_buff[CHIP_COUNT_GLOBAL_ADDR+3] = num_chips_global & 0xFF;
-    flash_write(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
+        if(add_all_cmd)
+        {
+          file_num_init[3] = 1; //increment file_num if add_all_cmd used
+        }
 
-    //update parent project
-    uint32_t new_chip_addr = new_chip_sector_addr + CHIPS_START_ADDR;
-    flash_read(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); 
-    flash_erase(PROJECTS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
-    //add chip_addr_ptr to project
-    uint32_t project_sector_addr = project_addr - PROJECTS_START_ADDR; 
-    uint32_t num_chips_project = sector_buff[project_sector_addr + CHIP_NUM_OFFSET] << 24 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 1] << 16 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 2] << 8 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 3];
-    uint32_t chip_ptr_addr = PROJECT_HEADER_SIZE + (num_chips_project * WORD_SIZE);
-    sector_buff[project_sector_addr + chip_ptr_addr] = (new_chip_addr >> 24) & 0xFF;  
-    sector_buff[project_sector_addr + chip_ptr_addr+1] = (new_chip_addr >> 16) & 0xFF;
-    sector_buff[project_sector_addr + chip_ptr_addr+2] = (new_chip_addr >> 8) & 0xFF;
-    sector_buff[project_sector_addr + chip_ptr_addr+3] = new_chip_addr & 0xFF;
-    //increment chip_num in project
-    num_chips_project++;
-    sector_buff[project_sector_addr + CHIP_NUM_OFFSET] = (num_chips_project >> 24) & 0xFF;  
-    sector_buff[project_sector_addr + CHIP_NUM_OFFSET+1] = (num_chips_project >> 16) & 0xFF;
-    sector_buff[project_sector_addr + CHIP_NUM_OFFSET+2] = (num_chips_project >> 8) & 0xFF;
-    sector_buff[project_sector_addr + CHIP_NUM_OFFSET+3] = num_chips_project & 0xFF;
-    flash_write(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE);
+        //update chip sector with new chip 
+        uint32_t new_chip_sector_addr = num_chips_global * MAX_CHIP_SIZE;
+        flash_read(sector_buff, CHIPS_START_ADDR, CHIP_SECTOR_SIZE);
+        flash_erase(CHIPS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB); //erase first sector 
+        flash_erase(CHIPS_START_ADDR + FLASH_SECTOR_SIZE, NRF_QSPI_ERASE_LEN_4KB); //erase second sector 
+        flash_erase(CHIPS_START_ADDR + (2*FLASH_SECTOR_SIZE), NRF_QSPI_ERASE_LEN_4KB); //erase third sector 
+        memcpy(&sector_buff[new_chip_sector_addr], chip_name, MAX_STRING_SIZE); //copy new chip name into sector
+        memcpy(&sector_buff[new_chip_sector_addr + MAX_STRING_SIZE], chip_id, WORD_SIZE); // chip_id
+        memcpy(&sector_buff[new_chip_sector_addr + FILE_NUM_OFFSET], file_num_init, WORD_SIZE); 
+        flash_write(sector_buff, CHIPS_START_ADDR, CHIP_SECTOR_SIZE); // rewrite sector 
+    
+        //update directory
+        flash_read(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE); 
+        flash_erase(DIRECTORY_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
+        num_chips_global++;
+        sector_buff[CHIP_COUNT_GLOBAL_ADDR] = (num_chips_global >> 24) & 0xFF;  
+        sector_buff[CHIP_COUNT_GLOBAL_ADDR+1] = (num_chips_global >> 16) & 0xFF;
+        sector_buff[CHIP_COUNT_GLOBAL_ADDR+2] = (num_chips_global >> 8) & 0xFF;
+        sector_buff[CHIP_COUNT_GLOBAL_ADDR+3] = num_chips_global & 0xFF;
+        flash_write(sector_buff, DIRECTORY_START_ADDR, FLASH_SECTOR_SIZE);
 
-    return new_chip_addr;
+        //update parent project
+        uint32_t new_chip_addr = new_chip_sector_addr + CHIPS_START_ADDR;
+        flash_read(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE); 
+        flash_erase(PROJECTS_START_ADDR, NRF_QSPI_ERASE_LEN_4KB);
+        //add chip_addr_ptr to project
+        uint32_t project_sector_addr = project_addr - PROJECTS_START_ADDR; 
+        uint32_t num_chips_project = sector_buff[project_sector_addr + CHIP_NUM_OFFSET] << 24 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 1] << 16 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 2] << 8 | sector_buff[project_sector_addr + CHIP_NUM_OFFSET + 3];
+        uint32_t chip_ptr_addr = PROJECT_HEADER_SIZE + (num_chips_project * WORD_SIZE);
+        sector_buff[project_sector_addr + chip_ptr_addr] = (new_chip_addr >> 24) & 0xFF;  
+        sector_buff[project_sector_addr + chip_ptr_addr+1] = (new_chip_addr >> 16) & 0xFF;
+        sector_buff[project_sector_addr + chip_ptr_addr+2] = (new_chip_addr >> 8) & 0xFF;
+        sector_buff[project_sector_addr + chip_ptr_addr+3] = new_chip_addr & 0xFF;
+        //increment chip_num in project
+        num_chips_project++;
+        sector_buff[project_sector_addr + CHIP_NUM_OFFSET] = (num_chips_project >> 24) & 0xFF;  
+        sector_buff[project_sector_addr + CHIP_NUM_OFFSET+1] = (num_chips_project >> 16) & 0xFF;
+        sector_buff[project_sector_addr + CHIP_NUM_OFFSET+2] = (num_chips_project >> 8) & 0xFF;
+        sector_buff[project_sector_addr + CHIP_NUM_OFFSET+3] = num_chips_project & 0xFF;
+        flash_write(sector_buff, PROJECTS_START_ADDR, FLASH_SECTOR_SIZE);
+
+        return new_chip_addr;
+    }
+    else
+    {
+        oled_draw_err(CHIP_LIMIT_REACHED);// throw chip limit reached error
+        return NULL; 
+    }
 }
 
 
 void file_header_write(uint32_t chip_addr, char* file_name, uint32_t start_address, uint32_t file_data_length, bool add_all_cmd)
 {   
-    uint32_t file_count; 
+    uint32_t file_count;
+    uint32_t file_count_local;
     uint8_t file_count_buff[WORD_SIZE]; 
-
-    // read global file count to detemine where to place in file sector 
-    flash_read(file_count_buff, FILE_COUNT_GLOBAL_ADDR, WORD_SIZE);
-    file_count = file_count_buff[0] << 24 | file_count_buff[1] << 16 | file_count_buff[2] << 8 | file_count_buff[3];
-
-    //write file name string in file flash section
-    uint32_t curr_file_addr = DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_SECTOR_OFFSET + (FILE_HEADER_SIZE * file_count); // determine address in file section
-    flash_write(file_name, curr_file_addr, MAX_STRING_SIZE);  
     
-    //write start address to file header
-    uint8_t start_address_buff[WORD_SIZE];
-    start_address_buff[0] = (start_address >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
-    start_address_buff[1] = (start_address >> 16) & 0xFF;
-    start_address_buff[2] = (start_address >> 8) & 0xFF;
-    start_address_buff[3] = start_address & 0xFF;
-    flash_write(start_address_buff, curr_file_addr + MAX_STRING_SIZE, WORD_SIZE); 
-    
-    //write data length to file
-    uint8_t file_data_length_buff[WORD_SIZE];
-    file_data_length_buff[0] = (file_data_length >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
-    file_data_length_buff[1] = (file_data_length >> 16) & 0xFF;
-    file_data_length_buff[2] = (file_data_length >> 8) & 0xFF;
-    file_data_length_buff[3] = file_data_length & 0xFF;
-    flash_write(file_data_length_buff, curr_file_addr + MAX_STRING_SIZE + WORD_SIZE, WORD_SIZE); 
-    
-    //write data address into file
-    uint32_t bytes_prog = fetch_bytes_prog(); 
-    uint32_t file_data_addr = bytes_prog + DATA_SECTOR_START; 
-    uint8_t file_data_addr_buff[WORD_SIZE];
-    file_data_addr_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
-    file_data_addr_buff[1] = (file_data_addr >> 16) & 0xFF;
-    file_data_addr_buff[2] = (file_data_addr >> 8) & 0xFF;
-    file_data_addr_buff[3] = file_data_addr & 0xFF;
-    flash_write(file_data_addr_buff, curr_file_addr + FILE_DATA_ADDR_OFFSET, WORD_SIZE);   
-    
-    //add file address pointer to chip
-    uint32_t file_num_chip;
-    uint8_t file_num_chip_buff[WORD_SIZE]; 
-    flash_read(file_num_chip_buff, chip_addr + FILE_NUM_OFFSET, WORD_SIZE); //read number of files in chip
-    file_num_chip = file_num_chip_buff[0] << 24 | file_num_chip_buff[1] << 16 | file_num_chip_buff[2] << 8 | file_num_chip_buff[3];
-
-    if(add_all_cmd)
+    flash_read(file_count_buff, chip_addr + FILE_NUM_OFFSET, WORD_SIZE);  //read chip's file count check that files per chip do not exceed MAX_FILES
+    file_count_local = file_count_buff[0] << 24 | file_count_buff[1] << 16 | file_count_buff[2] << 8 | file_count_buff[3];
+    if(file_count_local <= MAX_FILES)
     {
-        file_num_chip--; //chip was initted with 1 file and casues offset in file_addr_chip if add_all_cmd was used
+        // read global file count to detemine where to place in file sector 
+        flash_read(file_count_buff, FILE_COUNT_GLOBAL_ADDR, WORD_SIZE);
+        file_count = file_count_buff[0] << 24 | file_count_buff[1] << 16 | file_count_buff[2] << 8 | file_count_buff[3];
+
+        //write file name string in file flash section
+        uint32_t curr_file_addr = DIRECTORY_OFFSET + PROJECT_SECTOR_OFFSET + CHIP_SECTOR_OFFSET + (FILE_HEADER_SIZE * file_count); // determine address in file section
+        flash_write(file_name, curr_file_addr, MAX_STRING_SIZE);  
+    
+        //write start address to file header
+        uint8_t start_address_buff[WORD_SIZE];
+        start_address_buff[0] = (start_address >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+        start_address_buff[1] = (start_address >> 16) & 0xFF;
+        start_address_buff[2] = (start_address >> 8) & 0xFF;
+        start_address_buff[3] = start_address & 0xFF;
+        flash_write(start_address_buff, curr_file_addr + MAX_STRING_SIZE, WORD_SIZE); 
+    
+        //write data length to file
+        uint8_t file_data_length_buff[WORD_SIZE];
+        file_data_length_buff[0] = (file_data_length >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+        file_data_length_buff[1] = (file_data_length >> 16) & 0xFF;
+        file_data_length_buff[2] = (file_data_length >> 8) & 0xFF;
+        file_data_length_buff[3] = file_data_length & 0xFF;
+        flash_write(file_data_length_buff, curr_file_addr + MAX_STRING_SIZE + WORD_SIZE, WORD_SIZE); 
+    
+        //write data address into file
+        uint32_t bytes_prog = fetch_bytes_prog(); 
+        uint32_t file_data_addr = bytes_prog + DATA_SECTOR_START; 
+        uint8_t file_data_addr_buff[WORD_SIZE];
+        file_data_addr_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+        file_data_addr_buff[1] = (file_data_addr >> 16) & 0xFF;
+        file_data_addr_buff[2] = (file_data_addr >> 8) & 0xFF;
+        file_data_addr_buff[3] = file_data_addr & 0xFF;
+        flash_write(file_data_addr_buff, curr_file_addr + FILE_DATA_ADDR_OFFSET, WORD_SIZE);   
+    
+        //add file address pointer to chip
+        uint32_t file_num_chip;
+        uint8_t file_num_chip_buff[WORD_SIZE]; 
+        flash_read(file_num_chip_buff, chip_addr + FILE_NUM_OFFSET, WORD_SIZE); //read number of files in chip
+        file_num_chip = file_num_chip_buff[0] << 24 | file_num_chip_buff[1] << 16 | file_num_chip_buff[2] << 8 | file_num_chip_buff[3];
+
+        if(add_all_cmd)
+        {
+            file_num_chip--; //chip was initted with 1 file and casues offset in file_addr_chip if add_all_cmd was used
+        }
+
+        uint32_t file_addr_chip = chip_addr + CHIP_HEADER_SIZE + (file_num_chip * WORD_SIZE);
+        uint8_t curr_file_addr_buff[WORD_SIZE];
+        curr_file_addr_buff[0] = (curr_file_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
+        curr_file_addr_buff[1] = (curr_file_addr >> 16) & 0xFF;
+        curr_file_addr_buff[2] = (curr_file_addr >> 8) & 0xFF;
+        curr_file_addr_buff[3] = curr_file_addr & 0xFF;
+        flash_write(curr_file_addr_buff, file_addr_chip, WORD_SIZE); //write file address in chip
+    }
+    else
+    {
+        set_ble_error_flag(true); //set prog_flag false to prevent file data write
+        oled_draw_err(FILE_LIMIT_REACHED);// throw file limit reached error
     }
 
-    uint32_t file_addr_chip = chip_addr + CHIP_HEADER_SIZE + (file_num_chip * WORD_SIZE);
-    uint8_t curr_file_addr_buff[WORD_SIZE];
-    curr_file_addr_buff[0] = (curr_file_addr >> 24) & 0xFF; //bit shift 32bit int into 8bit array 
-    curr_file_addr_buff[1] = (curr_file_addr >> 16) & 0xFF;
-    curr_file_addr_buff[2] = (curr_file_addr >> 8) & 0xFF;
-    curr_file_addr_buff[3] = curr_file_addr & 0xFF;
-    flash_write(curr_file_addr_buff, file_addr_chip, WORD_SIZE); //write file address in chip
-
-  //NOTE FOR TEST 
-//  uint8_t data_buff[500];
-//  flash_read(data_buff, chip_addr, 500);
-//  m_finished = true;
+    //  NOTE FOR TEST 
+    //  uint8_t data_buff[500];
+    //  flash_read(data_buff, chip_addr, 500);
+    //  m_finished = true;
                 
-                
- 
+               
     // write file header data (name, timestamp, datalength, data_addr)
 }

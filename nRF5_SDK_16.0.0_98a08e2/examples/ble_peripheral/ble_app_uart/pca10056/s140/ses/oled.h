@@ -9,6 +9,10 @@
 #ifndef OLED_H_
 #define OLED_H_
 
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 128
+#define SM_CHAR_WIDTH 7
+
 //#define CS_PIN 38 //P1.06
 #define LDO_EN 4  //NOTE used for detecting usb on boot
 #define BB_EN 26 //NOTE not used 
@@ -77,6 +81,8 @@ void oled_stop_ad_timer(void);
 void oled_draw_transfer_progress(void);
 
 void oled_draw_transfer_complete(void);
+
+void oled_center_small_x(uint8_t num_chars, uint8_t y_point);
 
 
 

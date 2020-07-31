@@ -99,6 +99,7 @@ static uint32_t chip_addr_global;
 static bool prog_flag = false; 
 static bool add_all_mode = false; 
 static bool ad_started = false;
+static bool ble_error_flag = false; 
 static uint8_t chip_id[WORD_SIZE]; //chip_id decoded from chip name string 
 
 
@@ -112,6 +113,16 @@ static struct chips_supported
     char ATSAMC51[8] = {"ATSAMC51"};
 }
 */
+
+void set_ble_error_flag(bool state)
+{
+    ble_error_flag = state;
+}
+
+void set_prog_flag(bool state)
+{
+    prog_flag = state; 
+}
 
 void ble_set_ad_stopped(void)
 {
@@ -512,7 +523,7 @@ void nus_data_handler(ble_nus_evt_t * p_evt)
             ble_cmd_parser(); 
             current_byte_pos = file_data_length;
         }
-        else // prog flag true, start file write
+        else if(!ble_error_flag) // prog flag true, start file write
         {
            if(current_byte_pos > 0)
             {   
@@ -753,7 +764,7 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
-            oled_draw_err(error_client_timeout); //PC(central) is client 
+            oled_draw_err(ERROR_CLIENT_TIMEOUT); //PC(central) is client 
             break;
 
         case BLE_GATTS_EVT_TIMEOUT:
@@ -761,7 +772,7 @@ void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
-            oled_draw_err(error_server_timeout); //flashblaster(peripheral) is server
+            oled_draw_err(ERROR_SERVER_TIMEOUT); //flashblaster(peripheral) is server
             break;
 
         default:

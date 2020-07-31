@@ -38,5 +38,6 @@ void timer_init(void);
 void hibernate(void);
 
 void reduce_itemHighlighted(void);
+void return_home(void);
 
 #endif /* BUTTON_H_ */ 

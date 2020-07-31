@@ -52,6 +52,14 @@ static int8_t selectedItem = 0;
 static int8_t screenStack = 0; 
 
 
+void return_home(void)
+{
+    screenStack = 0; 
+    itemHighlighted = 0;
+    selectedItem = 0; 
+    rerender_screen(itemHighlighted, selectedItem, screenStack, recentsFlag);   
+}
+
 
 void reduce_itemHighlighted(void)
 {
@@ -262,9 +270,7 @@ void long_press_timeout_handler(void* p_context)
     {   
         recentsFlag = false;
         list_clear();
-        screenStack = 0; 
-        rerender_screen(itemHighlighted, selectedItem, screenStack, recentsFlag);
-
+        return_home(); 
     }
     else if(enterFlag && !upFlag)// enter long press
     {
@@ -277,6 +283,7 @@ void long_press_timeout_handler(void* p_context)
     else if(downFlag) //down long press
     {
         // do something
+        // oled_draw_transfer_progress();
     }
 }
 

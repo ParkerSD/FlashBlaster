@@ -194,7 +194,7 @@ void watchdog_init(void)
 void flashblaster_init(void)
 {
 
-    // Initialize.
+    // Initialize
     power_clock_init();
     log_init();
     timers_init();

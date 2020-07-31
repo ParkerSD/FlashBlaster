@@ -807,7 +807,7 @@ void flash_init(void)
     flash_erase(0, NRF_QSPI_ERASE_LEN_64KB); // erase all 
     flash_erase(0x10000, NRF_QSPI_ERASE_LEN_64KB); //0x10000
     flash_erase(0x20000, NRF_QSPI_ERASE_LEN_64KB);
-    //TODO: erase entire flash 32MB
+
 //    flash_erase(4096, NRF_QSPI_ERASE_LEN_4KB); //0x1000
 //    flash_erase(8192, NRF_QSPI_ERASE_LEN_4KB); //0x2000
 //    flash_erase(12288, NRF_QSPI_ERASE_LEN_4KB); //0x3000
@@ -840,6 +840,7 @@ void flash_init(void)
 //    uint8_t chip_ptr_first_test[WORD_SIZE] = {0, 0, 32, 0}; //address 8192 when bit shifted
 //    uint8_t chip_ptr_sec_test[WORD_SIZE] = {0, 0, 32, 56}; //address 8248 
 //    uint8_t chip_ptr_three_test[WORD_SIZE] = {0, 0, 32, 112}; //address 8304 
+//writing project below
 //    flash_write(project_string_test0, 4096, MAX_STRING_SIZE); // name sting 16 bytes long 
 //    flash_write(chip_num_test, 4112, WORD_SIZE); // chip num 4 bytes, address 48 (after string) 
 //    flash_write(chip_ptr_first_test, 4116, WORD_SIZE); // write first chip ptr after chip_num value of first project
