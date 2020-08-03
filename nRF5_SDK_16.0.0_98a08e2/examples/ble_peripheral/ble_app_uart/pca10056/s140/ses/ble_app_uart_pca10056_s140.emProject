@@ -190,7 +190,7 @@
       <file file_name="../../../../../../components/softdevice/common/nrf_sdh_ble.c" />
       <file file_name="../../../../../../components/softdevice/common/nrf_sdh_soc.c" />
     </folder>
-    <configuration Name="Release" linker_output_format="bin" />
+    <configuration Name="Release" linker_output_format="hex" />
   </project>
   <configuration
     Name="Release"
