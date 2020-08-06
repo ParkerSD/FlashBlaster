@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_usbd.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd.c \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -30,7 +30,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_usbd.o: \
  ../../../../../components/softdevice/mbr/headers/nrf_svc.h \
  ../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd.h \
  ../../../../../integration/nrfx/legacy/nrf_drv_usbd.h \
  ../../../../../modules/nrfx/nrfx.h \
  ../../../../../integration/nrfx/nrfx_config.h \
@@ -57,12 +57,12 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_usbd.o: \
  ../../../../../modules/nrfx/hal/nrf_usbd.h \
  ../../../../../integration/nrfx/legacy/nrf_drv_usbd_errata.h \
  ../../../../../modules/nrfx/drivers/include/../src/nrfx_usbd_errata.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd_types.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd_request.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd_descriptor.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd_langid.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd_class_base.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\app_usbd_core.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd_types.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd_request.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd_descriptor.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd_langid.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd_class_base.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\app_usbd_core.h \
  ../../../../../modules/nrfx/hal/nrf_power.h \
  ../../../../../integration/nrfx/legacy/nrf_drv_clock.h \
  ../../../../../modules/nrfx/drivers/include/nrfx_clock.h \

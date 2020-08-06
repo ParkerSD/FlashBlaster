@@ -12,6 +12,8 @@
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 128
 #define SM_CHAR_WIDTH 7
+#define MED_CHAR_WIDTH 11
+#define BIG_CHAR_WIDTH 16
 
 //#define CS_PIN 38 //P1.06
 #define LDO_EN 4  //NOTE used for detecting usb on boot
@@ -31,6 +33,11 @@
 #define LED_ORANGE 43 //P1.11
 
 #define SWCLK 16 
+
+//buttons
+#define BTN_UP 8  
+#define BTN_DOWN 34 // P1.02
+#define BTN_ENTER 5
 
 // OLED type for init function
 enum 
@@ -82,7 +89,11 @@ void oled_draw_transfer_progress(void);
 
 void oled_draw_transfer_complete(void);
 
-void oled_center_small_x(uint8_t num_chars, uint8_t y_point);
+void oled_center_x(uint8_t num_chars, uint8_t y_point, uint8_t char_width);
+
+void clear_screen(void);
+
+void oled_draw_bootloader(void);
 
 
 

@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_dfu_serial.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../components/drivers_nrf/nrf_soc_nosd/nrf_error.h \

@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/led_softblink.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\led_softblink\led_softblink.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\led_softblink\led_softblink.c \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -30,7 +30,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/led_softblink.o: \
  ../../../../../components/softdevice/mbr/headers/nrf_svc.h \
  ../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\led_softblink\led_softblink.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\led_softblink\led_softblink.h \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../modules/nrfx/hal/nrf_gpio.h \
  ../../../../../modules/nrfx/nrfx.h \

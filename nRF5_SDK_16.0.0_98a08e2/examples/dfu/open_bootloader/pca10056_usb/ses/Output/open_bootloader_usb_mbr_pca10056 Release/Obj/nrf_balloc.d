@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_balloc.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\balloc\nrf_balloc.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\balloc\nrf_balloc.c \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -32,7 +32,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_balloc.o: \
  ../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../components/libraries/experimental_section_vars/nrf_section.h \
  ../../../../../components/libraries/util/nordic_common.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\balloc\nrf_balloc.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\balloc\nrf_balloc.h \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../components/libraries/util/app_util_platform.h \
  ../../../../../components/libraries/util/app_error.h \

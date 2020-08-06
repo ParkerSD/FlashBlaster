@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrfx_atomic.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\modules\nrfx\soc\nrfx_atomic.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\modules\nrfx\soc\nrfx_atomic.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic.h \
  ../../../../../modules/nrfx/nrfx.h \
  ../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../modules/nrfx/drivers/nrfx_common.h \
@@ -46,4 +46,4 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrfx_atomic.o: \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../components/libraries/util/sdk_resources.h \
  ../../../../../modules/nrfx/drivers/nrfx_errors.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\modules\nrfx\soc\nrfx_atomic_internal.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\soc\nrfx_atomic_internal.h

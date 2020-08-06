@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -72,11 +72,11 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader.o: \
  ../../../../../components/libraries/log/nrf_log_backend_interface.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_settings.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_utils.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_wdt.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_info.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_app_start.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_fw_activation.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_dfu_timers.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_wdt.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_info.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_app_start.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_fw_activation.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_dfu_timers.h \
  ../../../../../components/libraries/scheduler/app_scheduler.h \
  ../../../../../components/libraries/util/app_error.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_validation.h \

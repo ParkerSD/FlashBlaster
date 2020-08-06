@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_error_weak.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\app_error_weak.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\app_error.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\app_error_weak.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\app_error.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdio.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
@@ -18,10 +18,10 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_error_weak.o: \
  ../../../../../modules/nrfx/mdk/nrf51_to_nrf52840.h \
  ../../../../../modules/nrfx/mdk/nrf52_to_nrf52840.h \
  ../../../../../modules/nrfx/mdk/compiler_abstraction.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\sdk_errors.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\sdk_errors.h \
  ../../../../../components/drivers_nrf/nrf_soc_nosd/nrf_error.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\nordic_common.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\app_error_weak.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\nordic_common.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\app_error_weak.h \
  ../../../../../components/libraries/log/nrf_log.h \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \
@@ -47,6 +47,22 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_error_weak.o: \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h \
  ../../../../../components/libraries/log/nrf_log_backend_interface.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\app_util_platform.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\nrf_assert.h \
- ../../../../../components/libraries/strerror/nrf_strerror.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\app_util_platform.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\nrf_assert.h \
+ ../../../../../components/libraries/strerror/nrf_strerror.h \
+ ../../../../../modules/nrfx/hal/nrf_gpio.h \
+ ../../../../../modules/nrfx/nrfx.h \
+ ../../../../../integration/nrfx/nrfx_config.h \
+ ../../../../../modules/nrfx/drivers/nrfx_common.h \
+ ../../../../../modules/nrfx/mdk/nrf_peripherals.h \
+ ../../../../../modules/nrfx/mdk/nrf52840_peripherals.h \
+ ../../../../../integration/nrfx/nrfx_glue.h \
+ ../../../../../integration/nrfx/legacy/apply_old_config.h \
+ ../../../../../modules/nrfx/soc/nrfx_irqs.h \
+ ../../../../../modules/nrfx/soc/nrfx_irqs_nrf52840.h \
+ ../../../../../components/libraries/util/nrf_assert.h \
+ ../../../../../components/libraries/util/app_util_platform.h \
+ ../../../../../modules/nrfx/soc/nrfx_coredep.h \
+ ../../../../../modules/nrfx/soc/nrfx_atomic.h \
+ ../../../../../components/libraries/util/sdk_resources.h \
+ ../../../../../modules/nrfx/drivers/nrfx_errors.h

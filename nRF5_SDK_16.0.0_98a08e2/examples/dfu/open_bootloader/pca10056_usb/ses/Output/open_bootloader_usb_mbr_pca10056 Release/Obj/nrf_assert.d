@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_assert.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\nrf_assert.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\nrf_assert.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\nrf_assert.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\nrf_assert.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  ../../../../../modules/nrfx/mdk/nrf.h \
  ../../../../../modules/nrfx/mdk/nrf52840.h \
@@ -15,11 +15,11 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_assert.o: \
  ../../../../../modules/nrfx/mdk/nrf51_to_nrf52840.h \
  ../../../../../modules/nrfx/mdk/nrf52_to_nrf52840.h \
  ../../../../../modules/nrfx/mdk/compiler_abstraction.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\app_error.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\app_error.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdio.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\sdk_errors.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\sdk_errors.h \
  ../../../../../components/drivers_nrf/nrf_soc_nosd/nrf_error.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\nordic_common.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\util\app_error_weak.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\nordic_common.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\util\app_error_weak.h

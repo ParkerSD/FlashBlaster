@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader_info.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_info.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_info.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_info.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_info.h \
  ../../../../../components/libraries/util/app_util.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \

@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/boards.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\boards\boards.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\boards\boards.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\boards\boards.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\boards\boards.h \
  ../../../../../modules/nrfx/hal/nrf_gpio.h \
  ../../../../../modules/nrfx/nrfx.h \
  ../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
@@ -47,4 +47,4 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/boards.o: \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../components/libraries/util/sdk_resources.h \
  ../../../../../modules/nrfx/drivers/nrfx_errors.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\boards\pca10056.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\boards\pca10056.h

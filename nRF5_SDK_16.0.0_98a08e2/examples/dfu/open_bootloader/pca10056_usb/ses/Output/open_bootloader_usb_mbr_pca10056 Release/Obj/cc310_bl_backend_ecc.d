@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/cc310_bl_backend_ecc.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\crypto\backend\cc310_bl\cc310_bl_backend_ecc.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\crypto\backend\cc310_bl\cc310_bl_backend_ecc.c \
  ../config/sdk_config.h \
  ../../../../../components/libraries/util/nordic_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \
@@ -54,4 +54,4 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/cc310_bl_backend_ecc.o: \
  ../../../../../components/libraries/crypto/nrf_crypto_shared.h \
  ../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../components/libraries/crypto/nrf_crypto_mem.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\crypto\backend\cc310_bl\cc310_bl_backend_ecc.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\crypto\backend\cc310_bl\cc310_bl_backend_ecc.h

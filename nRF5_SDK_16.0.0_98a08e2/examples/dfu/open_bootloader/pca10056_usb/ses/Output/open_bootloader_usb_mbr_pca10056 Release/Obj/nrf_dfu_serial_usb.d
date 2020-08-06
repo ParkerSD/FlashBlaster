@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_dfu_serial_usb.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial_usb.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial_usb.c \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_req_handler.h \
@@ -71,7 +71,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_dfu_serial_usb.o: \
  ../../../../../modules/nrfx/hal/nrf_usbd.h \
  ../../../../../integration/nrfx/legacy/nrf_drv_usbd_errata.h \
  ../../../../../modules/nrfx/drivers/include/../src/nrfx_usbd_errata.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\serial_dfu\nrf_dfu_serial.h \
  ../../../../../components/libraries/scheduler/app_scheduler.h \
  ../../../../../components/libraries/util/app_error.h \
  ../../../../../components/libraries/usbd/app_usbd.h \

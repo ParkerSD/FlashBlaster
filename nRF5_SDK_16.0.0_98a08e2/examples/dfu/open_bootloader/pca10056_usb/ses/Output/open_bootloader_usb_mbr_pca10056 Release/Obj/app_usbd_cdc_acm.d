@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_usbd_cdc_acm.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\class\cdc\acm\app_usbd_cdc_acm.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\class\cdc\acm\app_usbd_cdc_acm.c \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -30,7 +30,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_usbd_cdc_acm.o: \
  ../../../../../components/softdevice/mbr/headers/nrf_svc.h \
  ../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\class\cdc\acm\app_usbd_cdc_acm.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\class\cdc\acm\app_usbd_cdc_acm.h \
  ../../../../../integration/nrfx/legacy/nrf_drv_usbd.h \
  ../../../../../modules/nrfx/nrfx.h \
  ../../../../../integration/nrfx/nrfx_config.h \
@@ -69,7 +69,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_usbd_cdc_acm.o: \
  ../../../../../components/libraries/usbd/class/cdc/app_usbd_cdc_desc.h \
  ../../../../../components/libraries/usbd/class/cdc/app_usbd_cdc_types.h \
  ../../../../../components/libraries/usbd/class/cdc/app_usbd_cdc_types.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\usbd\class\cdc\acm\app_usbd_cdc_acm_internal.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\usbd\class\cdc\acm\app_usbd_cdc_acm_internal.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/inttypes.h \
  ../../../../../components/libraries/log/nrf_log.h \
  ../../../../../components/libraries/experimental_section_vars/nrf_section.h \

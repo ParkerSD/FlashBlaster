@@ -183,11 +183,11 @@ void oled_draw_transfer_complete(void)
     SSD1351_printf(COLOR_GREEN, med_font, "Complete");//draw error
 }
 
-void oled_center_small_x(uint8_t num_chars, uint8_t y_point)
+void oled_center_x(uint8_t num_chars, uint8_t y_point, uint8_t char_width)
 {
-    //x-axis 128 pixels wide, small char is 7 pixels wide
+    //x-axis 128 pixels wide, small char is 7 pixels wide, med 11, big 16 
     uint8_t x_point;
-    uint8_t string_width = num_chars * SM_CHAR_WIDTH; 
+    uint8_t string_width = num_chars * char_width; 
     x_point = (SCREEN_WIDTH - string_width)/2; 
 
     SSD1351_set_cursor(x_point, y_point);
@@ -202,35 +202,35 @@ void oled_draw_err(uint8_t err_id)
     switch(err_id)
     {
         case ERROR_NO_TARGET:
-            oled_center_small_x(strlen("Target Not Found"), 70);
+            oled_center_x(strlen("Target Not Found"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "Target Not Found");
             break;
         case ERROR_NO_DBG_PWR:
-            oled_center_small_x(strlen("Failure To Init"), 70);
+            oled_center_x(strlen("Failure To Init"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "Failure To Init");
             break;
         case ERROR_DBG_LOCKED:
-            oled_center_small_x(strlen("Debug Port Locked"), 70);
+            oled_center_x(strlen("Debug Port Locked"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "Debug Port Locked");
             break;
         case ERROR_CLIENT_TIMEOUT: // PC(central) is client
-            oled_center_small_x(strlen("Client Timeout"), 70);
+            oled_center_x(strlen("Client Timeout"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "Client Timeout");
             break;
         case ERROR_SERVER_TIMEOUT: // Flashblaster(peripheral) is server
-            oled_center_small_x(strlen("Server Timeout"), 70);
+            oled_center_x(strlen("Server Timeout"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "Server Timeout");
             break;
         case PROJECT_LIMIT_REACHED:
-            oled_center_small_x(strlen("8 Project Limit"), 70);
+            oled_center_x(strlen("8 Project Limit"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "8 Project Limit");
             break;
         case CHIP_LIMIT_REACHED:
-            oled_center_small_x(strlen("8 Chip Limit"), 70);
+            oled_center_x(strlen("8 Chip Limit"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "8 Chip Limit");
             break;
         case FILE_LIMIT_REACHED:
-            oled_center_small_x(strlen("8 File Limit"), 70);
+            oled_center_x(strlen("8 File Limit"), 70, SM_CHAR_WIDTH);
             SSD1351_printf(COLOR_WHITE, small_font, "8 File Limit");
             break;
         default:

@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_timer2.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\timer\app_timer2.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\timer\app_timer.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\timer\app_timer2.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\timer\app_timer.h \
  ../config/sdk_config.h \
  ../../../../../components/libraries/util/app_error.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
@@ -62,5 +62,5 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/app_timer2.o: \
  ../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../components/libraries/log/src/nrf_log_internal.h \
  ../../../../../components/libraries/log/nrf_log_types.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\timer\drv_rtc.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\timer\drv_rtc.h \
  ../../../../../modules/nrfx/hal/nrf_rtc.h

@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrfx_usbd.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\modules\nrfx\drivers\src\nrfx_usbd.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\nrfx_usbd.c \
  ../../../../../modules/nrfx/nrfx.h \
  ../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../modules/nrfx/drivers/nrfx_common.h \
@@ -47,7 +47,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrfx_usbd.o: \
  ../../../../../modules/nrfx/drivers/nrfx_errors.h \
  ../../../../../modules/nrfx/drivers/include/nrfx_usbd.h \
  ../../../../../modules/nrfx/hal/nrf_usbd.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\modules\nrfx\drivers\src\nrfx_usbd_errata.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\nrfx_usbd_errata.h \
  ../../../../../modules/nrfx/drivers/include/nrfx_systick.h \
  ../../../../../modules/nrfx/hal/nrf_systick.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \

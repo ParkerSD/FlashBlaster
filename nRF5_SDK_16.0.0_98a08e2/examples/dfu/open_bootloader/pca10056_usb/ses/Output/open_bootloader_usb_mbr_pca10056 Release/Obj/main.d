@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/main.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\examples\dfu\open_bootloader\main.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\main.c \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  ../../../../../components/boards/boards.h \
  ../../../../../modules/nrfx/hal/nrf_gpio.h \
@@ -78,14 +78,14 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/main.o: \
  ../../../../../components/libraries/sortlist/nrf_sortlist.h \
  ../../../../../components/libraries/delay/nrf_delay.h \
  ../../../../../modules/nrfx/hal/nrf_clock.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\examples\dfu\open_bootloader\ssd1351.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\ssd1351.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdlib.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/math.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdarg.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\examples\dfu\open_bootloader\fonts.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\fonts.h \
  ../../../../../integration/nrfx/legacy/nrf_drv_spi.h \
  ../../../../../modules/nrfx/drivers/include/nrfx_spim.h \
  ../../../../../modules/nrfx/hal/nrf_spim.h \
  ../../../../../modules/nrfx/drivers/include/nrfx_spi.h \
  ../../../../../modules/nrfx/hal/nrf_spi.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\examples\dfu\open_bootloader\oled.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\oled.h

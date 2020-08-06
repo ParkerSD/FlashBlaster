@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader_wdt.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_wdt.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_wdt.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_wdt.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_wdt.h \
  ../../../../../components/libraries/util/sdk_errors.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  ../../../../../components/drivers_nrf/nrf_soc_nosd/nrf_error.h \
@@ -47,7 +47,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader_wdt.o: \
  ../../../../../modules/nrfx/soc/nrfx_atomic.h \
  ../../../../../components/libraries/util/sdk_resources.h \
  ../../../../../modules/nrfx/drivers/nrfx_errors.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_dfu_timers.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_dfu_timers.h \
  ../../../../../components/libraries/log/nrf_log_ctrl.h \
  ../../../../../components/libraries/log/nrf_log_types.h \
  ../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h \

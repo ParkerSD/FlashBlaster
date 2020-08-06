@@ -1,9 +1,9 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_dfu.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\dfu\nrf_dfu.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\dfu\nrf_dfu.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\dfu\nrf_dfu.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\dfu\nrf_dfu.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\dfu\nrf_dfu_types.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\dfu\nrf_dfu_types.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stddef.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
  ../../../../../components/libraries/util/sdk_common.h \
@@ -36,12 +36,12 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_dfu.o: \
  ../../../../../components/libraries/util/app_error.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdio.h \
  ../../../../../components/libraries/util/app_error_weak.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\dfu\nrf_dfu_req_handler.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\dfu\nrf_dfu_flash.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\dfu\nrf_dfu_req_handler.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\dfu\nrf_dfu_flash.h \
  ../../../../../components/libraries/util/sdk_errors.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\dfu\nrf_dfu_utils.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\dfu\nrf_dfu_utils.h \
  ../../../../../components/libraries/util/app_util.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\dfu\nrf_dfu_transport.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\dfu\nrf_dfu_transport.h \
  ../../../../../components/libraries/experimental_section_vars/nrf_section.h \
  ../../../../../components/libraries/util/nordic_common.h \
  ../../../../../components/libraries/log/nrf_log.h \

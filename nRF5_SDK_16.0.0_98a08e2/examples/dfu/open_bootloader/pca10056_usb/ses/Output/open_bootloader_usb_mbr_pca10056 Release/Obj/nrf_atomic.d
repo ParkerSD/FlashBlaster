@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_atomic.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\atomic\nrf_atomic.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\atomic\nrf_atomic.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\atomic\nrf_atomic.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\atomic\nrf_atomic.h \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -31,4 +31,4 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_atomic.o: \
  ../../../../../components/softdevice/mbr/headers/nrf_svc.h \
  ../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\atomic\nrf_atomic_internal.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\atomic\nrf_atomic_internal.h

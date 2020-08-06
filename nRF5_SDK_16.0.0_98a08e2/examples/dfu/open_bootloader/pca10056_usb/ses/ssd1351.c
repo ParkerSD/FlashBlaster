@@ -5,9 +5,8 @@
 #include <string.h>
 #include "nordic_common.h"
 #include "nrf.h"
-
 #include "app_timer.h"
-
+#include "app_util_platform.h"
 #include "nrf_drv_spi.h"
 #include "oled.h"
 #include "ssd1351.h"

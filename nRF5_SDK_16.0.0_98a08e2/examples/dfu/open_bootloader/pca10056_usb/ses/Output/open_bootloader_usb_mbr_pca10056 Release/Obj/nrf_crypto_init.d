@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_crypto_init.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\crypto\nrf_crypto_init.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\crypto\nrf_crypto_init.c \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -30,8 +30,8 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_crypto_init.o: \
  ../../../../../components/softdevice/mbr/headers/nrf_svc.h \
  ../../../../../components/libraries/util/sdk_macros.h \
  ../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\crypto\nrf_crypto_init.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\crypto\nrf_crypto_init.h \
  ../../../../../components/libraries/experimental_section_vars/nrf_section.h \
  ../../../../../components/libraries/util/nordic_common.h \
  ../../../../../components/libraries/util/sdk_errors.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\crypto\nrf_crypto_types.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\crypto\nrf_crypto_types.h

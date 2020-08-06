@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_ringbuf.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\ringbuf\nrf_ringbuf.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\ringbuf\nrf_ringbuf.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\ringbuf\nrf_ringbuf.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\ringbuf\nrf_ringbuf.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  ../../../../../components/libraries/atomic/nrf_atomic.h \
  ../../../../../components/libraries/util/sdk_common.h \

@@ -1,6 +1,6 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader_fw_activation.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_fw_activation.c \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_fw_activation.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_fw_activation.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_fw_activation.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_settings.h \
@@ -40,7 +40,7 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader_fw_activatio
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_flash.h \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_mbr.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_info.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_info.h \
  ../../../../../components/libraries/util/app_util.h \
  ../../../../../components/libraries/crc32/crc32.h \
  ../../../../../components/libraries/log/nrf_log.h \
@@ -54,4 +54,4 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_bootloader_fw_activatio
  ../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h \
  ../../../../../components/libraries/log/nrf_log_backend_interface.h \
  ../../../../../components/libraries/bootloader/dfu/nrf_dfu_utils.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\components\libraries\bootloader\nrf_bootloader_wdt.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\components\libraries\bootloader\nrf_bootloader_wdt.h

@@ -1,7 +1,7 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_drv_clock.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\integration\nrfx\legacy\nrf_drv_clock.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.c \
  ../../../../../components/libraries/util/nordic_common.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\integration\nrfx\legacy\nrf_drv_clock.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\integration\nrfx\legacy\nrf_drv_clock.h \
  ../../../../../modules/nrfx/drivers/include/nrfx_clock.h \
  ../../../../../modules/nrfx/nrfx.h \
  ../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \

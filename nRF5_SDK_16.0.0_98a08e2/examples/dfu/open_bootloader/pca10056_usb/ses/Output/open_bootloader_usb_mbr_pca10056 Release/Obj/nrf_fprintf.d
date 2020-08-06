@@ -1,5 +1,5 @@
 Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_fprintf.o: \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\external\fprintf\nrf_fprintf.c \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\external\fprintf\nrf_fprintf.c \
  ../../../../../components/libraries/util/sdk_common.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -32,5 +32,5 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrf_fprintf.o: \
  ../../../../../components/libraries/util/nrf_assert.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdarg.h \
  ../../../../../components/libraries/util/nrf_assert.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\external\fprintf\nrf_fprintf_format.h \
- C:\Users\Parker\Documents\nRF5SDK160098a08e2\external\fprintf\nrf_fprintf.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\external\fprintf\nrf_fprintf_format.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\external\fprintf\nrf_fprintf.h
