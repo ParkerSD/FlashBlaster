@@ -32,4 +32,3 @@ bool string_compare(char* name, char* target_name, uint8_t name_length);
 void ble_decode_chip_id(char* chip_name, uint8_t chip_name_length);
 void ble_set_ad_stopped(void);
 void set_prog_flag(bool state);
-void set_ble_error_flag(bool state);

@@ -137,7 +137,7 @@ typedef struct recents
     file_struct *file2;
 }recents_struct;
 
-
+void set_ble_error_flag(bool state);
 void program_target(file_struct* target_file);
 file_struct* recents_index(int8_t selectedItem);
 bool recents_check(void);
@@ -188,4 +188,5 @@ void atmel_shutdown(void);
 
 void device_shutdown(void);
 
-uint32_t bytes_to_word(uint8_t* bytes, uint32_t word); //  converts four byte array to word
+uint32_t array_to_word(uint8_t* bytes, uint32_t word); //  converts four byte array to word
+void word_to_array(uint32_t word, uint8_t* buff);

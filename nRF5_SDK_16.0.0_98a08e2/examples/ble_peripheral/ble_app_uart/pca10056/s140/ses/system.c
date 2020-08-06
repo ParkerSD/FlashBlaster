@@ -65,6 +65,14 @@ void device_shutdown(void)
     hibernate();
 }
 
+void word_to_array(uint32_t word, uint8_t* buff)
+{
+    *buff = (word >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
+    *(buff + 1) = (word >> 16) & 0xFF;
+    *(buff + 2) = (word >> 8) & 0xFF;
+    *(buff + 3) = word & 0xFF;    
+}
+
 void program_target(file_struct* target_file)
 {
     uint32_t file_data_addr = target_file->file_data;
@@ -79,26 +87,11 @@ void program_target(file_struct* target_file)
         nrf_gpio_pin_set(BOOT_PIN); //testing 
         atmel_reset();
      
-        uint8_t data_buff[16];                        //TODO Extract these operations to function 
-        data_buff[0] = (file_data_addr >> 24) & 0xFF; //bit shift 32bit address into 8bit array 
-        data_buff[1] = (file_data_addr >> 16) & 0xFF;
-        data_buff[2] = (file_data_addr >> 8) & 0xFF;
-        data_buff[3] = file_data_addr & 0xFF;
-
-        data_buff[4] = (file_data_len >> 24) & 0xFF;  
-        data_buff[5] = (file_data_len >> 16) & 0xFF;
-        data_buff[6] = (file_data_len >> 8) & 0xFF;
-        data_buff[7] = file_data_len & 0xFF;
-
-        data_buff[8] = (file_start_addr >> 24) & 0xFF;  
-        data_buff[9] = (file_start_addr >> 16) & 0xFF;
-        data_buff[10] = (file_start_addr >> 8) & 0xFF;
-        data_buff[11] = file_start_addr & 0xFF;
-
-        data_buff[12] = (chip_target_id >> 24) & 0xFF; 
-        data_buff[13] = (chip_target_id >> 16) & 0xFF;
-        data_buff[14] = (chip_target_id >> 8) & 0xFF;
-        data_buff[15] = chip_target_id & 0xFF;
+        uint8_t data_buff[16]; 
+        word_to_array(file_data_addr, &data_buff[0]); //bit shift 32bit address into 8bit array 
+        word_to_array(file_data_len, &data_buff[4]);
+        word_to_array(file_start_addr, &data_buff[8]);
+        word_to_array(chip_target_id, &data_buff[12]);
 
         twi_cmd_tx(target_cmd, data_buff, 16);
 
@@ -263,7 +256,7 @@ system_struct* system_new(void) //TODO file system, shoulf be constructed in Fla
 }
 
 
-uint32_t bytes_to_word(uint8_t* bytes, uint32_t word) // bytes stored MSB 
+uint32_t array_to_word(uint8_t* bytes, uint32_t word) // bytes stored MSB 
 {
     word = *bytes << 24 | *(bytes + 1) << 16 | *(bytes + 2) << 8 | *(bytes + 3);
 
@@ -504,7 +497,7 @@ void projects_sync(void) //sync projects from flash
     //determine number of projects from directory value
     uint8_t* num_projects = malloc(sizeof(int)); 
     flash_read(num_projects, ADDR_NUM_PROJECTS, WORD_SIZE); // read num projects // flash_read(uint8_t* buffer_rx, uint32_t start_addr, size_t DATA_SIZE_BYTES)
-    uint32_t project_count = bytes_to_word(num_projects, project_count); // function to convert byte array to 32bit word 
+    uint32_t project_count = array_to_word(num_projects, project_count); // function to convert byte array to 32bit word 
     SYS_ projects_total = project_count; // populate system struct with project num value from flash
     free(num_projects);
 
