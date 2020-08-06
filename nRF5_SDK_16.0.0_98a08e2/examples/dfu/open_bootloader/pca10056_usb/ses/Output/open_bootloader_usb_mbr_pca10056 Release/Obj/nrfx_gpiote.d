@@ -1,11 +1,9 @@
-Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/main.o: \
- C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\main.c \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
- ../../../../../components/boards/boards.h \
- ../../../../../modules/nrfx/hal/nrf_gpio.h \
+Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/nrfx_gpiote.o: \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\modules\nrfx\drivers\src\nrfx_gpiote.c \
  ../../../../../modules/nrfx/nrfx.h \
  ../../../../../integration/nrfx/nrfx_config.h ../config/sdk_config.h \
  ../../../../../modules/nrfx/drivers/nrfx_common.h \
+ C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdint.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stddef.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/__crossworks.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdbool.h \
@@ -47,47 +45,19 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/main.o: \
  ../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../components/libraries/util/sdk_resources.h \
  ../../../../../modules/nrfx/drivers/nrfx_errors.h \
- ../../../../../components/boards/pca10056.h \
- ../../../../../components/libraries/bootloader/nrf_bootloader.h \
- ../../../../../components/libraries/bootloader/dfu/nrf_dfu.h \
- ../../../../../components/libraries/bootloader/dfu/nrf_dfu_types.h \
- ../../../../../components/libraries/util/sdk_common.h \
+ ../../../../../modules/nrfx/drivers/include/nrfx_gpiote.h \
+ ../../../../../modules/nrfx/hal/nrf_gpiote.h \
+ ../../../../../modules/nrfx/hal/nrf_gpio.h \
+ ../../../../../components/libraries/util/nrf_bitmask.h \
  C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/string.h \
+ ../../../../../integration/nrfx/nrfx_log.h \
+ ../../../../../components/libraries/log/nrf_log.h \
+ ../../../../../components/libraries/util/sdk_common.h \
  ../../../../../components/libraries/util/sdk_os.h \
  ../../../../../components/libraries/util/app_util.h \
  ../../../../../components/libraries/util/sdk_macros.h \
- ../../../../../components/libraries/bootloader/dfu/nrf_dfu_req_handler.h \
- ../../../../../components/libraries/bootloader/dfu/nrf_dfu_flash.h \
- ../../../../../components/libraries/bootloader/nrf_bootloader_app_start.h \
- ../../../../../components/libraries/log/nrf_log.h \
  ../../../../../components/libraries/experimental_section_vars/nrf_section.h \
  ../../../../../components/libraries/log/src/nrf_log_internal.h \
  ../../../../../components/libraries/log/nrf_log_instance.h \
  ../../../../../components/libraries/log/nrf_log_types.h \
- ../../../../../components/libraries/log/nrf_log_types.h \
- ../../../../../components/libraries/log/nrf_log_ctrl.h \
- ../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h \
- ../../../../../components/libraries/log/nrf_log_backend_interface.h \
- ../../../../../components/libraries/log/nrf_log_default_backends.h \
- ../../../../../components/libraries/util/app_error.h \
- ../../../../../components/libraries/util/app_error_weak.h \
- ../../../../../components/libraries/bootloader/nrf_bootloader_info.h \
- ../../../../../components/libraries/bootloader/dfu/nrf_dfu_utils.h \
- ../../../../../components/libraries/led_softblink/led_softblink.h \
- ../../../../../components/libraries/timer/app_timer.h \
- ../../../../../components/libraries/sortlist/nrf_sortlist.h \
- ../../../../../components/libraries/delay/nrf_delay.h \
- ../../../../../modules/nrfx/hal/nrf_clock.h \
- C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\ssd1351.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdlib.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/math.h \
- C:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 4.12/include/stdarg.h \
- C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\fonts.h \
- ../../../../../integration/nrfx/legacy/nrf_drv_spi.h \
- ../../../../../modules/nrfx/drivers/include/nrfx_spim.h \
- ../../../../../modules/nrfx/hal/nrf_spim.h \
- ../../../../../modules/nrfx/drivers/include/nrfx_spi.h \
- ../../../../../modules/nrfx/hal/nrf_spi.h \
- C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\oled.h \
- C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\button.h \
- C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\app_button.h
+ ../../../../../components/libraries/log/nrf_log_types.h

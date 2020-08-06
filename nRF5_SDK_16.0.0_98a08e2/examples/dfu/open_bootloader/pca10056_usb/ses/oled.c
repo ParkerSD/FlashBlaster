@@ -80,6 +80,8 @@ void oled_draw_bootloader(void)
     SSD1351_printf(COLOR_BLUE, med_font, "BOOTLOADER");
     oled_center_x(strlen("ACTIVE"), 80, MED_CHAR_WIDTH);
     SSD1351_printf(COLOR_BLUE, med_font, "ACTIVE");
+    oled_center_x(strlen("Via NRFConnect"), 115, SM_CHAR_WIDTH);
+    SSD1351_printf(COLOR_WHITE, small_font, "Use NRFConnect");
     SSD1351_update();
 }
 
