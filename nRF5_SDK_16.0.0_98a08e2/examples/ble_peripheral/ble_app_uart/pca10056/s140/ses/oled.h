@@ -16,7 +16,7 @@
 #define BIG_CHAR_WIDTH 16
 
 //#define CS_PIN 38 //P1.06
-#define LDO_EN 4  //NOTE used for detecting usb on boot
+#define USBV_DETECT 4  //NOTE used for detecting usb on boot
 #define BB_EN 26 //NOTE not used 
 #define RST_PIN 36 //P1.04
 #define DC_PIN 37 //P1.05

@@ -81,18 +81,28 @@ void button_up_callback(uint8_t pin_no, uint8_t button_action)
         upFlag = false;
         timer_stop();
 
-        itemHighlighted--;
+        itemHighlighted--; //signed int 
         rerender = true;
-        if(itemHighlighted < 0)
+        if(itemHighlighted < 0) // navigate backwards if up button is hit on top item
         {
+            if(recentsFlag) // handle recents exception
+            {
+                recentsFlag = false; 
+                return_home();
+                return;
+            }
+
+            rerender = false; // prevent double rerender
             itemHighlighted = 0;
-            rerender = false; 
-//            screenStack--;      //NOTE: for more granular backwards navigation, needs bug fixes with display logic
-//            if(screenStack < 0)
-//            {
-//                screenStack = 0; 
-//            }
+            
+            if(screenStack) // don't act on main menu
+            {   
+                selectedItem = 0; 
+                screenStack--;
+                rerender_screen(itemHighlighted, selectedItem, screenStack, recentsFlag);
+            }
         }
+
         if(rerender)
         {
             rerender_list(itemHighlighted);
@@ -160,10 +170,11 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                     recentsFlag = false;
                     rerender = true;
                 }
-                else
+                else //no recent projects available
                 {
                     screenStack--; //do not progress 
-                    rerender = false;
+                    //rerender = false; //not needed
+                    draw_error_box(); //draw red selection box if selected item not available
                 }
                 break;
             case chip_screen:
@@ -191,6 +202,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                     else
                     {
                         screenStack--; //do not progress 
+                        draw_error_box(); //draw red selection box if selected item not available
                     }
                 }
                 break;
@@ -204,6 +216,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 else
                 {
                     screenStack--; //do not progress 
+                    draw_error_box(); //draw red selection box if selected item not available
                 }
                 break;
             case exe_screen:
@@ -229,6 +242,7 @@ void enter_callback(uint8_t pin_no, uint8_t button_action)
                 else
                 {
                     screenStack--; //do not progress 
+                    draw_error_box(); //draw red selection box if selected item not available
                 }
                 break;
             default: 
@@ -268,9 +282,12 @@ void long_press_timeout_handler(void* p_context)
 {
     if(upFlag && !enterFlag)// up long press
     {   
-        recentsFlag = false;
-        list_clear();
-        return_home(); 
+        if(screenStack) // if not on main menu already, return to it
+        {
+            recentsFlag = false;
+            list_clear();
+            return_home(); 
+        }
     }
     else if(enterFlag && !upFlag)// enter long press
     {
@@ -283,7 +300,6 @@ void long_press_timeout_handler(void* p_context)
     else if(downFlag) //down long press
     {
         // do something
-        // oled_draw_transfer_progress();
     }
 }
 

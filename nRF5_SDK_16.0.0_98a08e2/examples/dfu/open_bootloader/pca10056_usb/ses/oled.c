@@ -40,10 +40,10 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_output(ATMEL_RESET_PIN);
     nrf_gpio_pin_set(ATMEL_RESET_PIN);
 
-    nrf_gpio_cfg_output(BOOT_PIN); //set true before reset to boot atmel
+    nrf_gpio_cfg_output(BOOT_PIN); //set true before reset to boot atmel application
     //nrf_gpio_pin_clear(BOOT_PIN);
 
-    nrf_gpio_cfg_input(I2CS_INT, NRF_GPIO_PIN_PULLDOWN);
+    nrf_gpio_cfg_output(BL_BOOT_PIN); //hold high to keep atmel in BL
 
     nrf_gpio_cfg_input(BTN_UP, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(BTN_DOWN, NRF_GPIO_PIN_PULLUP);

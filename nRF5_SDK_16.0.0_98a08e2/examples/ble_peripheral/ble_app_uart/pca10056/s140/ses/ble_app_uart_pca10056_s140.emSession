@@ -26,6 +26,7 @@
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;Application"/>
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;None"/>
   <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;nRF_Drivers"/>
+  <ProjectSessionItem path="ble_app_uart_pca10056_s140;ble_app_uart_pca10056_s140;nRF_Libraries"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="ble_app_uart_pca10056_s140" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -61,17 +62,25 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="228" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="1" top="216" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="67" y="122" useTextEdit="1" useBinaryEdit="0" left="0" path="system.c" selected="0" top="101" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="180" useTextEdit="1" useBinaryEdit="0" left="0" path="system.h" selected="0" top="139" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="15" useTextEdit="1" useBinaryEdit="0" left="0" path="flash.c" selected="0" top="3" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="164" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="1" top="79" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="763" useTextEdit="1" useBinaryEdit="0" left="0" path="system.c" selected="0" top="745" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1" useTextEdit="1" useBinaryEdit="0" left="0" path="system.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="472" useTextEdit="1" useBinaryEdit="0" left="0" path="flash.c" selected="0" top="430" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="34" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.h" selected="0" top="12" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="490" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.c" selected="0" top="478" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="73" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="46" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="51" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.h" selected="0" top="39" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="5" y="37" useTextEdit="1" useBinaryEdit="0" left="0" path="button.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="276" useTextEdit="1" useBinaryEdit="0" left="0" path="button.c" selected="0" top="230" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="774" useTextEdit="1" useBinaryEdit="0" left="0" path="ble.c" selected="0" top="729" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="64" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="54" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="27" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.h" selected="0" top="23" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="40" useTextEdit="1" useBinaryEdit="0" left="0" path="button.h" selected="0" top="23" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="59" useTextEdit="1" useBinaryEdit="0" left="0" path="button.c" selected="0" top="54" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="233" useTextEdit="1" useBinaryEdit="0" left="0" path="battery.c" selected="0" top="223" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="405" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/toolchain/cmsis/include/cmsis_gcc.h" selected="0" top="391" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="367" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" selected="0" top="333" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1017" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/hal/nrf_power.h" selected="0" top="983" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="732" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/hal/nrf_gpio.h" selected="0" top="698" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="559" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/hal/nrf_spim.h" selected="0" top="525" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="522" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/drivers/src/nrfx_spim.c" selected="0" top="485" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="108" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error_weak.c" selected="0" top="41" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="5" useTextEdit="1" useBinaryEdit="0" left="0" path="twi.h" selected="0" top="0" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_uart_pca10056_s140" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" debugSearchFileMap="C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.30a/source/thumb_crt0.s&#xa;&#xa;C:/Users/davispa/Desktop/FlashBlaster Git/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/modules/nrfx/mdk/ses_startup_nrf52840.s&#xa;C:/Users/Parker/Documents/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/modules/nrfx/mdk/ses_startup_nrf52840.s" fileDialogInitialDirectory="C:/Users/Parker/Documents/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/examples/ble_peripheral/ble_app_uart/pca10056/s140/ses/Output/Release/Exe" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

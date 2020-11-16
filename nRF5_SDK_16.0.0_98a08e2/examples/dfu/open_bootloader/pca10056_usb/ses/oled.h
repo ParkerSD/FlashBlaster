@@ -25,8 +25,8 @@
 
 //atmel pins
 #define ATMEL_RESET_PIN 30 
-#define BOOT_PIN 45 //hold high before reset to boot atmel 
-#define I2CS_INT 43 // indication that atmel has i2c slave tx data waiting for read
+#define BOOT_PIN 45 //hold high before reset to boot atmel application
+#define BL_BOOT_PIN 43 //hold high to keep atmel in BL
 
 //#define LED_BLUE 27 
 #define LED_RED 42 //P1.10

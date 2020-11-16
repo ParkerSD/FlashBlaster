@@ -34,9 +34,7 @@
 #include "ble.h"
 
 
-#define SYS_ system_singleton->
-#define L_ list_singleton->
-#define REC_ recents_singleton-> 
+
 
 //NOTE can declare as static
 recents_struct* recents_singleton;
@@ -61,7 +59,7 @@ static char fileHeader[] = {"Select Program:"}; // or Chip Name
 
 void device_shutdown(void)
 {
-    nrf_gpio_pin_clear(BOOT_PIN); // turn of atmel
+    nrf_gpio_pin_clear(BOOT_PIN); // turn off atmel
     hibernate();
 }
 
@@ -166,12 +164,20 @@ void clear_screen(void)
 }
 
 
-void draw_selection_box(void) // top left corner of full width box = point (0, y) 
+void draw_selection_box(uint16_t color) // top left corner of full width box = point (0, y) 
 {
     //SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
-    SSD1351_draw_rect(2, 48, 124, 25, COLOR_BLUE);
+    SSD1351_draw_rect(2, 48, 124, 25, color);
     SSD1351_update();
     L_ boxPresent = true; 
+
+}
+
+void draw_error_box(void)
+{
+    draw_selection_box(COLOR_RED); 
+    nrf_delay_ms(50);
+    draw_selection_box(COLOR_BLUE);
 }
 
 
@@ -198,7 +204,7 @@ void draw_initial_screen(void)
     recents_singleton = recents_init(); //TODO: load recents from flash 
     
     clear_screen();
-    draw_selection_box();
+    draw_selection_box(COLOR_BLUE);
     draw_header();
     SSD1351_set_cursor(10,57);
     SSD1351_printf(COLOR_WHITE, curr_font, L_ items[0]);
@@ -601,7 +607,7 @@ project_struct* project_create(void)
 void system_init(void) // create global system struct and read directory info from flash, create project structs 
 {   
     system_singleton = system_new();
-    #if FIRST_BOOT  
+    #if FIRST_BOOT    
     flash_init();    //NOTE: watchdog will timeout during flash erase unless disabled
     #endif 
     projects_sync(); 
@@ -670,7 +676,7 @@ void rerender_list(int8_t itemHighlighted) // use screenStack
 
 void project_name_fetch(void)
 {
-    for(int x = 0; x < MAX_PROJECTS; x++) //MAX_PROJECTS = 26 
+    for(int x = 0; x < MAX_PROJECTS; x++) //MAX_PROJECTS = 8 
     {
         L_ items[x] = project_list_index(x)->project_name;
     }
@@ -752,7 +758,7 @@ void rerender_screen(int8_t itemHighlighted, int8_t selectedItem, int8_t screenS
 
     if(L_ boxPresent == false)
     {
-        draw_selection_box();
+        draw_selection_box(COLOR_BLUE);
     }
 
     if(L_ headerPresent == false)

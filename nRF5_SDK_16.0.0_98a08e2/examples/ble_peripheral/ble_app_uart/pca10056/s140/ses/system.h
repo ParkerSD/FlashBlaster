@@ -50,9 +50,9 @@
 #define curr_font small_font
 
 
-
-
-
+#define SYS_ system_singleton-> // short hand notation
+#define L_ list_singleton->
+#define REC_ recents_singleton-> 
 
 typedef enum
 {   
@@ -172,7 +172,8 @@ chip_struct* files_sync(int8_t, project_struct*);
 project_struct* chips_sync(int8_t);
 void projects_sync(void);
 
-void draw_selection_box(void);
+void draw_selection_box(uint16_t color);
+void draw_error_box(void);
 void draw_header(void);
 void draw_initial_screen(void);
 void rerender_screen(int8_t, int8_t, int8_t, bool);
@@ -180,11 +181,11 @@ void clear_list(void);
 void rerender_list(int8_t);
 void clear_screen(void);
 
-void atmel_reset_hold(void);
-void atmel_reset_release(void);
+void atmel_reset_hold(void); // not used 
+void atmel_reset_release(void); // not used
 void atmel_reset(void);
-void atmel_boot(void);
-void atmel_shutdown(void); 
+void atmel_boot(void); //not used
+void atmel_shutdown(void); //not used
 
 void device_shutdown(void);
 

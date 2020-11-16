@@ -59,10 +59,10 @@ void gpio_init(void) // init gpio for oled drivers
 
     //atmel
     nrf_gpio_cfg_output(ATMEL_RESET_PIN);
-    nrf_gpio_pin_set(ATMEL_RESET_PIN);
+    nrf_gpio_pin_set(ATMEL_RESET_PIN); //TODO: test if interfering with jlink 
 
     nrf_gpio_cfg_output(BOOT_PIN); //set true before reset to boot atmel
-    //nrf_gpio_pin_clear(BOOT_PIN);
+    //nrf_gpio_pin_clear(BOOT_PIN); //uncomment this line to hold atmel off 
 
     nrf_gpio_cfg_input(I2CS_INT, NRF_GPIO_PIN_PULLDOWN);
 
@@ -76,7 +76,7 @@ void gpio_init(void) // init gpio for oled drivers
     nrf_gpio_cfg_input(BTN_ENTER, NRF_GPIO_PIN_PULLUP);
 
     nrf_gpio_cfg_input(BB_EN, NRF_GPIO_PIN_NOPULL); //NOTE not used 
-    nrf_gpio_cfg_input(LDO_EN, NRF_GPIO_PIN_NOPULL);
+    nrf_gpio_cfg_input(USBV_DETECT, NRF_GPIO_PIN_PULLDOWN);
 }
 
 
@@ -239,8 +239,8 @@ void oled_draw_err(uint8_t err_id)
 
     SSD1351_update();
     nrf_delay_ms(2000);
-    clear_screen();
-    return_home();
+    //clear_screen(); //not needed
+    //return_home();
 }
 
 

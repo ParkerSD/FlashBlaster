@@ -89,7 +89,7 @@
 #include "nrf_drv_wdt.h"
 #include "twi.h"
 
-
+#define ATMEL_DEBUG 0
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -243,19 +243,18 @@ int main(void)
     nrf_power_dcdcen_set(true);
 
     #if FIRST_BOOT == false // defined in system.h
-    watchdog_init();   
+    watchdog_init();    
     #endif 
+    
+    #if ATMEL_DEBUG //defined in main 
+    nrf_gpio_pin_set(BOOT_PIN); // power atmel for swd debug
+    atmel_reset();
+    #endif
 
     //nrf_delay_ms(1); //prevent false boot
     if(!nrf_gpio_pin_read(BTN_ENTER)) 
     {
-        //nrf_gpio_pin_set(BOOT_PIN); // nordic stopped booting when bootpin cleared (atmel off) 
-        //atmel_reset();
-        
         flashblaster_init();
-
-        //nrf_gpio_pin_clear(BOOT_PIN); // comment out to program atmel
-        //atmel_reset();
     }
     else
     {

@@ -60,6 +60,7 @@
 #include "nrf_dfu_validation.h"
 
 
+
 static nrf_dfu_observer_t m_user_observer; //<! Observer callback set by the user.
 static volatile bool m_flash_write_done;
 
@@ -481,6 +482,7 @@ ret_code_t nrf_bootloader_init(nrf_dfu_observer_t observer)
     if (dfu_enter)
     {
         start_up_display();
+        //activate_atmel_bl();
 
         nrf_bootloader_wdt_init();
         scheduler_init();

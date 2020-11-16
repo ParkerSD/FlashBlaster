@@ -26,6 +26,7 @@
   <ProjectSessionItem path="open_bootloader_usb_mbr_pca10056;open_bootloader_usb_mbr_pca10056;Application"/>
   <ProjectSessionItem path="open_bootloader_usb_mbr_pca10056;open_bootloader_usb_mbr_pca10056;nRF_Bootloader"/>
   <ProjectSessionItem path="open_bootloader_usb_mbr_pca10056;open_bootloader_usb_mbr_pca10056;nRF_Drivers"/>
+  <ProjectSessionItem path="open_bootloader_usb_mbr_pca10056;open_bootloader_usb_mbr_pca10056;nRF_Libraries"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="open_bootloader_usb_mbr_pca10056" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -58,18 +59,22 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="226" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="1" top="200" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="16" y="22" useTextEdit="1" useBinaryEdit="0" left="0" path="ssd1351.h" selected="0" top="11" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="144" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="1" top="207" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="22" useTextEdit="1" useBinaryEdit="0" left="0" path="ssd1351.h" selected="0" top="11" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="119" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../integration/nrfx/legacy/nrf_drv_spi.h" selected="0" top="79" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="223" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="203" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="5" y="150" useTextEdit="1" useBinaryEdit="0" left="0" path="ssd1351.c" selected="0" top="207" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="19" y="39" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.h" selected="0" top="6" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="50" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="9" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="182" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="162" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="150" useTextEdit="1" useBinaryEdit="0" left="0" path="ssd1351.c" selected="0" top="115" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="65" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.h" selected="0" top="6" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="56" useTextEdit="1" useBinaryEdit="0" left="0" path="oled.c" selected="0" top="21" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="120" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../integration/nrfx/legacy/nrf_drv_spi.c" selected="0" top="89" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="219" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../modules/nrfx/drivers/src/nrfx_spim.c" selected="0" top="36" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="405" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../components/toolchain/cmsis/include/cmsis_gcc.h" selected="0" top="362" codecName=""/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="13" useTextEdit="1" useBinaryEdit="0" left="0" path="fonts.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="34" y="484" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../components/libraries/bootloader/nrf_bootloader.c" selected="0" top="463" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="405" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../components/toolchain/cmsis/include/cmsis_gcc.h" selected="0" top="362" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="9" useTextEdit="1" useBinaryEdit="0" left="0" path="fonts.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="230" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../components/libraries/bootloader/nrf_bootloader.c" selected="0" top="211" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="96" useTextEdit="1" useBinaryEdit="0" left="0" path="button.c" selected="0" top="61" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="30" useTextEdit="1" useBinaryEdit="0" left="0" path="button.h" selected="0" top="12" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="271" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../components/libraries/button/app_button.c" selected="0" top="31" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="247" useTextEdit="1" useBinaryEdit="0" left="0" path="app_button.c" selected="0" top="30" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="open_bootloader_usb_mbr_pca10056" fileDialogDefaultFilter="" autoConnectTarget="J-Link" buildConfiguration="Release" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/Parker/Documents/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/modules/nrfx/drivers/src/prs" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="open_bootloader_usb_mbr_pca10056" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/Parker/Documents/FlashBlaster/nRF5_SDK_16.0.0_98a08e2/examples/ble_peripheral/ble_app_uart/pca10056/s140/ses" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

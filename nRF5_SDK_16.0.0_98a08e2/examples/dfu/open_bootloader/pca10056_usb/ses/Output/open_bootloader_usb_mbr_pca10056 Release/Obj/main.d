@@ -90,4 +90,5 @@ Output/open_bootloader_usb_mbr_pca10056\ Release/Obj/main.o: \
  ../../../../../modules/nrfx/hal/nrf_spi.h \
  C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\oled.h \
  C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\button.h \
- C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\app_button.h
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\app_button.h \
+ C:\Users\Parker\Documents\FlashBlaster\nRF5_SDK_16.0.0_98a08e2\examples\dfu\open_bootloader\pca10056_usb\ses\twi.h

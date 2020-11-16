@@ -230,11 +230,10 @@ void battery_draw_icon(void) //charge bar is 5x9
     }
     else if(battery_val < NO_CHARGE)
     {   
-        //NOTE Commented out for testing 
-        // hibernate(); //shutdown amp if low voltage condition, plug in USB to reboot
+        //NOTE Voltage Detect IC will Shutdown BB before reaching this code
         
         //for test 
-        battery_draw_outline(COLOR_AQUA);
+        battery_draw_outline(COLOR_AQUA);//draw blue
         SSD1351_draw_filled_rect(112, 12, 10, 4, COLOR_BLACK); // erase 
         SSD1351_draw_filled_rect(112, 12, 9, 4, COLOR_AQUA);
     }
@@ -299,7 +298,7 @@ void battery_init(void)
 {
     battery = malloc(sizeof(battery_struct)); 
     
-    if(nrf_gpio_pin_read(LDO_EN)) // read ldo_en pin to determine if usb is connected on boot 
+    if(nrf_gpio_pin_read(USBV_DETECT)) // read ldo_en pin to determine if usb is connected on boot 
     {
         battery_set_charging_state(true);
     }

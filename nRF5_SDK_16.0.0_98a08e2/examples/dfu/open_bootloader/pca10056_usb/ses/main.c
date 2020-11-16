@@ -66,6 +66,7 @@
 #include "ssd1351.h"
 #include "oled.h"
 #include "button.h"
+#include "twi.h"
 
 /* Timer used to blink LED on DFU progress. */
 APP_TIMER_DEF(m_dfu_progress_led_timer);
@@ -206,12 +207,29 @@ void start_up_display(void)
     oled_draw_bootloader();
 }
 
+void atmel_reset(void)
+{
+    nrf_gpio_pin_clear(ATMEL_RESET_PIN);
+    nrf_delay_ms(10);
+    nrf_gpio_pin_set(ATMEL_RESET_PIN);
+    nrf_delay_ms(10);
+}
+
+void activate_atmel_bl(void)
+{
+    nrf_gpio_pin_set(BL_BOOT_PIN); // hoold high to enter BL
+    nrf_delay_ms(10);
+    atmel_reset();
+}
+
+
 int main(void)
 {
     uint32_t ret_val;
     
     gpio_init(); 
     button_init();
+    twi_init(); 
 
     // Must happen before flash protection is applied, since it edits a protected page.
     nrf_bootloader_mbr_addrs_populate();
